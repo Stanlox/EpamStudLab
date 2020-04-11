@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FileCabinetApp
 {
@@ -17,12 +18,15 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
             new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+            new string[] { "stat", "view the number of records." },
+            new string[] { "create", "create new user." },
         };
 
         public static void Main(string[] args)
@@ -102,6 +106,40 @@ namespace FileCabinetApp
         {
             var recordsCount = Program.fileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            bool isCorrectDataBirth = true;
+            int numberOfRecord;
+            Console.Write("First name: ");
+            string firstName = Console.ReadLine();
+            Console.Write("Last Name: ");
+            string lastName = Console.ReadLine();
+            Console.Write("Date of birth: ");
+            string dataOfBirth = Console.ReadLine();
+            DateTime dateValue;
+            if (DateTime.TryParse(dataOfBirth, out dateValue))
+            {
+               numberOfRecord = Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue);
+               Console.WriteLine($"Record # {numberOfRecord} is created.");
+            }
+            else
+            {
+                do
+                {
+                    Console.WriteLine("Please, Input correct Data of Birth in format DD/MM/YYYY ");
+                    Console.Write("Date of birth: ");
+                    dataOfBirth = Console.ReadLine();
+                    if (DateTime.TryParse(dataOfBirth, out dateValue))
+                    {
+                        numberOfRecord = Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue);
+                        Console.WriteLine($"Record # {numberOfRecord} is created.");
+                        isCorrectDataBirth = false;
+                    }
+                }
+                while (isCorrectDataBirth);
+            }
         }
     }
 }
