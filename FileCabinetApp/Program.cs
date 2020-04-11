@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -19,14 +20,16 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("exit", Exit),
             new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
-            new string[] { "stat", "view the number of records." },
-            new string[] { "create", "create new user." },
+            new string[] { "stat", "view the number of records" },
+            new string[] { "create", "create new user" },
+            new string[] { "list", "view a list of records added to the service" },
         };
 
         public static void Main(string[] args)
@@ -111,7 +114,6 @@ namespace FileCabinetApp
         private static void Create(string parameters)
         {
             bool isCorrectDataBirth = true;
-            int numberOfRecord;
             Console.Write("First name: ");
             string firstName = Console.ReadLine();
             Console.Write("Last Name: ");
@@ -121,8 +123,8 @@ namespace FileCabinetApp
             DateTime dateValue;
             if (DateTime.TryParse(dataOfBirth, out dateValue))
             {
-               numberOfRecord = Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue);
-               Console.WriteLine($"Record # {numberOfRecord} is created.");
+               Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue);
+               Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
             }
             else
             {
@@ -133,12 +135,24 @@ namespace FileCabinetApp
                     dataOfBirth = Console.ReadLine();
                     if (DateTime.TryParse(dataOfBirth, out dateValue))
                     {
-                        numberOfRecord = Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue);
-                        Console.WriteLine($"Record # {numberOfRecord} is created.");
+                        Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue);
+                        Console.WriteLine($"Record #{Program.fileCabinetService.GetStat()} is created.");
                         isCorrectDataBirth = false;
                     }
                 }
                 while (isCorrectDataBirth);
+            }
+        }
+
+        private static void List(string parameters)
+        {
+            int sequentialNumberInlist = 1;
+            var listRecordsInService = Program.fileCabinetService.GetRecords();
+            for (int i = 0; i < listRecordsInService.Length; i++)
+            {
+                Console.Write("#" + sequentialNumberInlist + ", " + listRecordsInService[i].FirstName + ", " + listRecordsInService[i].LastName + ", " + listRecordsInService[i].DateOfBirth.ToString("D", CultureInfo.CurrentCulture));
+                sequentialNumberInlist++;
+                Console.WriteLine();
             }
         }
     }

@@ -25,12 +25,14 @@ namespace FileCabinetApp
 
         public FileCabinetRecord[] GetRecords()
         {
-            return Array.Empty<FileCabinetRecord>();
+            FileCabinetRecord[] array = new FileCabinetRecord[this.list.Count];
+            array = this.list.ToArray();
+            return array;
         }
 
         public int GetStat()
         {
-            return this.list.Count;
+           return this.list.Count;
         }
     }
 }
