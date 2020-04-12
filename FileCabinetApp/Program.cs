@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -9,19 +11,25 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-
         private static bool isRunning = true;
+        private static FileCabinetService fileCabinetService = new FileCabinetService();
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
+            new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+            new string[] { "stat", "view the number of records" },
+            new string[] { "create", "create new user" },
+            new string[] { "list", "view a list of records added to the service" },
         };
 
         public static void Main(string[] args)
@@ -95,6 +103,64 @@ namespace FileCabinetApp
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+        }
+
+        private static void Stat(string parameters)
+        {
+            var recordsCount = Program.fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            bool isCorrectDataBirth = true;
+            Console.Write("First name: ");
+            string firstName = Console.ReadLine();
+            Console.Write("Last Name: ");
+            string lastName = Console.ReadLine();
+            Console.Write("Date of birth: ");
+            string dataOfBirth = Console.ReadLine();
+            Console.Write("Gender (M/W): ");
+            char gender = char.Parse(Console.ReadLine());
+            Console.Write("Age: ");
+            short age = short.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
+            Console.Write("Salary: ");
+            decimal salary = decimal.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
+            DateTime dateValue;
+            if (DateTime.TryParse(dataOfBirth, out dateValue))
+            {
+               Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue, gender, age, salary);
+               Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
+            }
+            else
+            {
+                do
+                {
+                    Console.WriteLine("Please, Input correct Data of Birth in format DD/MM/YYYY ");
+                    Console.Write("Date of birth: ");
+                    dataOfBirth = Console.ReadLine();
+                    if (DateTime.TryParse(dataOfBirth, out dateValue))
+                    {
+                        Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue, gender, age, salary);
+                        Console.WriteLine($"Record #{Program.fileCabinetService.GetStat()} is created.");
+                        isCorrectDataBirth = false;
+                    }
+                }
+                while (isCorrectDataBirth);
+            }
+        }
+
+        private static void List(string parameters)
+        {
+            int sequentialNumberInlist = 1;
+            var listRecordsInService = Program.fileCabinetService.GetRecords();
+            for (int i = 0; i < listRecordsInService.Length; i++)
+            {
+                Console.Write("#" + sequentialNumberInlist + ", " + listRecordsInService[i].FirstName + ", " + listRecordsInService[i].LastName + ", " +
+                listRecordsInService[i].DateOfBirth.ToString("D", CultureInfo.CurrentCulture) + ", " + listRecordsInService[i].Gender + ", " + listRecordsInService[i].Age + ", " + listRecordsInService[i].Salary);
+                sequentialNumberInlist++;
+                Console.WriteLine();
+            }
         }
     }
 }
