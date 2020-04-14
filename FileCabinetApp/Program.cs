@@ -12,6 +12,7 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private static bool isCorrect = true;
         private static bool isRunning = true;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
@@ -114,6 +115,7 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
+            string repeatIfDataIsNotCorrect = parameters;
             try
             {
                 Console.Write("First name: ");
@@ -132,7 +134,7 @@ namespace FileCabinetApp
                 var parsed = DateTime.TryParse(dataOfBirth, out dateValue);
                 if (!parsed)
                 {
-                    throw new ArgumentException($"{nameof(parsed)}");
+                    throw new ArgumentException($"{nameof(dateValue)}");
                 }
                 else
                 {
@@ -143,18 +145,31 @@ namespace FileCabinetApp
             catch (ArgumentNullException ex)
             {
                 Console.WriteLine(ex.Message);
+                isCorrect = false;
             }
             catch (ArgumentException ex)
             {
                 Console.WriteLine(ex.Message);
+                isCorrect = false;
             }
             catch (FormatException ex)
             {
                 Console.WriteLine(ex.Message);
+                isCorrect = false;
             }
             catch (OverflowException ex)
             {
                 Console.WriteLine(ex.Message);
+                isCorrect = false;
+            }
+            finally
+            {
+                if (!isCorrect)
+                {
+                    Console.WriteLine("Your data is incorrect, please try again");
+                    isCorrect = true;
+                    Create(repeatIfDataIsNotCorrect);
+                }
             }
         }
 
