@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace FileCabinetApp
 {
@@ -32,7 +33,7 @@ namespace FileCabinetApp
             new string[] { "list", "view a list of records added to the service" },
         };
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(Program.HintMessage);
@@ -113,53 +114,64 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            bool isCorrectDataBirth = true;
-            Console.Write("First name: ");
-            string firstName = Console.ReadLine();
-            Console.Write("Last Name: ");
-            string lastName = Console.ReadLine();
-            Console.Write("Date of birth: ");
-            string dataOfBirth = Console.ReadLine();
-            Console.Write("Gender (M/W): ");
-            char gender = char.Parse(Console.ReadLine());
-            Console.Write("Age: ");
-            short age = short.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
-            Console.Write("Salary: ");
-            decimal salary = decimal.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
-            DateTime dateValue;
-            if (DateTime.TryParse(dataOfBirth, out dateValue))
+            try
             {
-               Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue, gender, age, salary);
-               Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
-            }
-            else
-            {
-                do
+                Console.Write("First name: ");
+                string firstName = Console.ReadLine();
+                Console.Write("Last Name: ");
+                string lastName = Console.ReadLine();
+                Console.Write("Date of birth: ");
+                string dataOfBirth = Console.ReadLine();
+                Console.Write("Gender (M/W): ");
+                char gender = char.Parse(Console.ReadLine());
+                Console.Write("Age: ");
+                short age = short.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
+                Console.Write("Salary: ");
+                decimal salary = decimal.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
+                DateTime dateValue;
+                var parsed = DateTime.TryParse(dataOfBirth, out dateValue);
+                if (!parsed)
                 {
-                    Console.WriteLine("Please, Input correct Data of Birth in format DD/MM/YYYY ");
-                    Console.Write("Date of birth: ");
-                    dataOfBirth = Console.ReadLine();
-                    if (DateTime.TryParse(dataOfBirth, out dateValue))
-                    {
-                        Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue, gender, age, salary);
-                        Console.WriteLine($"Record #{Program.fileCabinetService.GetStat()} is created.");
-                        isCorrectDataBirth = false;
-                    }
+                    throw new ArgumentException($"{nameof(parsed)}");
                 }
-                while (isCorrectDataBirth);
+                else
+                {
+                    Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue, gender, age, salary);
+                    Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (OverflowException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
         private static void List(string parameters)
         {
-            int sequentialNumberInlist = 1;
             var listRecordsInService = Program.fileCabinetService.GetRecords();
             for (int i = 0; i < listRecordsInService.Length; i++)
             {
-                Console.Write("#" + sequentialNumberInlist + ", " + listRecordsInService[i].FirstName + ", " + listRecordsInService[i].LastName + ", " +
-                listRecordsInService[i].DateOfBirth.ToString("D", CultureInfo.CurrentCulture) + ", " + listRecordsInService[i].Gender + ", " + listRecordsInService[i].Age + ", " + listRecordsInService[i].Salary);
-                sequentialNumberInlist++;
-                Console.WriteLine();
+                var builder = new StringBuilder();
+                builder.Append($"{listRecordsInService[i].Id}, ");
+                builder.Append($"{listRecordsInService[i].FirstName}, ");
+                builder.Append($"{listRecordsInService[i].LastName}, ");
+                builder.Append($"{listRecordsInService[i].DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
+                builder.Append($"{listRecordsInService[i].Gender}, ");
+                builder.Append($"{listRecordsInService[i].Age}, ");
+                builder.Append($"{listRecordsInService[i].Salary}");
+                Console.WriteLine("#" + builder.ToString());
             }
         }
     }

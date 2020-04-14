@@ -10,19 +10,24 @@ namespace FileCabinetApp
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
         {
+            GuardClauses.IsNullOrEmpty(firstName, nameof(firstName), lastName, nameof(lastName));
+            GuardClauses.CheckLength(firstName, nameof(firstName), lastName, nameof(lastName));
+            GuardClauses.CheckDateRange(dateOfBirth, nameof(dateOfBirth));
+            GuardClauses.CheckGender(gender, nameof(gender));
+            GuardClauses.CheckSalarySign(salary, nameof(salary));
+            GuardClauses.CheckAge(age, nameof(age));
+
             var record = new FileCabinetRecord
-            {
-                Id = this.list.Count + 1,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dateOfBirth,
-                Gender = gender,
-                Age = age,
-                Salary = salary,
-            };
-
+                {
+                    Id = this.list.Count + 1,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dateOfBirth,
+                    Gender = gender,
+                    Age = age,
+                    Salary = salary,
+                };
             this.list.Add(record);
-
             return record.Id;
         }
 
