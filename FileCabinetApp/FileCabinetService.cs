@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp
@@ -41,6 +42,20 @@ namespace FileCabinetApp
         public int GetStat()
         {
            return this.list.Count;
+        }
+
+        public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
+        {
+                foreach (var record in this.list.Where(x => x.Id == id))
+                {
+                    record.Id = id;
+                    record.FirstName = firstName;
+                    record.LastName = lastName;
+                    record.DateOfBirth = dateOfBirth;
+                    record.Gender = gender;
+                    record.Age = age;
+                    record.Salary = salary;
+                }
         }
     }
 }
