@@ -7,7 +7,7 @@ namespace FileCabinetApp
 {
     public class FileCabinetService
     {
-        private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
         {
@@ -56,6 +56,13 @@ namespace FileCabinetApp
                     record.Age = age;
                     record.Salary = salary;
                 }
+        }
+
+        public FileCabinetRecord[] FindByFirstName(string firstName)
+        {
+            this.list = this.list.Where(x => string.Equals(x.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            FileCabinetRecord[] array = this.GetRecords();
+            return array;
         }
     }
 }
