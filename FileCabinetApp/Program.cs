@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace FileCabinetApp
         private static char gender;
         private static short age;
         private static decimal salary;
+        private static FileCabinetRecord[] listRecordsInService;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -151,7 +153,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            var listRecordsInService = Program.fileCabinetService.GetRecords();
+            listRecordsInService = Program.fileCabinetService.GetRecords();
             ListRecord(listRecordsInService);
         }
 
@@ -177,11 +179,29 @@ namespace FileCabinetApp
 
         private static void Find(string parameters)
         {
-            string parameterValue = parameters.Split(' ').Last();
-            string[] parameterArray = parameters.Split(' ');
-            string parameterName = parameterArray[parameterArray.Length - 2];
-            var listRecordsInService = Program.fileCabinetService.FindByFirstName(parameterValue);
-            ListRecord(listRecordsInService);
+            try
+            {
+                string parameterValue = parameters.Split(' ').Last().Trim('"');
+                Console.WriteLine(parameterValue);
+                string[] parameterArray = parameters.Split(' ');
+                string parameterName = parameterArray[parameterArray.Length - 2];
+                Console.WriteLine(parameterName);
+                switch (parameterName.ToLower(CultureInfo.CurrentCulture))
+                {
+                    case "firstname":
+                        listRecordsInService = Program.fileCabinetService.FindByFirstName(parameterValue);
+                        ListRecord(listRecordsInService);
+                        break;
+                    case "lastname":
+                        listRecordsInService = Program.fileCabinetService.FindByLastName(parameterValue);
+                        ListRecord(listRecordsInService);
+                        break;
+                }
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static void ListRecord(FileCabinetRecord[] listRecordsInService)
