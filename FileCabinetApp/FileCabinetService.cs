@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -68,6 +69,15 @@ namespace FileCabinetApp
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
             this.list = this.list.Where(x => string.Equals(x.LastName, lastName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            FileCabinetRecord[] array = this.GetRecords();
+            return array;
+        }
+
+        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
+        {
+            DateTime birthDate = DateTime.Parse(dateOfBirth, CultureInfo.CurrentCulture);
+            Console.WriteLine(birthDate);
+            this.list = this.list.Where(x => DateTime.Equals(x.DateOfBirth, birthDate)).ToList();
             FileCabinetRecord[] array = this.GetRecords();
             return array;
         }

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -184,7 +183,7 @@ namespace FileCabinetApp
                 string parameterValue = parameters.Split(' ').Last().Trim('"');
                 Console.WriteLine(parameterValue);
                 string[] parameterArray = parameters.Split(' ');
-                string parameterName = parameterArray[parameterArray.Length - 2];
+                var parameterName = parameterArray[parameterArray.Length - 2];
                 Console.WriteLine(parameterName);
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
@@ -194,6 +193,10 @@ namespace FileCabinetApp
                         break;
                     case "lastname":
                         listRecordsInService = Program.fileCabinetService.FindByLastName(parameterValue);
+                        ListRecord(listRecordsInService);
+                        break;
+                    case "dateofbirth":
+                        listRecordsInService = Program.fileCabinetService.FindByDateOfBirth(parameterValue);
                         ListRecord(listRecordsInService);
                         break;
                 }
