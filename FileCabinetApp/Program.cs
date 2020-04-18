@@ -181,10 +181,8 @@ namespace FileCabinetApp
             try
             {
                 string parameterValue = parameters.Split(' ').Last().Trim('"');
-                Console.WriteLine(parameterValue);
                 string[] parameterArray = parameters.Split(' ');
                 var parameterName = parameterArray[parameterArray.Length - 2];
-                Console.WriteLine(parameterName);
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
                     case "firstname":

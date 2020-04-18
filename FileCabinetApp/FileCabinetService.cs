@@ -8,6 +8,7 @@ namespace FileCabinetApp
 {
     public class FileCabinetService
     {
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
@@ -20,15 +21,24 @@ namespace FileCabinetApp
             GuardClauses.CheckAge(age, nameof(age));
 
             var record = new FileCabinetRecord
-                {
-                    Id = this.list.Count + 1,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    DateOfBirth = dateOfBirth,
-                    Gender = gender,
-                    Age = age,
-                    Salary = salary,
-                };
+            {
+                Id = this.list.Count + 1,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dateOfBirth,
+                Gender = gender,
+                Age = age,
+                Salary = salary,
+            };
+            if (this.firstNameDictionary.ContainsKey(firstName))
+            {
+                this.firstNameDictionary[firstName].Add(record);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord> { record });
+            }
+
             this.list.Add(record);
             return record.Id;
         }
@@ -47,21 +57,23 @@ namespace FileCabinetApp
 
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
         {
-                foreach (var record in this.list.Where(x => x.Id == id))
-                {
-                    record.Id = id;
-                    record.FirstName = firstName;
-                    record.LastName = lastName;
-                    record.DateOfBirth = dateOfBirth;
-                    record.Gender = gender;
-                    record.Age = age;
-                    record.Salary = salary;
-                }
+            this.firstNameDictionary.Remove(firstName);
+            foreach (var record in this.list.Where(x => x.Id == id))
+            {
+                record.Id = id;
+                record.FirstName = firstName;
+                record.LastName = lastName;
+                record.DateOfBirth = dateOfBirth;
+                record.Gender = gender;
+                record.Age = age;
+                record.Salary = salary;
+                this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord> { record });
+            }
         }
 
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
-            this.list = this.list.Where(x => string.Equals(x.FirstName, firstName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            this.list = this.firstNameDictionary[firstName].ToList();
             FileCabinetRecord[] array = this.GetRecords();
             return array;
         }
@@ -76,7 +88,6 @@ namespace FileCabinetApp
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
         {
             DateTime birthDate = DateTime.Parse(dateOfBirth, CultureInfo.CurrentCulture);
-            Console.WriteLine(birthDate);
             this.list = this.list.Where(x => DateTime.Equals(x.DateOfBirth, birthDate)).ToList();
             FileCabinetRecord[] array = this.GetRecords();
             return array;
