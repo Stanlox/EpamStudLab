@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp
@@ -20,6 +21,7 @@ namespace FileCabinetApp
         private static char gender;
         private static short age;
         private static decimal salary;
+        private static FileCabinetRecord[] listRecordsInService;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -30,6 +32,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -40,6 +43,7 @@ namespace FileCabinetApp
             new string[] { "create", "create new user" },
             new string[] { "list", "view a list of records added to the service" },
             new string[] { "edit", "edit record" },
+            new string[] { "find", "find record by a known value" },
         };
 
         public static void Main()
@@ -148,19 +152,8 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            var listRecordsInService = Program.fileCabinetService.GetRecords();
-            for (int i = 0; i < listRecordsInService.Length; i++)
-            {
-                var builder = new StringBuilder();
-                builder.Append($"{listRecordsInService[i].Id}, ");
-                builder.Append($"{listRecordsInService[i].FirstName}, ");
-                builder.Append($"{listRecordsInService[i].LastName}, ");
-                builder.Append($"{listRecordsInService[i].DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
-                builder.Append($"{listRecordsInService[i].Gender}, ");
-                builder.Append($"{listRecordsInService[i].Age}, ");
-                builder.Append($"{listRecordsInService[i].Salary}");
-                Console.WriteLine("#" + builder.ToString());
-            }
+            listRecordsInService = Program.fileCabinetService.GetRecords();
+            ListRecord(listRecordsInService);
         }
 
         private static void Edit(string parameters)
@@ -180,6 +173,51 @@ namespace FileCabinetApp
             catch (ArgumentException ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void Find(string parameters)
+        {
+            try
+            {
+                string parameterValue = parameters.Split(' ').Last().Trim('"');
+                string[] parameterArray = parameters.Split(' ');
+                var parameterName = parameterArray[parameterArray.Length - 2];
+                switch (parameterName.ToLower(CultureInfo.CurrentCulture))
+                {
+                    case "firstname":
+                        listRecordsInService = Program.fileCabinetService.FindByFirstName(parameterValue);
+                        ListRecord(listRecordsInService);
+                        break;
+                    case "lastname":
+                        listRecordsInService = Program.fileCabinetService.FindByLastName(parameterValue);
+                        ListRecord(listRecordsInService);
+                        break;
+                    case "dateofbirth":
+                        listRecordsInService = Program.fileCabinetService.FindByDateOfBirth(parameterValue);
+                        ListRecord(listRecordsInService);
+                        break;
+                }
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void ListRecord(FileCabinetRecord[] listRecordsInService)
+        {
+            for (int i = 0; i < listRecordsInService.Length; i++)
+            {
+                var builder = new StringBuilder();
+                builder.Append($"{listRecordsInService[i].Id}, ");
+                builder.Append($"{listRecordsInService[i].FirstName}, ");
+                builder.Append($"{listRecordsInService[i].LastName}, ");
+                builder.Append($"{listRecordsInService[i].DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
+                builder.Append($"{listRecordsInService[i].Gender}, ");
+                builder.Append($"{listRecordsInService[i].Age}, ");
+                builder.Append($"{listRecordsInService[i].Salary}");
+                Console.WriteLine("#" + builder.ToString());
             }
         }
 
