@@ -6,6 +6,9 @@ using System.Text;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// A class that is intended for processing user data and further processing it.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Bandaruk Maxim";
@@ -46,6 +49,9 @@ namespace FileCabinetApp
             new string[] { "find", "find record by a known value" },
         };
 
+        /// <summary>
+        /// Point of entry.
+        /// </summary>
         public static void Main()
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");

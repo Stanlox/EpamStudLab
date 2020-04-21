@@ -4,5 +4,235 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.FileCabinetRecord">
+            <summary>
+            properties that describe the model.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
+            <summary>
+            Gets or sets properties id.
+            </summary>
+            <value>The id property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets properties FirstName.
+            </summary>
+            <value>The FirstName property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets properties LastName.
+            </summary>
+            <value>The LastName property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets properties DateOfBirth.
+            </summary>
+            <value>The DateOfBirth property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Gender">
+            <summary>
+            Gets or sets properties Gender.
+            </summary>
+            <value>The Gender property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Age">
+            <summary>
+            Gets or sets properties Age.
+            </summary>
+            <value>The Age property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Salary">
+            <summary>
+            Gets or sets properties Slary.
+            </summary>
+            <value>The Salary property gets/sets the value.</value>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            contains services for adding, editing, and modifying records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CheckUsersDataEntry(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+            <summary>
+            checks the data entered by the user.
+            </summary>
+            <param name="firstName">Input firstName.</param>
+            <param name="lastName">Input lastName.</param>
+            <param name="dateOfBirth">Input dateOfBirth.</param>
+            <param name="gender">Input gender.</param>
+            <param name="age">Input age.</param>
+            <param name="salary">Input salary.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+            <summary>
+            creates a new records.
+            </summary>
+            <param name="firstName">Input firstName.</param>
+            <param name="lastName">Input lastName.</param>
+            <param name="dateOfBirth">Input dateOfBirth.</param>
+            <param name="gender">Input gender.</param>
+            <param name="age">Input age.</param>
+            <param name="salary">Input salary.</param>
+            <returns>id of the new record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
+            <summary>
+            Gets records.
+            </summary>
+            <returns>Array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            gets statistics by records.
+            </summary>
+            <returns>Count of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+            <summary>
+            changes data an existing record.
+            </summary>
+            <param name="id">id of the record to edit.</param>
+            <param name="firstName">Input new firstName.</param>
+            <param name="lastName">Input new lastName.</param>
+            <param name="dateOfBirth">Input new dateOfBirth.</param>
+            <param name="gender">Input new gender.</param>
+            <param name="age">Input new age.</param>
+            <param name="salary">Input new salary.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordInFirstNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            remove record in <see cref="F:FileCabinetApp.FileCabinetService.firstNameDictionary"/>.
+            </summary>
+            <param name="oldRecord">the record that is being modified.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordInLastNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            remove record in <see cref="F:FileCabinetApp.FileCabinetService.lastNameDictionary"/>.
+            </summary>
+            <param name="oldRecord">the record that is being modified.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordInDateOfBirthDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            remove record in <see cref="F:FileCabinetApp.FileCabinetService.dateofbirthDictionary"/>.
+            </summary>
+            <param name="oldRecord">the record that is being modified.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            find record in dictionary by FirstName.
+            </summary>
+            <param name="firstName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            find record in dictionary by LastName.
+            </summary>
+            <param name="lastName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
+            <summary>
+            find record in dictionary by DateOfBirth.
+            </summary>
+            <param name="dateOfBirth">the key for search.</param>
+            <returns>found a list of records.</returns>
+            <exception cref="T:System.ArgumentException">throw when date is not correct.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.AddInDictionaryFirstName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            adds a dictionary record by key <paramref name="firstName"/>.
+            </summary>
+            <param name="firstName">Input key.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.AddInDictionaryLastName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            adds a dictionary record by key <paramref name="lastName"/>.
+            </summary>
+            <param name="lastName">Input key.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.AddInDictionaryDateOfBirth(System.DateTime,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            adds a dictionary record by key <paramref name="dateofbirth"/>.
+            </summary>
+            <param name="dateofbirth">Input key.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="T:FileCabinetApp.GuardClauses">
+            <summary>
+            Contains methods for checking data input user.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.GuardClauses.IsNullOrEmpty(System.String,System.String,System.String,System.String)">
+            <summary>
+            checks the string for null and empty.
+            </summary>
+            <param name="firstNameValue">variable value firstName.</param>
+            <param name="firstName">variable name firstName.</param>
+            <param name="lastNameValue">variable value lastName.</param>
+            <param name="lastName">variable name lastName.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when string is null or empty.</exception>
+        </member>
+        <member name="M:FileCabinetApp.GuardClauses.CheckLength(System.String,System.String,System.String,System.String)">
+            <summary>
+            checks the string length.
+            </summary>
+            <param name="firstNameValue">variable value firstName.</param>
+            <param name="firstName">variable name firstName.</param>
+            <param name="lastNameValue">variable value lastName.</param>
+            <param name="lastName">variable name lastName.</param>
+            <exception cref="T:System.ArgumentException">Thrown when string is not corrct length.</exception>
+        </member>
+        <member name="M:FileCabinetApp.GuardClauses.CheckDateRange(System.DateTime,System.String)">
+            <summary>
+            checks the date of birth range.
+            </summary>
+            <param name="dateOfBirthValue">variable value dateOfBirth.</param>
+            <param name="dateOfBirth">variable name lastName.</param>
+            <exception cref="T:System.ArgumentException">thrown when <paramref name="dateOfBirthValue"/> is the wrong range.</exception>
+        </member>
+        <member name="M:FileCabinetApp.GuardClauses.CheckAge(System.Int16,System.String)">
+            <summary>
+            checks age for a negative value.
+            </summary>
+            <param name="ageValue">variable value age.</param>
+            <param name="age">variable name age.</param>
+            <exception cref="T:System.ArgumentException">thrown when <paramref name="ageValue"/> less than 0. </exception>
+        </member>
+        <member name="M:FileCabinetApp.GuardClauses.CheckGender(System.Char,System.String)">
+            <summary>
+            checks gender.
+            </summary>
+            <param name="genderValue">variable value gender.</param>
+            <param name="gender">variable name gender.</param>
+            <exception cref="T:System.ArgumentException">thrown, when gender not defined.</exception>
+        </member>
+        <member name="M:FileCabinetApp.GuardClauses.CheckSalarySign(System.Decimal,System.String)">
+            <summary>
+            checks salary for a negative value.
+            </summary>
+            <param name="salaryValue">variable value salary.</param>
+            <param name="salary">variable name salary.</param>
+            <exception cref="T:System.ArgumentException">thrown, when user entered a negative amount.</exception>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            A class that is intended for processing user data and further processing it.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main">
+            <summary>
+            Point of entry.
+            </summary>
+        </member>
     </members>
 </doc>

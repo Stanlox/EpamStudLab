@@ -6,6 +6,9 @@ using System.Text;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// contains services for adding, editing, and modifying records.
+    /// </summary>
     public class FileCabinetService
     {
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
@@ -13,6 +16,15 @@ namespace FileCabinetApp
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
+        /// <summary>
+        /// checks the data entered by the user.
+        /// </summary>
+        /// <param name="firstName">Input firstName.</param>
+        /// <param name="lastName">Input lastName.</param>
+        /// <param name="dateOfBirth">Input dateOfBirth.</param>
+        /// <param name="gender">Input gender.</param>
+        /// <param name="age">Input age.</param>
+        /// <param name="salary">Input salary.</param>
         public static void CheckUsersDataEntry(string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
         {
             GuardClauses.IsNullOrEmpty(firstName, nameof(firstName), lastName, nameof(lastName));
@@ -23,6 +35,16 @@ namespace FileCabinetApp
             GuardClauses.CheckAge(age, nameof(age));
         }
 
+        /// <summary>
+        /// creates a new records.
+        /// </summary>
+        /// <param name="firstName">Input firstName.</param>
+        /// <param name="lastName">Input lastName.</param>
+        /// <param name="dateOfBirth">Input dateOfBirth.</param>
+        /// <param name="gender">Input gender.</param>
+        /// <param name="age">Input age.</param>
+        /// <param name="salary">Input salary.</param>
+        /// <returns>id of the new record.</returns>
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
         {
             CheckUsersDataEntry(firstName, lastName, dateOfBirth, gender, age,  salary);
@@ -44,6 +66,10 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        /// <summary>
+        /// Gets records.
+        /// </summary>
+        /// <returns>Array of records.</returns>
         public FileCabinetRecord[] GetRecords()
         {
             FileCabinetRecord[] array = new FileCabinetRecord[this.list.Count];
@@ -51,13 +77,28 @@ namespace FileCabinetApp
             return array;
         }
 
+        /// <summary>
+        /// gets statistics by records.
+        /// </summary>
+        /// <returns>Count of records.</returns>
         public int GetStat()
         {
            return this.list.Count;
         }
 
+        /// <summary>
+        /// changes data an existing record.
+        /// </summary>
+        /// <param name="id">id of the record to edit.</param>
+        /// <param name="firstName">Input new firstName.</param>
+        /// <param name="lastName">Input new lastName.</param>
+        /// <param name="dateOfBirth">Input new dateOfBirth.</param>
+        /// <param name="gender">Input new gender.</param>
+        /// <param name="age">Input new age.</param>
+        /// <param name="salary">Input new salary.</param>
         public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
         {
+            CheckUsersDataEntry(firstName, lastName, dateOfBirth, gender, age, salary);
             FileCabinetRecord oldrecord = this.list[id - 1];
             this.RemoveRecordInFirstNameDictionary(oldrecord);
             this.RemoveRecordInLastNameDictionary(oldrecord);
@@ -77,6 +118,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// remove record in <see cref="firstNameDictionary"/>.
+        /// </summary>
+        /// <param name="oldRecord">the record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
         public void RemoveRecordInFirstNameDictionary(FileCabinetRecord oldRecord)
         {
             if (oldRecord is null)
@@ -89,6 +135,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// remove record in <see cref="lastNameDictionary"/>.
+        /// </summary>
+        /// <param name="oldRecord">the record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
         public void RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord)
         {
             if (oldRecord is null)
@@ -101,6 +152,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// remove record in <see cref="dateofbirthDictionary"/>.
+        /// </summary>
+        /// <param name="oldRecord">the record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
         public void RemoveRecordInDateOfBirthDictionary(FileCabinetRecord oldRecord)
         {
             if (oldRecord is null)
@@ -113,6 +169,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// find record in dictionary by FirstName.
+        /// </summary>
+        /// <param name="firstName">the key for search.</param>
+        /// <returns>found a list of records.</returns>
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.ContainsKey(firstName))
@@ -128,6 +189,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// find record in dictionary by LastName.
+        /// </summary>
+        /// <param name="lastName">the key for search.</param>
+        /// <returns>found a list of records.</returns>
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.ContainsKey(lastName))
@@ -143,6 +209,12 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// find record in dictionary by DateOfBirth.
+        /// </summary>
+        /// <param name="dateOfBirth">the key for search.</param>
+        /// <returns>found a list of records.</returns>
+        /// <exception cref="ArgumentException">throw when date is not correct.</exception>
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
         {
             DateTime dateValue;
@@ -165,6 +237,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// adds a dictionary record by key <paramref name="firstName"/>.
+        /// </summary>
+        /// <param name="firstName">Input key.</param>
+        /// <param name="record">Input record.</param>
         public void AddInDictionaryFirstName(string firstName, FileCabinetRecord record)
         {
             if (this.firstNameDictionary.ContainsKey(firstName))
@@ -177,6 +254,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// adds a dictionary record by key <paramref name="lastName"/>.
+        /// </summary>
+        /// <param name="lastName">Input key.</param>
+        /// <param name="record">Input record.</param>
         public void AddInDictionaryLastName(string lastName, FileCabinetRecord record)
         {
             if (this.lastNameDictionary.ContainsKey(lastName))
@@ -189,6 +271,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// adds a dictionary record by key <paramref name="dateofbirth"/>.
+        /// </summary>
+        /// <param name="dateofbirth">Input key.</param>
+        /// <param name="record">Input record.</param>
         public void AddInDictionaryDateOfBirth(DateTime dateofbirth, FileCabinetRecord record)
         {
             if (this.dateofbirthDictionary.ContainsKey(dateofbirth))
