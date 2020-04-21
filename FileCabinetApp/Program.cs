@@ -203,6 +203,10 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(ex.Message);
             }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private static void ListRecord(FileCabinetRecord[] listRecordsInService)

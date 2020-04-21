@@ -20,5 +20,10 @@ namespace FileCabinetApp
         public short Age { get; set; }
 
         public decimal Salary { get; set; }
+
+        public static implicit operator List<object>(FileCabinetRecord v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
