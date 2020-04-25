@@ -18,12 +18,8 @@ namespace FileCabinetApp
         private const int ExplanationHelpIndex = 2;
         private static bool isCorrect = true;
         private static bool isRunning = true;
-        private static string firstName;
-        private static string lastName;
         private static DateTime dateValue;
-        private static char gender;
-        private static short age;
-        private static decimal salary;
+        private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private static FileCabinetRecord[] listRecordsInService;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
@@ -137,7 +133,7 @@ namespace FileCabinetApp
             try
             {
                 Program.UserData();
-                Program.fileCabinetService.CreateRecord(firstName, lastName, dateValue, gender, age, salary);
+                Program.fileCabinetService.CreateRecord(fileCabinetServiceContext);
                 Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
             }
             catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
@@ -173,7 +169,7 @@ namespace FileCabinetApp
                 }
 
                 Program.UserData();
-                Program.fileCabinetService.EditRecord(getNumberEditRecord, firstName, lastName, dateValue, gender, age, salary);
+                Program.fileCabinetService.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
                 Console.WriteLine($"Record #{parameters} is updated.");
             }
             catch (ArgumentException ex)
@@ -234,22 +230,24 @@ namespace FileCabinetApp
         private static void UserData()
         {
             Console.Write("First name: ");
-            firstName = Console.ReadLine();
+            fileCabinetServiceContext.FirstName = Console.ReadLine();
             Console.Write("Last Name: ");
-            lastName = Console.ReadLine();
+            fileCabinetServiceContext.LastName = Console.ReadLine();
             Console.Write("Date of birth: ");
             string dateOfBirth = Console.ReadLine();
             Console.Write("Gender (M/W): ");
-            gender = char.Parse(Console.ReadLine());
+            fileCabinetServiceContext.Gender = char.Parse(Console.ReadLine());
             Console.Write("Age: ");
-            age = short.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
+            fileCabinetServiceContext.Age = short.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
             Console.Write("Salary: ");
-            salary = decimal.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
+            fileCabinetServiceContext.Salary = decimal.Parse(Console.ReadLine(), CultureInfo.CurrentCulture);
             var parsed = DateTime.TryParse(dateOfBirth, out dateValue);
             if (!parsed)
             {
                 throw new ArgumentException($"{nameof(dateOfBirth)}");
             }
+
+            fileCabinetServiceContext.DateOfBirth = dateValue;
         }
     }
 }

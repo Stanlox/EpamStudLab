@@ -47,7 +47,7 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Salary">
             <summary>
-            Gets or sets properties Slary.
+            Gets or sets properties Salary.
             </summary>
             <value>The Salary property gets/sets the value.</value>
         </member>
@@ -56,27 +56,17 @@
             contains services for adding, editing, and modifying records.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CheckUsersDataEntry(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+        <member name="M:FileCabinetApp.FileCabinetService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
             checks the data entered by the user.
             </summary>
-            <param name="firstName">Input firstName.</param>
-            <param name="lastName">Input lastName.</param>
-            <param name="dateOfBirth">Input dateOfBirth.</param>
-            <param name="gender">Input gender.</param>
-            <param name="age">Input age.</param>
-            <param name="salary">Input salary.</param>
+            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
             creates a new records.
             </summary>
-            <param name="firstName">Input firstName.</param>
-            <param name="lastName">Input lastName.</param>
-            <param name="dateOfBirth">Input dateOfBirth.</param>
-            <param name="gender">Input gender.</param>
-            <param name="age">Input age.</param>
-            <param name="salary">Input salary.</param>
+            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
             <returns>id of the new record.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
@@ -91,17 +81,12 @@
             </summary>
             <returns>Count of records.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Char,System.Int16,System.Decimal)">
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
             <summary>
             changes data an existing record.
             </summary>
             <param name="id">id of the record to edit.</param>
-            <param name="firstName">Input new firstName.</param>
-            <param name="lastName">Input new lastName.</param>
-            <param name="dateOfBirth">Input new dateOfBirth.</param>
-            <param name="gender">Input new gender.</param>
-            <param name="age">Input new age.</param>
-            <param name="salary">Input new salary.</param>
+            <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordInFirstNameDictionary(FileCabinetApp.FileCabinetRecord)">
             <summary>
@@ -167,6 +152,53 @@
             <param name="dateofbirth">Input key.</param>
             <param name="record">Input record.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetServiceContext">
+            <summary>
+            this class is intended to be passed as an object.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceContext.Id">
+            <summary>
+            Gets or sets properties id.
+            </summary>
+            <value>The id property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceContext.FirstName">
+            <summary>
+            Gets or sets properties FirstName.
+            </summary>
+            <value>The FirstName property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceContext.LastName">
+            <summary>
+            Gets or sets properties LastName.
+            </summary>
+            <value>The LastName property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceContext.DateOfBirth">
+            <summary>
+            Gets or sets properties DateOfBirth.
+            </summary>
+            <value>The DateOfBirth property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceContext.Gender">
+            <summary>
+            Gets or sets properties Gender.
+            </summary>
+            <value>The Gender property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceContext.Age">
+            <summary>
+            Gets or sets properties Age.
+            </summary>
+            <value>The Age property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceContext.Salary">
+            <summary>
+            Gets or sets properties Salary.
+            </summary>
+            <value>The Salary property gets/sets the value.</value>
+        </member>
         <member name="T:FileCabinetApp.GuardClauses">
             <summary>
             Contains methods for checking data input user.
@@ -221,7 +253,7 @@
             checks salary for a negative value.
             </summary>
             <param name="salaryValue">variable value salary.</param>
-            <param name="salary">variable name salary.</param>
+            <param name="salary">variable name.</param>
             <exception cref="T:System.ArgumentException">thrown, when user entered a negative amount.</exception>
         </member>
         <member name="T:FileCabinetApp.Program">

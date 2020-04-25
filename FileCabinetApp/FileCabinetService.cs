@@ -19,49 +19,39 @@ namespace FileCabinetApp
         /// <summary>
         /// checks the data entered by the user.
         /// </summary>
-        /// <param name="firstName">Input firstName.</param>
-        /// <param name="lastName">Input lastName.</param>
-        /// <param name="dateOfBirth">Input dateOfBirth.</param>
-        /// <param name="gender">Input gender.</param>
-        /// <param name="age">Input age.</param>
-        /// <param name="salary">Input salary.</param>
-        public static void CheckUsersDataEntry(string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
+        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        public static void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
         {
-            GuardClauses.IsNullOrEmpty(firstName, nameof(firstName), lastName, nameof(lastName));
-            GuardClauses.CheckLength(firstName, nameof(firstName), lastName, nameof(lastName));
-            GuardClauses.CheckDateRange(dateOfBirth, nameof(dateOfBirth));
-            GuardClauses.CheckGender(gender, nameof(gender));
-            GuardClauses.CheckSalarySign(salary, nameof(salary));
-            GuardClauses.CheckAge(age, nameof(age));
+            GuardClauses.IsNullOrEmpty(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
+            GuardClauses.CheckLength(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
+            GuardClauses.CheckDateRange(objectParameter.DateOfBirth, nameof(objectParameter.DateOfBirth));
+            GuardClauses.CheckGender(objectParameter.Gender, nameof(objectParameter.Gender));
+            GuardClauses.CheckSalarySign(objectParameter.Salary, nameof(objectParameter.Salary));
+            GuardClauses.CheckAge(objectParameter.Age, nameof(objectParameter.Age));
         }
 
         /// <summary>
         /// creates a new records.
         /// </summary>
-        /// <param name="firstName">Input firstName.</param>
-        /// <param name="lastName">Input lastName.</param>
-        /// <param name="dateOfBirth">Input dateOfBirth.</param>
-        /// <param name="gender">Input gender.</param>
-        /// <param name="age">Input age.</param>
-        /// <param name="salary">Input salary.</param>
+        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         /// <returns>id of the new record.</returns>
-        public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
+        public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
-            CheckUsersDataEntry(firstName, lastName, dateOfBirth, gender, age,  salary);
+            CheckUsersDataEntry(objectParameter);
 
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dateOfBirth,
-                Gender = gender,
-                Age = age,
-                Salary = salary,
+                FirstName = objectParameter.FirstName,
+                LastName = objectParameter.LastName,
+                DateOfBirth = objectParameter.DateOfBirth,
+                Gender = objectParameter.Gender,
+                Age = objectParameter.Age,
+                Salary = objectParameter.Salary,
             };
-            this.AddInDictionaryFirstName(firstName, record);
-            this.AddInDictionaryLastName(lastName, record);
-            this.AddInDictionaryDateOfBirth(dateOfBirth, record);
+            this.AddInDictionaryFirstName(objectParameter.FirstName, record);
+            this.AddInDictionaryLastName(objectParameter.LastName, record);
+            this.AddInDictionaryDateOfBirth(objectParameter.DateOfBirth, record);
             this.list.Add(record);
             return record.Id;
         }
@@ -90,31 +80,26 @@ namespace FileCabinetApp
         /// changes data an existing record.
         /// </summary>
         /// <param name="id">id of the record to edit.</param>
-        /// <param name="firstName">Input new firstName.</param>
-        /// <param name="lastName">Input new lastName.</param>
-        /// <param name="dateOfBirth">Input new dateOfBirth.</param>
-        /// <param name="gender">Input new gender.</param>
-        /// <param name="age">Input new age.</param>
-        /// <param name="salary">Input new salary.</param>
-        public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char gender, short age, decimal salary)
+        /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-            CheckUsersDataEntry(firstName, lastName, dateOfBirth, gender, age, salary);
+            CheckUsersDataEntry(objectParameter);
             FileCabinetRecord oldrecord = this.list[id - 1];
             this.RemoveRecordInFirstNameDictionary(oldrecord);
             this.RemoveRecordInLastNameDictionary(oldrecord);
             this.RemoveRecordInDateOfBirthDictionary(oldrecord);
             foreach (var record in this.list.Where(x => x.Id == id))
             {
-                record.Id = id;
-                record.FirstName = firstName;
-                record.LastName = lastName;
-                record.DateOfBirth = dateOfBirth;
-                record.Gender = gender;
-                record.Age = age;
-                record.Salary = salary;
-                this.AddInDictionaryFirstName(firstName, record);
-                this.AddInDictionaryLastName(lastName, record);
-                this.AddInDictionaryDateOfBirth(dateOfBirth, record);
+                record.Id = objectParameter.Id;
+                record.FirstName = objectParameter.FirstName;
+                record.LastName = objectParameter.LastName;
+                record.DateOfBirth = objectParameter.DateOfBirth;
+                record.Gender = objectParameter.Gender;
+                record.Age = objectParameter.Age;
+                record.Salary = objectParameter.Salary;
+                this.AddInDictionaryFirstName(objectParameter.FirstName, record);
+                this.AddInDictionaryLastName(objectParameter.LastName, record);
+                this.AddInDictionaryDateOfBirth(objectParameter.DateOfBirth, record);
             }
         }
 
