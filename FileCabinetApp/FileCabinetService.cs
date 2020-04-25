@@ -9,26 +9,12 @@ namespace FileCabinetApp
     /// <summary>
     /// contains services for adding, editing, and modifying records.
     /// </summary>
-    public class FileCabinetService
+    public abstract class FileCabinetService
     {
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
-
-        /// <summary>
-        /// checks the data entered by the user.
-        /// </summary>
-        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        public static void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
-        {
-            GuardClauses.IsNullOrEmpty(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
-            GuardClauses.CheckLength(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
-            GuardClauses.CheckDateRange(objectParameter.DateOfBirth, nameof(objectParameter.DateOfBirth));
-            GuardClauses.CheckGender(objectParameter.Gender, nameof(objectParameter.Gender));
-            GuardClauses.CheckSalarySign(objectParameter.Salary, nameof(objectParameter.Salary));
-            GuardClauses.CheckAge(objectParameter.Age, nameof(objectParameter.Age));
-        }
 
         /// <summary>
         /// creates a new records.
@@ -37,7 +23,7 @@ namespace FileCabinetApp
         /// <returns>id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
-            CheckUsersDataEntry(objectParameter);
+            this.CheckUsersDataEntry(objectParameter);
 
             var record = new FileCabinetRecord
             {
@@ -83,7 +69,8 @@ namespace FileCabinetApp
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-            CheckUsersDataEntry(objectParameter);
+            this.CheckUsersDataEntry(objectParameter);
+
             FileCabinetRecord oldrecord = this.list[id - 1];
             this.RemoveRecordInFirstNameDictionary(oldrecord);
             this.RemoveRecordInLastNameDictionary(oldrecord);
@@ -271,6 +258,14 @@ namespace FileCabinetApp
             {
                 this.dateofbirthDictionary.Add(dateofbirth, new List<FileCabinetRecord> { record });
             }
+        }
+
+        /// <summary>
+        /// virtual method for checking the correctness of user input.
+        /// </summary>
+        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        protected virtual void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
+        {
         }
     }
 }

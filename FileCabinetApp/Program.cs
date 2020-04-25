@@ -20,8 +20,8 @@ namespace FileCabinetApp
         private static bool isRunning = true;
         private static DateTime dateValue;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
+        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
         private static FileCabinetRecord[] listRecordsInService;
-        private static FileCabinetService fileCabinetService = new FileCabinetService();
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {

@@ -8,11 +8,11 @@ namespace FileCabinetApp
     /// <summary>
     /// Contains methods for checking data input user.
     /// </summary>
-    public static class GuardClauses
+    public class FileCabinetDefaultService : FileCabinetService
     {
         private const string CheckMenGender = "M";
         private const string CheckWomenGender = "W";
-        private static readonly DateTime MinDate = new DateTime(1950, 1, 1);
+        private static readonly DateTime MinDate = new DateTime(1900, 1, 1);
 
         /// <summary>
         /// checks the string for null and empty.
@@ -22,7 +22,7 @@ namespace FileCabinetApp
         /// <param name="lastNameValue">variable value lastName.</param>
         /// <param name="lastName">variable name lastName.</param>
         /// <exception cref="ArgumentNullException">thrown when string is null or empty.</exception>
-        public static void IsNullOrEmpty(string firstNameValue, string firstName, string lastNameValue, string lastName)
+        protected static void IsNullOrEmpty(string firstNameValue, string firstName, string lastNameValue, string lastName)
         {
             if (string.IsNullOrEmpty(firstNameValue))
             {
@@ -42,16 +42,16 @@ namespace FileCabinetApp
         /// <param name="lastNameValue">variable value lastName.</param>
         /// <param name="lastName">variable name lastName.</param>
         /// <exception cref="ArgumentException">Thrown when string is not corrct length.</exception>
-        public static void CheckLength(string firstNameValue, string firstName, string lastNameValue, string lastName)
+        protected static void CheckLength(string firstNameValue, string firstName, string lastNameValue, string lastName)
         {
             #pragma warning disable CA1062 // Проверить аргументы или открытые методы
-            if (firstNameValue.Length < 2 | firstNameValue.Length > 60)
+            if (firstNameValue.Length < 2 | firstNameValue.Length > 15)
             #pragma warning restore CA1062 // Проверить аргументы или открытые методы
             {
                 throw new ArgumentException("Invalid length.", $"{nameof(firstName)}");
             }
             #pragma warning disable CA1062 // Проверить аргументы или открытые методы
-            else if (lastNameValue.Length < 2 | lastNameValue.Length > 60)
+            else if (lastNameValue.Length < 2 | lastNameValue.Length > 15)
             #pragma warning restore CA1062 // Проверить аргументы или открытые методы
             {
                 throw new ArgumentException("Invalid length.", $"{nameof(lastName)}");
@@ -64,9 +64,9 @@ namespace FileCabinetApp
         /// <param name="dateOfBirthValue">variable value dateOfBirth.</param>
         /// <param name="dateOfBirth">variable name lastName.</param>
         /// <exception cref="ArgumentException">thrown when <paramref name="dateOfBirthValue"/> is the wrong range.</exception>
-        public static void CheckDateRange(DateTime dateOfBirthValue, string dateOfBirth)
+        protected static void CheckDateRange(DateTime dateOfBirthValue, string dateOfBirth)
         {
-            if (DateTime.Compare(DateTime.Now, dateOfBirthValue) < 0 || DateTime.Compare(MinDate, dateOfBirthValue) > 0)
+            if (DateTime.Compare(DateTime.Today, dateOfBirthValue) < 0 || DateTime.Compare(MinDate, dateOfBirthValue) > 0)
             {
                 throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
             }
@@ -78,7 +78,7 @@ namespace FileCabinetApp
         /// <param name="ageValue">variable value age.</param>
         /// <param name="age">variable name age.</param>
         /// <exception cref="ArgumentException">thrown when <paramref name="ageValue"/> less than 0. </exception>
-        public static void CheckAge(short ageValue, string age)
+        protected static void CheckAge(short ageValue, string age)
         {
             if (ageValue < 0)
             {
@@ -92,7 +92,7 @@ namespace FileCabinetApp
         /// <param name="genderValue">variable value gender.</param>
         /// <param name="gender">variable name gender.</param>
         /// <exception cref="ArgumentException">thrown, when gender not defined.</exception>
-        public static void CheckGender(char genderValue, string gender)
+        protected static void CheckGender(char genderValue, string gender)
         {
             string stringGender = genderValue.ToString(CultureInfo.CurrentCulture);
             if (!(stringGender.Equals(CheckMenGender, StringComparison.InvariantCultureIgnoreCase) || stringGender.Equals(CheckWomenGender, StringComparison.InvariantCultureIgnoreCase)))
@@ -107,12 +107,26 @@ namespace FileCabinetApp
         /// <param name="salaryValue">variable value salary.</param>
         /// <param name="salary">variable name.</param>
         /// <exception cref="ArgumentException">thrown, when user entered a negative amount.</exception>
-        public static void CheckSalarySign(decimal salaryValue, string salary)
+        protected static void CheckSalarySign(decimal salaryValue, string salary)
         {
             if (salaryValue < 0)
             {
                 throw new ArgumentException("You entered a negative amount", $"{nameof(salary)}");
             }
+        }
+
+        /// <summary>
+        /// implementation of the method for checking the correctness of user input.
+        /// </summary>
+        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        protected override void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
+        {
+            IsNullOrEmpty(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
+            CheckLength(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
+            CheckDateRange(objectParameter.DateOfBirth, nameof(objectParameter.DateOfBirth));
+            CheckGender(objectParameter.Gender, nameof(objectParameter.Gender));
+            CheckSalarySign(objectParameter.Salary, nameof(objectParameter.Salary));
+            CheckAge(objectParameter.Age, nameof(objectParameter.Age));
         }
     }
 }
