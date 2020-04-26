@@ -50,6 +50,29 @@ namespace FileCabinetApp
         /// </summary>
         public static void Main()
         {
+            Console.Write("Validations rules: ");
+            var validationsRules = Console.ReadLine().Trim(' ').Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
+            var longDescription = "--validation-rules";
+            var shortDescription = "-v";
+            if (validationsRules.Length == 0)
+            {
+                Console.WriteLine("Using default validation rules.");
+            }
+            else if (string.Compare(validationsRules[0], longDescription, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(validationsRules[0], shortDescription, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                string parameter = "custom";
+                if (string.Equals(validationsRules[1], parameter, StringComparison.OrdinalIgnoreCase))
+                {
+                    fileCabinetService = new FileCabinetCustomService();
+                    Console.WriteLine("Using custom validation rules.");
+                }
+                else
+                {
+                    Console.WriteLine("Using default validation rules.");
+                }
+            }
+
+            Console.WriteLine(fileCabinetService.GetType());
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
