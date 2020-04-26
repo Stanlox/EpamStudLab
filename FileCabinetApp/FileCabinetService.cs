@@ -9,12 +9,27 @@ namespace FileCabinetApp
     /// <summary>
     /// contains services for adding, editing, and modifying records.
     /// </summary>
-    public abstract class FileCabinetService
+    public class FileCabinetService : IRecordValidator
     {
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+
+        /// <summary>
+        /// Gets or sets properties ContextStrategy.
+        /// </summary>
+        /// <value>The ContextStrategy property gets/sets the value type of IRecordValidator.</value>
+        public IRecordValidator ContextStrategy { get; set; }
+
+        /// <summary>
+        /// Implementation of the strategy pattern. Installation strategy.
+        /// </summary>
+        /// <param name="strategy"> Installation strategy.</param>
+        public void CreateValidator(IRecordValidator strategy)
+        {
+            this.ContextStrategy = strategy;
+        }
 
         /// <summary>
         /// creates a new records.
@@ -23,6 +38,7 @@ namespace FileCabinetApp
         /// <returns>id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
+            this.ContextStrategy.CheckUsersDataEntry(objectParameter);
             this.CheckUsersDataEntry(objectParameter);
 
             var record = new FileCabinetRecord
@@ -264,7 +280,7 @@ namespace FileCabinetApp
         /// virtual method for checking the correctness of user input.
         /// </summary>
         /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        protected virtual void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
+        public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
         {
         }
     }

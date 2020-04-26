@@ -4,12 +4,18 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
-        <member name="T:FileCabinetApp.FileCabinetCustomService">
+        <member name="T:FileCabinetApp.CustomValidator">
             <summary>
             Contains methods for checking data input user.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.IsNullOrEmpty(System.String,System.String,System.String,System.String)">
+        <member name="M:FileCabinetApp.CustomValidator.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            implementation of the method for checking the correctness of user input.
+            </summary>
+            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.IsNullOrEmpty(System.String,System.String,System.String,System.String)">
             <summary>
             checks the string for null and empty.
             </summary>
@@ -19,7 +25,7 @@
             <param name="lastName">variable name lastName.</param>
             <exception cref="T:System.ArgumentNullException">thrown when string is null or empty.</exception>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CheckLength(System.String,System.String,System.String,System.String)">
+        <member name="M:FileCabinetApp.CustomValidator.CheckLength(System.String,System.String,System.String,System.String)">
             <summary>
             checks the string length.
             </summary>
@@ -29,7 +35,7 @@
             <param name="lastName">variable name lastName.</param>
             <exception cref="T:System.ArgumentException">Thrown when string is not corrct length.</exception>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CheckDateRange(System.DateTime,System.String)">
+        <member name="M:FileCabinetApp.CustomValidator.CheckDateRange(System.DateTime,System.String)">
             <summary>
             checks the date of birth range.
             </summary>
@@ -37,7 +43,7 @@
             <param name="dateOfBirth">variable name lastName.</param>
             <exception cref="T:System.ArgumentException">thrown when <paramref name="dateOfBirthValue"/> is the wrong range.</exception>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CheckAge(System.Int16,System.String)">
+        <member name="M:FileCabinetApp.CustomValidator.CheckAge(System.Int16,System.String)">
             <summary>
             checks age for a negative value.
             </summary>
@@ -45,7 +51,7 @@
             <param name="age">variable name age.</param>
             <exception cref="T:System.ArgumentException">thrown when <paramref name="ageValue"/> less than 0. </exception>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CheckGender(System.Char,System.String)">
+        <member name="M:FileCabinetApp.CustomValidator.CheckGender(System.Char,System.String)">
             <summary>
             checks gender.
             </summary>
@@ -53,7 +59,7 @@
             <param name="gender">variable name gender.</param>
             <exception cref="T:System.ArgumentException">thrown, when gender not defined.</exception>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CheckSalarySign(System.Decimal,System.String)">
+        <member name="M:FileCabinetApp.CustomValidator.CheckSalarySign(System.Decimal,System.String)">
             <summary>
             checks salary for a negative value.
             </summary>
@@ -61,74 +67,90 @@
             <param name="salary">variable name.</param>
             <exception cref="T:System.ArgumentException">thrown, when user entered a negative amount.</exception>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
+        <member name="T:FileCabinetApp.DefaultValidator">
+            <summary>
+            Contains methods for checking data input user.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
             implementation of the method for checking the correctness of user input.
             </summary>
             <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.IsNullOrEmpty(System.String,System.String,System.String,System.String)">
+            <summary>
+            checks the string for null and empty.
+            </summary>
+            <param name="firstNameValue">variable value firstName.</param>
+            <param name="firstName">variable name firstName.</param>
+            <param name="lastNameValue">variable value lastName.</param>
+            <param name="lastName">variable name lastName.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when string is null or empty.</exception>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.CheckLength(System.String,System.String,System.String,System.String)">
+            <summary>
+            checks the string length.
+            </summary>
+            <param name="firstNameValue">variable value firstName.</param>
+            <param name="firstName">variable name firstName.</param>
+            <param name="lastNameValue">variable value lastName.</param>
+            <param name="lastName">variable name lastName.</param>
+            <exception cref="T:System.ArgumentException">Thrown when string is not corrct length.</exception>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.CheckDateRange(System.DateTime,System.String)">
+            <summary>
+            checks the date of birth range.
+            </summary>
+            <param name="dateOfBirthValue">variable value dateOfBirth.</param>
+            <param name="dateOfBirth">variable name lastName.</param>
+            <exception cref="T:System.ArgumentException">thrown when <paramref name="dateOfBirthValue"/> is the wrong range.</exception>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.CheckAge(System.Int16,System.String)">
+            <summary>
+            checks age for a negative value.
+            </summary>
+            <param name="ageValue">variable value age.</param>
+            <param name="age">variable name age.</param>
+            <exception cref="T:System.ArgumentException">thrown when <paramref name="ageValue"/> less than 0. </exception>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.CheckGender(System.Char,System.String)">
+            <summary>
+            checks gender.
+            </summary>
+            <param name="genderValue">variable value gender.</param>
+            <param name="gender">variable name gender.</param>
+            <exception cref="T:System.ArgumentException">thrown, when gender not defined.</exception>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.CheckSalarySign(System.Decimal,System.String)">
+            <summary>
+            checks salary for a negative value.
+            </summary>
+            <param name="salaryValue">variable value salary.</param>
+            <param name="salary">variable name.</param>
+            <exception cref="T:System.ArgumentException">thrown, when user entered a negative amount.</exception>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetCustomService">
+            <summary>
+            inherits the class implementation FileCabinetService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCustomService.CreateValidator">
+            <summary>
+            dependency on IRecordService.
+            </summary>
+            <returns>instance CustomValidator.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetDefaultService">
             <summary>
-            Contains methods for checking data input user.
+            inherits the class implementation FileCabinetService.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.IsNullOrEmpty(System.String,System.String,System.String,System.String)">
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.CreateValidator">
             <summary>
-            checks the string for null and empty.
+            dependency on IRecordService.
             </summary>
-            <param name="firstNameValue">variable value firstName.</param>
-            <param name="firstName">variable name firstName.</param>
-            <param name="lastNameValue">variable value lastName.</param>
-            <param name="lastName">variable name lastName.</param>
-            <exception cref="T:System.ArgumentNullException">thrown when string is null or empty.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CheckLength(System.String,System.String,System.String,System.String)">
-            <summary>
-            checks the string length.
-            </summary>
-            <param name="firstNameValue">variable value firstName.</param>
-            <param name="firstName">variable name firstName.</param>
-            <param name="lastNameValue">variable value lastName.</param>
-            <param name="lastName">variable name lastName.</param>
-            <exception cref="T:System.ArgumentException">Thrown when string is not corrct length.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CheckDateRange(System.DateTime,System.String)">
-            <summary>
-            checks the date of birth range.
-            </summary>
-            <param name="dateOfBirthValue">variable value dateOfBirth.</param>
-            <param name="dateOfBirth">variable name lastName.</param>
-            <exception cref="T:System.ArgumentException">thrown when <paramref name="dateOfBirthValue"/> is the wrong range.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CheckAge(System.Int16,System.String)">
-            <summary>
-            checks age for a negative value.
-            </summary>
-            <param name="ageValue">variable value age.</param>
-            <param name="age">variable name age.</param>
-            <exception cref="T:System.ArgumentException">thrown when <paramref name="ageValue"/> less than 0. </exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CheckGender(System.Char,System.String)">
-            <summary>
-            checks gender.
-            </summary>
-            <param name="genderValue">variable value gender.</param>
-            <param name="gender">variable name gender.</param>
-            <exception cref="T:System.ArgumentException">thrown, when gender not defined.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CheckSalarySign(System.Decimal,System.String)">
-            <summary>
-            checks salary for a negative value.
-            </summary>
-            <param name="salaryValue">variable value salary.</param>
-            <param name="salary">variable name.</param>
-            <exception cref="T:System.ArgumentException">thrown, when user entered a negative amount.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
-            <summary>
-            implementation of the method for checking the correctness of user input.
-            </summary>
-            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <returns>instance DefaultValidator.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -181,6 +203,18 @@
             <summary>
             contains services for adding, editing, and modifying records.
             </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.ContextStrategy">
+            <summary>
+            Gets or sets properties ContextStrategy.
+            </summary>
+            <value>The ContextStrategy property gets/sets the value type of IRecordValidator.</value>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateValidator(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Implementation of the strategy pattern. Installation strategy.
+            </summary>
+            <param name="strategy"> Installation strategy.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
@@ -324,6 +358,17 @@
             Gets or sets properties Salary.
             </summary>
             <value>The Salary property gets/sets the value.</value>
+        </member>
+        <member name="T:FileCabinetApp.IRecordValidator">
+            <summary>
+            class, that contains a single method for checking user input.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            method for checking user input.
+            </summary>
+            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
