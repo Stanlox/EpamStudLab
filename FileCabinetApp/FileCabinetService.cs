@@ -10,7 +10,7 @@ namespace FileCabinetApp
     /// <summary>
     /// contains services for adding, editing, and modifying records.
     /// </summary>
-    public class FileCabinetService : IRecordValidator
+    public class FileCabinetService : IRecordValidator, IFileCabinetService
     {
         private readonly IRecordValidator contextStrategy;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
@@ -60,8 +60,8 @@ namespace FileCabinetApp
         /// <returns>ReadOnlyCollection of records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-           ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
-           return records;
+            ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
+            return records;
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace FileCabinetApp
         /// <returns>Count of records.</returns>
         public int GetStat()
         {
-           return this.list.Count;
+            return this.list.Count;
         }
 
         /// <summary>

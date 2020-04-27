@@ -10,12 +10,6 @@ namespace FileCabinetApp
     public class FileCabinetServiceContext
     {
         /// <summary>
-        /// Gets or sets properties id.
-        /// </summary>
-        /// <value>The id property gets/sets the value.</value>
-        public int Id { get; set; }
-
-        /// <summary>
         /// Gets or sets properties FirstName.
         /// </summary>
         /// <value>The FirstName property gets/sets the value.</value>

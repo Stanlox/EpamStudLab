@@ -289,12 +289,6 @@
             this class is intended to be passed as an object.
             </summary>
         </member>
-        <member name="P:FileCabinetApp.FileCabinetServiceContext.Id">
-            <summary>
-            Gets or sets properties id.
-            </summary>
-            <value>The id property gets/sets the value.</value>
-        </member>
         <member name="P:FileCabinetApp.FileCabinetServiceContext.FirstName">
             <summary>
             Gets or sets properties FirstName.
@@ -330,6 +324,103 @@
             Gets or sets properties Salary.
             </summary>
             <value>The Salary property gets/sets the value.</value>
+        </member>
+        <member name="T:FileCabinetApp.IFileCabinetService">
+            <summary>
+            Extract interface.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.AddInDictionaryDateOfBirth(System.DateTime,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="dateofbirth">Input dateofbirth.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.AddInDictionaryFirstName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="firstName">Input firstName.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.AddInDictionaryLastName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="lastName">Input lastName.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="objectParameter">Input objectParameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="objectParameter">Input objectParameter.</param>
+            <returns>New record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="id">id of the record to edit.</param>
+            <param name="objectParameter">Input objectParameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.String)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="dateOfBirth">Input dateOfBirth.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="firstName">Input firstName.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="lastName">Input lastName.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
+            <summary>
+            contains method signature.
+            </summary>
+            <returns>list of record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetStat">
+            <summary>
+            contains method signature.
+            </summary>
+            <returns>Count of record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecordInDateOfBirthDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="oldRecord">Input record for edit.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecordInFirstNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="oldRecord">Input record for edit.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecordInLastNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            contains method signature.
+            </summary>
+            <param name="oldRecord">Input record for edit.</param>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
