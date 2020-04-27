@@ -11,24 +11,19 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetService : IRecordValidator
     {
+        private readonly IRecordValidator contextStrategy;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         /// <summary>
-        /// Gets or sets properties ContextStrategy.
+        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
         /// </summary>
-        /// <value>The ContextStrategy property gets/sets the value type of IRecordValidator.</value>
-        public IRecordValidator ContextStrategy { get; set; }
-
-        /// <summary>
-        /// Implementation of the strategy pattern. Installation strategy.
-        /// </summary>
-        /// <param name="strategy"> Installation strategy.</param>
-        public void CreateValidator(IRecordValidator strategy)
+        /// <param name="strategy">specific interface representative.</param>
+        public FileCabinetService(IRecordValidator strategy)
         {
-            this.ContextStrategy = strategy;
+            this.contextStrategy = strategy;
         }
 
         /// <summary>
@@ -38,7 +33,7 @@ namespace FileCabinetApp
         /// <returns>id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
-            this.ContextStrategy.CheckUsersDataEntry(objectParameter);
+            this.contextStrategy.CheckUsersDataEntry(objectParameter);
             this.CheckUsersDataEntry(objectParameter);
 
             var record = new FileCabinetRecord

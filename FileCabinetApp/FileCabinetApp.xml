@@ -135,9 +135,9 @@
             inherits the class implementation FileCabinetService.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CreateValidator">
+        <member name="M:FileCabinetApp.FileCabinetCustomService.#ctor">
             <summary>
-            dependency on IRecordService.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCustomService"/> class.
             </summary>
             <returns>instance CustomValidator.</returns>
         </member>
@@ -146,9 +146,9 @@
             inherits the class implementation FileCabinetService.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CreateValidator">
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.#ctor">
             <summary>
-            dependency on IRecordService.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetDefaultService"/> class.
             </summary>
             <returns>instance DefaultValidator.</returns>
         </member>
@@ -204,17 +204,11 @@
             contains services for adding, editing, and modifying records.
             </summary>
         </member>
-        <member name="P:FileCabinetApp.FileCabinetService.ContextStrategy">
+        <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
             <summary>
-            Gets or sets properties ContextStrategy.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
             </summary>
-            <value>The ContextStrategy property gets/sets the value type of IRecordValidator.</value>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateValidator(FileCabinetApp.IRecordValidator)">
-            <summary>
-            Implementation of the strategy pattern. Installation strategy.
-            </summary>
-            <param name="strategy"> Installation strategy.</param>
+            <param name="strategy">specific interface representative.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
             <summary>

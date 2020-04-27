@@ -11,12 +11,12 @@ namespace FileCabinetApp
     public class FileCabinetCustomService : FileCabinetService
     {
         /// <summary>
-        /// dependency on IRecordService.
+        /// Initializes a new instance of the <see cref="FileCabinetCustomService"/> class.
         /// </summary>
         /// <returns>instance CustomValidator.</returns>
-        public static CustomValidator CreateValidator()
+        public FileCabinetCustomService()
+            : base(new DefaultValidator())
         {
-            return new CustomValidator();
         }
     }
 }

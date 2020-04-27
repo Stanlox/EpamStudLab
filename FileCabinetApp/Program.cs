@@ -20,7 +20,7 @@ namespace FileCabinetApp
         private static bool isRunning = true;
         private static DateTime dateValue;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
-        private static FileCabinetService fileCabinetService = new FileCabinetService();
+        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
         private static FileCabinetRecord[] listRecordsInService;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -57,19 +57,17 @@ namespace FileCabinetApp
             if (validationsRules.Length == 0)
             {
                 Console.WriteLine("Using default validation rules.");
-                fileCabinetService.CreateValidator(new CustomValidator());
             }
             else if (string.Compare(validationsRules[0], longDescription, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(validationsRules[0], shortDescription, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 string parameter = "custom";
                 if (string.Equals(validationsRules[1], parameter, StringComparison.OrdinalIgnoreCase))
                 {
-                    fileCabinetService.CreateValidator(new CustomValidator());
+                    fileCabinetService = new FileCabinetService(new CustomValidator());
                     Console.WriteLine("Using custom validation rules.");
                 }
                 else
                 {
-                    fileCabinetService.CreateValidator(new CustomValidator());
                     Console.WriteLine("Using default validation rules.");
                 }
             }
