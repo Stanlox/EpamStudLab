@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,7 @@ namespace FileCabinetApp
         private static DateTime dateValue;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
-        private static FileCabinetRecord[] listRecordsInService;
+        private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -185,9 +186,9 @@ namespace FileCabinetApp
             try
             {
                 int getNumberEditRecord = int.Parse(parameters, CultureInfo.CurrentCulture);
-                if (getNumberEditRecord > Program.fileCabinetService.GetStat())
+                if (getNumberEditRecord > Program.fileCabinetService.GetStat() || getNumberEditRecord < 1)
                 {
-                    throw new ArgumentException($"#{parameters} record in not found. ");
+                    throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
                 }
 
                 Program.UserData();
@@ -195,6 +196,10 @@ namespace FileCabinetApp
                 Console.WriteLine($"Record #{parameters} is updated.");
             }
             catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (FormatException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -233,9 +238,9 @@ namespace FileCabinetApp
             }
         }
 
-        private static void ListRecord(FileCabinetRecord[] listRecordsInService)
+        private static void ListRecord(ReadOnlyCollection<FileCabinetRecord> listRecordsInService)
         {
-            for (int i = 0; i < listRecordsInService.Length; i++)
+            for (int i = 0; i < listRecordsInService.Count; i++)
             {
                 var builder = new StringBuilder();
                 builder.Append($"{listRecordsInService[i].Id}, ");

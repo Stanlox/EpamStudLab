@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -56,12 +57,11 @@ namespace FileCabinetApp
         /// <summary>
         /// Gets records.
         /// </summary>
-        /// <returns>Array of records.</returns>
-        public FileCabinetRecord[] GetRecords()
+        /// <returns>ReadOnlyCollection of records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            FileCabinetRecord[] array = new FileCabinetRecord[this.list.Count];
-            array = this.list.ToArray();
-            return array;
+           ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
+           return records;
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace FileCabinetApp
             this.RemoveRecordInDateOfBirthDictionary(oldrecord);
             foreach (var record in this.list.Where(x => x.Id == id))
             {
-                record.Id = objectParameter.Id;
+                record.Id = record.Id;
                 record.FirstName = objectParameter.FirstName;
                 record.LastName = objectParameter.LastName;
                 record.DateOfBirth = objectParameter.DateOfBirth;
@@ -157,18 +157,18 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public FileCabinetRecord[] FindByFirstName(string firstName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.ContainsKey(firstName))
             {
-                this.list = this.firstNameDictionary[firstName].ToList();
-                FileCabinetRecord[] array = this.GetRecords();
-                return array;
+                List<FileCabinetRecord> listOfRecords = this.firstNameDictionary[firstName].ToList();
+                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
+                return readOnlyCollection;
             }
             else
             {
-                FileCabinetRecord[] array = Array.Empty<FileCabinetRecord>();
-                return array;
+                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                return readOnlyCollection;
             }
         }
 
@@ -177,18 +177,18 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public FileCabinetRecord[] FindByLastName(string lastName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.ContainsKey(lastName))
             {
-                this.list = this.lastNameDictionary[lastName].ToList();
-                FileCabinetRecord[] array = this.GetRecords();
-                return array;
+                List<FileCabinetRecord> listOfRecords = this.lastNameDictionary[lastName].ToList();
+                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
+                return readOnlyCollection;
             }
             else
             {
-                FileCabinetRecord[] array = Array.Empty<FileCabinetRecord>();
-                return array;
+                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                return readOnlyCollection;
             }
         }
 
@@ -198,7 +198,7 @@ namespace FileCabinetApp
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
         /// <exception cref="ArgumentException">throw when date is not correct.</exception>
-        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirth)
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             DateTime dateValue;
             bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
@@ -209,14 +209,14 @@ namespace FileCabinetApp
 
             if (this.dateofbirthDictionary.ContainsKey(dateValue))
             {
-                this.list = this.dateofbirthDictionary[dateValue].ToList();
-                FileCabinetRecord[] array = this.GetRecords();
-                return array;
+                List<FileCabinetRecord> listOfRecords = this.dateofbirthDictionary[dateValue].ToList();
+                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
+                return readOnlyCollection;
             }
             else
             {
-                FileCabinetRecord[] array = Array.Empty<FileCabinetRecord>();
-                return array;
+                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                return readOnlyCollection;
             }
         }
 

@@ -199,7 +199,7 @@
             <summary>
             Gets records.
             </summary>
-            <returns>Array of records.</returns>
+            <returns>ReadOnlyCollection of records.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetStat">
             <summary>
