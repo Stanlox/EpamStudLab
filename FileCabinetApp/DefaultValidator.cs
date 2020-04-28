@@ -94,7 +94,7 @@ namespace FileCabinetApp
         /// <exception cref="ArgumentException">thrown when <paramref name="ageValue"/> less than 0. </exception>
         protected static void CheckAge(short ageValue, string age)
         {
-            if (ageValue < 0)
+            if (ageValue < 0 || ageValue > 130)
             {
                 throw new ArgumentException("Invalid Age", $"{nameof(age)}");
             }
