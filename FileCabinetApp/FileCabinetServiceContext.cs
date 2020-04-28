@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace FileCabinetApp
 {
     /// <summary>
-    /// properties that describe the model.
+    /// this class is intended to be passed as an object.
     /// </summary>
-    public class FileCabinetRecord
+    public class FileCabinetServiceContext
     {
-        /// <summary>
-        /// Gets or sets properties id.
-        /// </summary>
-        /// <value>The id property gets/sets the value.</value>
-        public int Id { get; set; }
-
         /// <summary>
         /// Gets or sets properties FirstName.
         /// </summary>
