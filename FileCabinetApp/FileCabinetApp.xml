@@ -177,6 +177,23 @@
             </summary>
             <value>The Salary property gets/sets the value.</value>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
+            <summary>
+            contains methods for writing records to a file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
+            </summary>
+            <param name="writer">Thread.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            writes to a record file.
+            </summary>
+            <param name="fileCabinetRecord">the record of a <see cref="T:FileCabinetApp.FileCabinetRecord"/> type.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             contains services for adding, editing, and modifying records.
@@ -187,6 +204,19 @@
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
             </summary>
             <param name="strategy">specific interface representative.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.DeepCopy(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            makes a deep copy of the object.
+            </summary>
+            <param name="record">Input record.</param>
+            <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
+            <summary>
+            makes a snapshot of an list.
+            </summary>
+            <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
@@ -324,6 +354,24 @@
             Gets or sets properties Salary.
             </summary>
             <value>The Salary property gets/sets the value.</value>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
+            <summary>
+            contains a method for writing data type of <see cref="T:FileCabinetApp.FileCabinetRecord"/> in the format csv.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(FileCabinetApp.FileCabinetRecord[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
+            initializes a record.
+            </summary>
+            <param name="fileCabinetRecord">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter)">
+            <summary>
+            passing a stream to a class <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> and record.
+            </summary>
+            <param name="sw">stream.</param>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
