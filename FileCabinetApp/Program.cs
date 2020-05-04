@@ -44,7 +44,7 @@ namespace FileCabinetApp
             new string[] { "list", "view a list of records added to the service." },
             new string[] { "edit", "edit record." },
             new string[] { "find", "find record by a known value." },
-            new string[] { "export ", "export data to a file in format csv." },
+            new string[] { "export ", "export data to a file in format csv or xml." },
         };
 
         /// <summary>
@@ -210,8 +210,8 @@ namespace FileCabinetApp
         {
             try
             {
-                string parameterValue = parameters.Split(' ').Last().Trim('"');
-                string[] parameterArray = parameters.Split(' ');
+                var parameterValue = parameters.Split(' ').Last().Trim('"');
+                var parameterArray = parameters.Split(' ');
                 var parameterName = parameterArray[parameterArray.Length - 2];
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
@@ -241,13 +241,16 @@ namespace FileCabinetApp
 
         private static void Export(string parameters)
         {
-            FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
             bool rewrite = false;
             var noRewrite = 'n';
-            var parameterArray = parameters.Split(' ');
-            var nameFile = parameterArray[parameterArray.Length - 1];
+            const string xml = "xml";
+            const string csv = "csv";
             try
             {
+                FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
+                var parameterArray = parameters.Split(' ');
+                var nameFile = parameterArray.Last();
+                var typeFile = parameterArray[parameterArray.Length - 2];
                 if (File.Exists(nameFile))
                 {
                     Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
@@ -259,19 +262,37 @@ namespace FileCabinetApp
                     }
                 }
 
-                using (var sw = new StreamWriter(nameFile, rewrite))
+                try
                 {
-                    snapshot.SaveToCsv(sw);
-                    Console.WriteLine($"All records are exported to file {nameFile}");
+                    if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        {
+                            snapshot.SaveToCsv(sw);
+                            Console.WriteLine($"All records are exported to file {nameFile}");
+                        }
+                    }
+                    else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        {
+                            snapshot.SaveToXml(sw);
+                            Console.WriteLine($"All records are exported to file {nameFile}");
+                        }
+                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.WriteLine($"Export failed: can't open file {nameFile}");
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
-            catch (DirectoryNotFoundException)
+            catch (IndexOutOfRangeException)
             {
-                Console.WriteLine($"Export failed: can't open file {nameFile}");
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Enter the file extension and his name or path");
             }
         }
 

@@ -194,6 +194,23 @@
             </summary>
             <param name="fileCabinetRecord">the record of a <see cref="T:FileCabinetApp.FileCabinetRecord"/> type.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            serialize with help xmlWriter.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.Xml.XmlWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="writer">XmlWriter.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Serialise records to a file.
+            </summary>
+            <param name="records">list <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             contains services for adding, editing, and modifying records.
@@ -373,6 +390,12 @@
             </summary>
             <param name="sw">stream.</param>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToXml(System.IO.StreamWriter)">
+            <summary>
+            passing a stream to a class <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> and list of record.
+            </summary>
+            <param name="sw">stream.</param>
+        </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
             Extract interface.
@@ -490,6 +513,22 @@
             <summary>
             Point of entry.
             </summary>
+        </member>
+        <member name="T:FileCabinetApp.SerializebleCollection">
+            <summary>
+            class for serialize cillection.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.SerializebleCollection.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.SerializebleCollection"/> class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.SerializebleCollection.Records">
+            <summary>
+            Gets collection for serialize.
+            </summary>
+            <value>The Records property gets/sets the value.</value>
         </member>
     </members>
 </doc>
