@@ -10,7 +10,7 @@ namespace FileCabinetApp
     /// <summary>
     /// contains services for adding, editing, and modifying records.
     /// </summary>
-    public class FileCabinetService : IRecordValidator, IFileCabinetService
+    public class FileCabinetMemoryService : IRecordValidator, IFileCabinetService
     {
         private readonly IRecordValidator contextStrategy;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
@@ -19,10 +19,10 @@ namespace FileCabinetApp
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
         /// </summary>
         /// <param name="strategy">specific interface representative.</param>
-        public FileCabinetService(IRecordValidator strategy)
+        public FileCabinetMemoryService(IRecordValidator strategy)
         {
             this.contextStrategy = strategy;
         }

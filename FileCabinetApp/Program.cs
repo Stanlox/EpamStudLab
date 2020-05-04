@@ -21,7 +21,7 @@ namespace FileCabinetApp
         private static bool isCorrect = true;
         private static bool isRunning = true;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
-        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
+        private static FileCabinetMemoryService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
         private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -65,7 +65,7 @@ namespace FileCabinetApp
                 var parameter = "custom";
                 if (string.Equals(validationsRules[1], parameter, StringComparison.OrdinalIgnoreCase))
                 {
-                    fileCabinetService = new FileCabinetService(new CustomValidator());
+                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                     Console.WriteLine("Using custom validation rules.");
                 }
                 else

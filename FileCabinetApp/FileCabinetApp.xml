@@ -130,6 +130,126 @@
             <param name="salary">variable name.</param>
             <exception cref="T:System.ArgumentException">thrown, when user entered a negative amount.</exception>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetMemoryService">
+            <summary>
+            contains services for adding, editing, and modifying records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.#ctor(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetMemoryService"/> class.
+            </summary>
+            <param name="strategy">specific interface representative.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.DeepCopy(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            makes a deep copy of the object.
+            </summary>
+            <param name="record">Input record.</param>
+            <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.MakeSnapshot">
+            <summary>
+            makes a snapshot of an list.
+            </summary>
+            <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            creates a new records.
+            </summary>
+            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <returns>id of the new record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetRecords">
+            <summary>
+            Gets records.
+            </summary>
+            <returns>ReadOnlyCollection of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetStat">
+            <summary>
+            gets statistics by records.
+            </summary>
+            <returns>Count of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            changes data an existing record.
+            </summary>
+            <param name="id">id of the record to edit.</param>
+            <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordInFirstNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            remove record in <see cref="F:FileCabinetApp.FileCabinetMemoryService.firstNameDictionary"/>.
+            </summary>
+            <param name="oldRecord">the record that is being modified.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordInLastNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            remove record in <see cref="F:FileCabinetApp.FileCabinetMemoryService.lastNameDictionary"/>.
+            </summary>
+            <param name="oldRecord">the record that is being modified.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordInDateOfBirthDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            remove record in <see cref="F:FileCabinetApp.FileCabinetMemoryService.dateofbirthDictionary"/>.
+            </summary>
+            <param name="oldRecord">the record that is being modified.</param>
+            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
+            <summary>
+            find record in dictionary by FirstName.
+            </summary>
+            <param name="firstName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
+            <summary>
+            find record in dictionary by LastName.
+            </summary>
+            <param name="lastName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
+            <summary>
+            find record in dictionary by DateOfBirth.
+            </summary>
+            <param name="dateOfBirth">the key for search.</param>
+            <returns>found a list of records.</returns>
+            <exception cref="T:System.ArgumentException">throw when date is not correct.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.AddInDictionaryFirstName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            adds a dictionary record by key <paramref name="firstName"/>.
+            </summary>
+            <param name="firstName">Input key.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.AddInDictionaryLastName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            adds a dictionary record by key <paramref name="lastName"/>.
+            </summary>
+            <param name="lastName">Input key.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.AddInDictionaryDateOfBirth(System.DateTime,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            adds a dictionary record by key <paramref name="dateofbirth"/>.
+            </summary>
+            <param name="dateofbirth">Input key.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            virtual method for checking the correctness of user input.
+            </summary>
+            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             properties that describe the model.
@@ -210,126 +330,6 @@
             Serialise records to a file.
             </summary>
             <param name="records">list <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</param>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetService">
-            <summary>
-            contains services for adding, editing, and modifying records.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
-            </summary>
-            <param name="strategy">specific interface representative.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.DeepCopy(FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            makes a deep copy of the object.
-            </summary>
-            <param name="record">Input record.</param>
-            <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
-            <summary>
-            makes a snapshot of an list.
-            </summary>
-            <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
-            <summary>
-            creates a new records.
-            </summary>
-            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-            <returns>id of the new record.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
-            <summary>
-            Gets records.
-            </summary>
-            <returns>ReadOnlyCollection of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
-            <summary>
-            gets statistics by records.
-            </summary>
-            <returns>Count of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
-            <summary>
-            changes data an existing record.
-            </summary>
-            <param name="id">id of the record to edit.</param>
-            <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordInFirstNameDictionary(FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            remove record in <see cref="F:FileCabinetApp.FileCabinetService.firstNameDictionary"/>.
-            </summary>
-            <param name="oldRecord">the record that is being modified.</param>
-            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordInLastNameDictionary(FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            remove record in <see cref="F:FileCabinetApp.FileCabinetService.lastNameDictionary"/>.
-            </summary>
-            <param name="oldRecord">the record that is being modified.</param>
-            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordInDateOfBirthDictionary(FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            remove record in <see cref="F:FileCabinetApp.FileCabinetService.dateofbirthDictionary"/>.
-            </summary>
-            <param name="oldRecord">the record that is being modified.</param>
-            <exception cref="T:System.ArgumentNullException">thrown when record is null.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
-            <summary>
-            find record in dictionary by FirstName.
-            </summary>
-            <param name="firstName">the key for search.</param>
-            <returns>found a list of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
-            <summary>
-            find record in dictionary by LastName.
-            </summary>
-            <param name="lastName">the key for search.</param>
-            <returns>found a list of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
-            <summary>
-            find record in dictionary by DateOfBirth.
-            </summary>
-            <param name="dateOfBirth">the key for search.</param>
-            <returns>found a list of records.</returns>
-            <exception cref="T:System.ArgumentException">throw when date is not correct.</exception>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.AddInDictionaryFirstName(System.String,FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            adds a dictionary record by key <paramref name="firstName"/>.
-            </summary>
-            <param name="firstName">Input key.</param>
-            <param name="record">Input record.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.AddInDictionaryLastName(System.String,FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            adds a dictionary record by key <paramref name="lastName"/>.
-            </summary>
-            <param name="lastName">Input key.</param>
-            <param name="record">Input record.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.AddInDictionaryDateOfBirth(System.DateTime,FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            adds a dictionary record by key <paramref name="dateofbirth"/>.
-            </summary>
-            <param name="dateofbirth">Input key.</param>
-            <param name="record">Input record.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
-            <summary>
-            virtual method for checking the correctness of user input.
-            </summary>
-            <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetServiceContext">
             <summary>
