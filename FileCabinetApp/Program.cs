@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -20,9 +21,8 @@ namespace FileCabinetApp
         private static bool isCorrect = true;
         private static bool isRunning = true;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
-        private static IFileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
+        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
         private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
-
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
@@ -32,17 +32,19 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export", Export),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
-            new string[] { "stat", "view the number of records" },
-            new string[] { "create", "create new user" },
-            new string[] { "list", "view a list of records added to the service" },
-            new string[] { "edit", "edit record" },
-            new string[] { "find", "find record by a known value" },
+            new string[] { "stat", "view the number of records." },
+            new string[] { "create", "create new user." },
+            new string[] { "list", "view a list of records added to the service." },
+            new string[] { "edit", "edit record." },
+            new string[] { "find", "find record by a known value." },
+            new string[] { "export ", "export data to a file in format csv or xml." },
         };
 
         /// <summary>
@@ -60,7 +62,7 @@ namespace FileCabinetApp
             }
             else if (string.Compare(validationsRules[0], longDescription, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(validationsRules[0], shortDescription, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                string parameter = "custom";
+                var parameter = "custom";
                 if (string.Equals(validationsRules[1], parameter, StringComparison.OrdinalIgnoreCase))
                 {
                     fileCabinetService = new FileCabinetService(new CustomValidator());
@@ -208,8 +210,8 @@ namespace FileCabinetApp
         {
             try
             {
-                string parameterValue = parameters.Split(' ').Last().Trim('"');
-                string[] parameterArray = parameters.Split(' ');
+                var parameterValue = parameters.Split(' ').Last().Trim('"');
+                var parameterArray = parameters.Split(' ');
                 var parameterName = parameterArray[parameterArray.Length - 2];
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
@@ -234,6 +236,63 @@ namespace FileCabinetApp
             catch (ArgumentException ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void Export(string parameters)
+        {
+            bool rewrite = false;
+            var noRewrite = 'n';
+            const string xml = "xml";
+            const string csv = "csv";
+            try
+            {
+                FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
+                var parameterArray = parameters.Split(' ');
+                var nameFile = parameterArray.Last();
+                var typeFile = parameterArray[parameterArray.Length - 2];
+                if (File.Exists(nameFile))
+                {
+                    Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
+                    var rewriteOrNo = ReadInput(RewriteConverter, RewriteValidator);
+                    char.ToLower(rewriteOrNo, CultureInfo.InvariantCulture);
+                    if (char.Equals(rewriteOrNo, noRewrite))
+                    {
+                        rewrite = true;
+                    }
+                }
+
+                try
+                {
+                    if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        {
+                            snapshot.SaveToCsv(sw);
+                            Console.WriteLine($"All records are exported to file {nameFile}");
+                        }
+                    }
+                    else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        {
+                            snapshot.SaveToXml(sw);
+                            Console.WriteLine($"All records are exported to file {nameFile}");
+                        }
+                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.WriteLine($"Export failed: can't open file {nameFile}");
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Enter the file extension and his name or path");
             }
         }
 
@@ -397,7 +456,7 @@ namespace FileCabinetApp
         {
             if (val <= 0)
             {
-                return new Tuple<bool, string>(false, "Age can't be negative");
+                return new Tuple<bool, string>(false, "Age can't be negative or equal 0");
             }
             else
             {
@@ -435,13 +494,43 @@ namespace FileCabinetApp
 
         private static Tuple<bool, string> SalaryValidator(decimal val)
         {
-            if (val <= 0)
+            if (val < 0)
             {
                 return new Tuple<bool, string>(false, "Salary can't be negative");
             }
             else
             {
                 return new Tuple<bool, string>(true, string.Empty);
+            }
+        }
+
+        private static Tuple<bool, string> RewriteValidator(char val)
+        {
+            if (val == char.MaxValue)
+            {
+                return new Tuple<bool, string>(false, "Empty string");
+            }
+            else
+            {
+                return new Tuple<bool, string>(true, string.Empty);
+            }
+        }
+
+        private static Tuple<bool, string, char> RewriteConverter(string val)
+        {
+            val = val.Trim();
+            if (string.IsNullOrEmpty(val))
+            {
+                return new Tuple<bool, string, char>(false, "Empty field", char.MinValue);
+            }
+
+            if (char.TryParse(val, out char result))
+            {
+                return new Tuple<bool, string, char>(true, val, result);
+            }
+            else
+            {
+                return new Tuple<bool, string, char>(false, "The symbol is not of the char type", char.MinValue);
             }
         }
     }
