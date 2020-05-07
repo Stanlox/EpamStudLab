@@ -509,7 +509,7 @@
             A class that is intended for processing user data and further processing it.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Program.Main">
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
             <summary>
             Point of entry.
             </summary>

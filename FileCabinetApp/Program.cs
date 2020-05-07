@@ -21,7 +21,8 @@ namespace FileCabinetApp
         private static bool isCorrect = true;
         private static bool isRunning = true;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
-        private static FileCabinetMemoryService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+        private static FileCabinetMemoryService fileCabinetMemoryService = new FileCabinetMemoryService(new DefaultValidator());
+        private static FileCabinetFilesystemService fileCabinetFilesystemService;
         private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -50,28 +51,57 @@ namespace FileCabinetApp
         /// <summary>
         /// Point of entry.
         /// </summary>
-        public static void Main()
+        /// <param name="args">command line parameter.</param>
+        public static void Main(string[] args)
         {
-            Console.Write("Validations rules: ");
-            var validationsRules = Console.ReadLine().Trim(' ').Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
-            var longDescription = "--validation-rules";
-            var shortDescription = "-v";
-            if (validationsRules.Length == 0)
+            if (args.Length != 0)
             {
-                Console.WriteLine("Using default validation rules.");
-            }
-            else if (string.Compare(validationsRules[0], longDescription, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(validationsRules[0], shortDescription, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                var parameter = "custom";
-                if (string.Equals(validationsRules[1], parameter, StringComparison.OrdinalIgnoreCase))
+                var parameterCommandLine = string.Join(' ', args);
+                var validationsRules = parameterCommandLine.Trim(' ').Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
+                var longDescriptionValidationsRules = "--validation-rules";
+                var shortDescriptionValidationsRules = "-v";
+                var longDescriptionUseTypeService = "--storage";
+                var shortDescriptionUseTypeService = "-s";
+                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService };
+                var arrayMatchingElements = validationsRules.Where(x => arrayCommandLine.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+
+                for (int i = 0; i < arrayMatchingElements.Length; i++)
                 {
-                    fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
-                    Console.WriteLine("Using custom validation rules.");
+                    if (string.Compare(arrayMatchingElements[i], longDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        var parameter = "custom";
+                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        {
+                            fileCabinetMemoryService = new FileCabinetMemoryService(new CustomValidator());
+                            Console.WriteLine("Using custom validation rules.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Using default validation rules.");
+                        }
+                    }
+
+                    if (string.Compare(arrayMatchingElements[i], longDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                         var parameter = "file";
+                         if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                         {
+                              using (FileStream fileStream = new FileStream("cabinet-records.db", FileMode.Create))
+                              {
+                                    fileCabinetFilesystemService = new FileCabinetFilesystemService(fileStream);
+                              }
+                         }
+                    }
                 }
-                else
+
+                if (!(arrayMatchingElements.Contains(longDescriptionValidationsRules) || arrayMatchingElements.Contains(shortDescriptionValidationsRules)) || arrayMatchingElements.Length == 0)
                 {
                     Console.WriteLine("Using default validation rules.");
                 }
+            }
+            else
+            {
+                Console.WriteLine("Using default validation rules.");
             }
 
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
@@ -147,7 +177,7 @@ namespace FileCabinetApp
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
+            var recordsCount = Program.fileCabinetMemoryService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
         }
 
@@ -157,8 +187,8 @@ namespace FileCabinetApp
             try
             {
                 Program.UserData();
-                Program.fileCabinetService.CreateRecord(fileCabinetServiceContext);
-                Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
+                Program.fileCabinetMemoryService.CreateRecord(fileCabinetServiceContext);
+                Console.WriteLine($"Record # {Program.fileCabinetMemoryService.GetStat()} is created.");
             }
             catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
             {
@@ -178,7 +208,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            listRecordsInService = Program.fileCabinetService.GetRecords();
+            listRecordsInService = Program.fileCabinetMemoryService.GetRecords();
             ListRecord(listRecordsInService);
         }
 
@@ -187,13 +217,13 @@ namespace FileCabinetApp
             try
             {
                 int getNumberEditRecord = int.Parse(parameters, CultureInfo.CurrentCulture);
-                if (getNumberEditRecord > Program.fileCabinetService.GetStat() || getNumberEditRecord < 1)
+                if (getNumberEditRecord > Program.fileCabinetMemoryService.GetStat() || getNumberEditRecord < 1)
                 {
                     throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
                 }
 
                 Program.UserData();
-                Program.fileCabinetService.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
+                Program.fileCabinetMemoryService.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
                 Console.WriteLine($"Record #{parameters} is updated.");
             }
             catch (ArgumentException ex)
@@ -216,15 +246,15 @@ namespace FileCabinetApp
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
                     case "firstname":
-                        listRecordsInService = Program.fileCabinetService.FindByFirstName(parameterValue);
+                        listRecordsInService = Program.fileCabinetMemoryService.FindByFirstName(parameterValue);
                         ListRecord(listRecordsInService);
                         break;
                     case "lastname":
-                        listRecordsInService = Program.fileCabinetService.FindByLastName(parameterValue);
+                        listRecordsInService = Program.fileCabinetMemoryService.FindByLastName(parameterValue);
                         ListRecord(listRecordsInService);
                         break;
                     case "dateofbirth":
-                        listRecordsInService = Program.fileCabinetService.FindByDateOfBirth(parameterValue);
+                        listRecordsInService = Program.fileCabinetMemoryService.FindByDateOfBirth(parameterValue);
                         ListRecord(listRecordsInService);
                         break;
                 }
@@ -247,8 +277,8 @@ namespace FileCabinetApp
             const string csv = "csv";
             try
             {
-                FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
-                var parameterArray = parameters.Split(' ');
+                FileCabinetServiceSnapshot snapshot = fileCabinetMemoryService.MakeSnapshot();
+                var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 var nameFile = parameterArray.Last();
                 var typeFile = parameterArray[parameterArray.Length - 2];
                 if (File.Exists(nameFile))
