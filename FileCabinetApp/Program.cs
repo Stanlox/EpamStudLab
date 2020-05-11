@@ -21,9 +21,9 @@ namespace FileCabinetApp
         private static bool isCorrect = true;
         private static bool isRunning = true;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
-        private static FileCabinetMemoryService fileCabinetMemoryService = new FileCabinetMemoryService(new DefaultValidator());
-        private static FileCabinetFilesystemService fileCabinetFilesystemService;
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
         private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
+        private static FileStream fileStream;
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
@@ -72,7 +72,7 @@ namespace FileCabinetApp
                         var parameter = "custom";
                         if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
                         {
-                            fileCabinetMemoryService = new FileCabinetMemoryService(new CustomValidator());
+                            fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                             Console.WriteLine("Using custom validation rules.");
                         }
                         else
@@ -83,14 +83,12 @@ namespace FileCabinetApp
 
                     if (string.Compare(arrayMatchingElements[i], longDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                         var parameter = "file";
-                         if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
-                         {
-                              using (FileStream fileStream = new FileStream("cabinet-records.db", FileMode.Create))
-                              {
-                                    fileCabinetFilesystemService = new FileCabinetFilesystemService(fileStream);
-                              }
-                         }
+                        var parameter = "file";
+                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        {
+                            fileStream = new FileStream("cabinet-records.db", FileMode.Append);
+                            fileCabinetService = new FileCabinetFilesystemService(fileStream);
+                        }
                     }
                 }
 
@@ -171,13 +169,18 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
+            if (fileStream != null)
+            {
+                fileStream.Close();
+            }
+
             Console.WriteLine("Exiting an application...");
             isRunning = false;
         }
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.fileCabinetMemoryService.GetStat();
+            var recordsCount = Program.fileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
         }
 
@@ -187,8 +190,8 @@ namespace FileCabinetApp
             try
             {
                 Program.UserData();
-                Program.fileCabinetMemoryService.CreateRecord(fileCabinetServiceContext);
-                Console.WriteLine($"Record # {Program.fileCabinetMemoryService.GetStat()} is created.");
+                Program.fileCabinetService.CreateRecord(fileCabinetServiceContext);
+                Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
             }
             catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
             {
@@ -208,7 +211,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            listRecordsInService = Program.fileCabinetMemoryService.GetRecords();
+            listRecordsInService = Program.fileCabinetService.GetRecords();
             ListRecord(listRecordsInService);
         }
 
@@ -217,13 +220,13 @@ namespace FileCabinetApp
             try
             {
                 int getNumberEditRecord = int.Parse(parameters, CultureInfo.CurrentCulture);
-                if (getNumberEditRecord > Program.fileCabinetMemoryService.GetStat() || getNumberEditRecord < 1)
+                if (getNumberEditRecord > Program.fileCabinetService.GetStat() || getNumberEditRecord < 1)
                 {
                     throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
                 }
 
                 Program.UserData();
-                Program.fileCabinetMemoryService.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
+                Program.fileCabinetService.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
                 Console.WriteLine($"Record #{parameters} is updated.");
             }
             catch (ArgumentException ex)
@@ -246,15 +249,15 @@ namespace FileCabinetApp
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
                     case "firstname":
-                        listRecordsInService = Program.fileCabinetMemoryService.FindByFirstName(parameterValue);
+                        listRecordsInService = Program.fileCabinetService.FindByFirstName(parameterValue);
                         ListRecord(listRecordsInService);
                         break;
                     case "lastname":
-                        listRecordsInService = Program.fileCabinetMemoryService.FindByLastName(parameterValue);
+                        listRecordsInService = Program.fileCabinetService.FindByLastName(parameterValue);
                         ListRecord(listRecordsInService);
                         break;
                     case "dateofbirth":
-                        listRecordsInService = Program.fileCabinetMemoryService.FindByDateOfBirth(parameterValue);
+                        listRecordsInService = Program.fileCabinetService.FindByDateOfBirth(parameterValue);
                         ListRecord(listRecordsInService);
                         break;
                 }
@@ -277,7 +280,7 @@ namespace FileCabinetApp
             const string csv = "csv";
             try
             {
-                FileCabinetServiceSnapshot snapshot = fileCabinetMemoryService.MakeSnapshot();
+                FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 var nameFile = parameterArray.Last();
                 var typeFile = parameterArray[parameterArray.Length - 2];

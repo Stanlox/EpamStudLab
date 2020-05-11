@@ -32,7 +32,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="record">Input record.</param>
         /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
-        public static FileCabinetRecord DeepCopy(FileCabinetRecord record)
+        public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             return new FileCabinetRecord()
             {
@@ -63,7 +63,6 @@ namespace FileCabinetApp
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
             this.contextStrategy.CheckUsersDataEntry(objectParameter);
-            this.CheckUsersDataEntry(objectParameter);
 
             var record = new FileCabinetRecord
             {
@@ -108,7 +107,7 @@ namespace FileCabinetApp
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-            this.CheckUsersDataEntry(objectParameter);
+            this.contextStrategy.CheckUsersDataEntry(objectParameter);
 
             FileCabinetRecord oldrecord = this.list[id - 1];
             this.RemoveRecordInFirstNameDictionary(oldrecord);
