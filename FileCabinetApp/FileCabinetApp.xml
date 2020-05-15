@@ -493,6 +493,19 @@
             </summary>
             <param name="oldRecord">Input record for edit.</param>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.DeepCopy(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            makes a deep copy of the object.
+            </summary>
+            <param name="record">Input record.</param>
+            <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            makes a snapshot of an list.
+            </summary>
+            <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
+        </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
             class, that contains a single method for checking user input.
@@ -513,6 +526,7 @@
             <summary>
             Point of entry.
             </summary>
+            <param name="args">command line parameter.</param>
         </member>
         <member name="T:FileCabinetApp.SerializebleCollection">
             <summary>
