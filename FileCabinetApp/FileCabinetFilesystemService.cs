@@ -20,6 +20,7 @@ namespace FileCabinetApp
         private FileStream fileStream;
         private int lastRecordId = 1;
         private int countRecordInFile = 0;
+        private int recordId = 0;
 
         public FileCabinetFilesystemService(FileStream fileStream)
         {
@@ -48,19 +49,19 @@ namespace FileCabinetApp
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
             var bytes = new byte[RecordSize];
-            var recordBuffer = new byte[RecordSize];
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                this.countRecordInFile = (int)file.Length / RecordSize;
-                var offset = (this.countRecordInFile - 1) * RecordSize;
-                if (offset < 0)
+                if (file.Length <= 0)
                 {
+                    this.recordId++;
                 }
                 else
                 {
-                    file.Seek(offset, SeekOrigin.Begin);
-                    file.Read(recordBuffer, 0, RecordSize);
-                    this.lastRecordId = this.GetFileCabinetRecordIdToBytes(recordBuffer);
+                    byte[] recordBuffer = new byte[file.Length];
+                    file.Read(recordBuffer, 0, recordBuffer.Length);
+                    this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                    this.lastRecordId = this.list.Max(maxRecordID => maxRecordID.Id);
+                    this.recordId = ++this.lastRecordId;
                 }
             }
 
@@ -90,7 +91,7 @@ namespace FileCabinetApp
 
                 using (BinaryWriter binaryWriter1 = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
                 {
-                    binaryWriter1.Write(this.lastRecordId);
+                    binaryWriter1.Write(this.recordId);
                     binaryWriter1.Write(objectParameter.Age);
                     binaryWriter1.Write(objectParameter.Salary);
                     binaryWriter1.Write(objectParameter.Gender);
@@ -102,29 +103,9 @@ namespace FileCabinetApp
                     binaryWriter1.Write(objectParameter.DateOfBirth.Month);
                     binaryWriter1.Write(objectParameter.DateOfBirth.Day);
                 }
-
-                this.countRecordInFile++;
             }
 
-            return this.lastRecordId;
-        }
-
-        public int GetFileCabinetRecordIdToBytes(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                throw new ArgumentNullException(nameof(bytes));
-            }
-
-            FileCabinetRecord record = new FileCabinetRecord();
-
-            using (var memoryStream = new MemoryStream(bytes))
-            using (var binaryReader = new BinaryReader(memoryStream))
-            {
-                record.Id = binaryReader.ReadInt32();
-            }
-
-            return record.Id;
+            return this.recordId;
         }
 
         public byte[] FileCabinetRecordToBytes(FileCabinetRecord record)
@@ -254,17 +235,19 @@ namespace FileCabinetApp
             //{
             //    return countRecordInFile;
             //}
-            //else if (countRecordInFile == 0)
+            //if (countRecordInFile == 0)
             //{
             //    return countRecordInFile;
             //}
-            //using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            //{
-            //    this.countRecordInFile = ((int)file.Length / RecordSize) + 1;
-            //}
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                //this.countRecordInFile = ((int)file.Length / RecordSize) + 1;
+            }
 
-            //return this.countRecordInFile;
-            throw new NotImplementedException();
+            return this.list.Count;
         }
 
         public FileCabinetServiceSnapshot MakeSnapshot()
