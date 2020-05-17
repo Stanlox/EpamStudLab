@@ -86,7 +86,7 @@ namespace FileCabinetApp
                         var parameter = "file";
                         if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
                         {
-                            fileStream = new FileStream("cabinet-records.db", FileMode.Append);
+                            fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
                             fileCabinetService = new FileCabinetFilesystemService(fileStream);
                         }
                     }

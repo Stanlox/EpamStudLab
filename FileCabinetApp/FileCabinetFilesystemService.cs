@@ -18,8 +18,6 @@ namespace FileCabinetApp
         private const int RecordSize = (IntSize * 4) + (StringLengthSize * 2) + DecimalSize + ShortSize + CharSize + (MaxStringLength * 2);
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
-        private int lastRecordId = 1;
-        private int countRecordInFile = 0;
         private int recordId = 0;
 
         public FileCabinetFilesystemService(FileStream fileStream)
@@ -48,7 +46,6 @@ namespace FileCabinetApp
 
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
-            var bytes = new byte[RecordSize];
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 if (file.Length <= 0)
@@ -60,69 +57,35 @@ namespace FileCabinetApp
                     byte[] recordBuffer = new byte[file.Length];
                     file.Read(recordBuffer, 0, recordBuffer.Length);
                     this.list = this.BytesToFileCabinetRecord(recordBuffer);
-                    this.lastRecordId = this.list.Max(maxRecordID => maxRecordID.Id);
-                    this.recordId = ++this.lastRecordId;
+                    this.recordId = this.list.Max(maxRecordID => maxRecordID.Id) + 1;
                 }
+
+                this.FileCabinetRecordToBytes(
+                    new FileCabinetRecord
+                 {
+                    Id = this.recordId,
+                    Age = objectParameter.Age,
+                    Salary = objectParameter.Salary,
+                    Gender = objectParameter.Gender,
+                    FirstName = objectParameter.FirstName,
+                    LastName = objectParameter.LastName,
+                    DateOfBirth = objectParameter.DateOfBirth,
+                 });
+                return this.recordId;
             }
-
-            using (var memoryStream = new MemoryStream(bytes))
-
-            using (var binaryWriter = new BinaryWriter(memoryStream))
-            {
-                var firstNameBytes = Encoding.ASCII.GetBytes(objectParameter.FirstName);
-                var lastNameBytes = Encoding.ASCII.GetBytes(objectParameter.LastName);
-                var firstNameBuffer = new byte[MaxStringLength];
-                var lastNameBuffer = new byte[MaxStringLength];
-
-                var lastNameLength = lastNameBytes.Length;
-                var firstNameLength = firstNameBytes.Length;
-                if (firstNameLength > MaxStringLength)
-                {
-                    firstNameLength = MaxStringLength;
-                }
-
-                if (lastNameLength > MaxStringLength)
-                {
-                    lastNameLength = MaxStringLength;
-                }
-
-                Array.Copy(firstNameBytes, 0, firstNameBuffer, 0, firstNameLength);
-                Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
-
-                using (BinaryWriter binaryWriter1 = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
-                {
-                    binaryWriter1.Write(this.recordId);
-                    binaryWriter1.Write(objectParameter.Age);
-                    binaryWriter1.Write(objectParameter.Salary);
-                    binaryWriter1.Write(objectParameter.Gender);
-                    binaryWriter1.Write(firstNameLength);
-                    binaryWriter1.Write(firstNameBuffer);
-                    binaryWriter1.Write(lastNameLength);
-                    binaryWriter1.Write(lastNameBuffer);
-                    binaryWriter1.Write(objectParameter.DateOfBirth.Year);
-                    binaryWriter1.Write(objectParameter.DateOfBirth.Month);
-                    binaryWriter1.Write(objectParameter.DateOfBirth.Day);
-                }
-            }
-
-            return this.recordId;
         }
 
-        public byte[] FileCabinetRecordToBytes(FileCabinetRecord record)
+        public void FileCabinetRecordToBytes(FileCabinetRecord record)
         {
+            var bytes = new byte[RecordSize];
             if (record == null)
             {
                 throw new ArgumentNullException(nameof(record));
             }
 
-            var bytes = new byte[RecordSize];
             using (var memoryStream = new MemoryStream(bytes))
             using (var binaryWriter = new BinaryWriter(memoryStream))
             {
-                binaryWriter.Write(record.Id);
-                binaryWriter.Write(record.Age);
-                binaryWriter.Write(record.Salary);
-                binaryWriter.Write(record.Gender);
                 var firstNameBytes = Encoding.ASCII.GetBytes(record.FirstName);
                 var lastNameBytes = Encoding.ASCII.GetBytes(record.LastName);
                 var firstNameBuffer = new byte[MaxStringLength];
@@ -142,23 +105,85 @@ namespace FileCabinetApp
 
                 Array.Copy(firstNameBytes, 0, firstNameBuffer, 0, firstNameLength);
                 Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
-
-                binaryWriter.Write(firstNameLength);
-                binaryWriter.Write(firstNameBuffer);
-                binaryWriter.Write(lastNameLength);
-                binaryWriter.Write(lastNameBuffer);
-
-                binaryWriter.Write(record.DateOfBirth.Year);
-                binaryWriter.Write(record.DateOfBirth.Month);
-                binaryWriter.Write(record.DateOfBirth.Day);
+                using (var binarywriter = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
+                {
+                    binarywriter.Seek(0, SeekOrigin.End);
+                    binarywriter.Write(this.recordId);
+                    binarywriter.Write(record.Age);
+                    binarywriter.Write(record.Salary);
+                    binarywriter.Write(record.Gender);
+                    binarywriter.Write(firstNameLength);
+                    binarywriter.Write(firstNameBuffer);
+                    binarywriter.Write(lastNameLength);
+                    binarywriter.Write(lastNameBuffer);
+                    binarywriter.Write(record.DateOfBirth.Year);
+                    binarywriter.Write(record.DateOfBirth.Month);
+                    binarywriter.Write(record.DateOfBirth.Day);
+                }
             }
-
-            return bytes;
         }
 
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-            throw new NotImplementedException();
+
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+
+                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                var recordForUpdate = this.list.Find(record => record.Id == id);
+                recordForUpdate.Id = id;
+                recordForUpdate.Age = objectParameter.Age;
+                recordForUpdate.Salary = objectParameter.Salary;
+                recordForUpdate.Gender = objectParameter.Gender;
+                recordForUpdate.FirstName = objectParameter.FirstName;
+                recordForUpdate.LastName = objectParameter.LastName;
+                recordForUpdate.DateOfBirth = objectParameter.DateOfBirth;
+                int offset = (RecordSize * id) - RecordSize;
+                var bytes = new byte[RecordSize];
+
+                using (var memoryStream = new MemoryStream(bytes))
+                using (var binaryWriter = new BinaryWriter(memoryStream))
+                {
+                    var firstNameBytes = Encoding.ASCII.GetBytes(recordForUpdate.FirstName);
+                    var lastNameBytes = Encoding.ASCII.GetBytes(recordForUpdate.LastName);
+                    var firstNameBuffer = new byte[MaxStringLength];
+                    var lastNameBuffer = new byte[MaxStringLength];
+
+                    var lastNameLength = lastNameBytes.Length;
+                    var firstNameLength = firstNameBytes.Length;
+                    if (firstNameLength > MaxStringLength)
+                    {
+                        firstNameLength = MaxStringLength;
+                    }
+
+                    if (lastNameLength > MaxStringLength)
+                    {
+                        lastNameLength = MaxStringLength;
+                    }
+
+                    Array.Copy(firstNameBytes, 0, firstNameBuffer, 0, firstNameLength);
+                    Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
+                    using (var binarywriter = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
+                    {
+                        binarywriter.Seek(offset, SeekOrigin.Begin);
+                        binarywriter.Write(id);
+                        binarywriter.Write(recordForUpdate.Age);
+                        binarywriter.Write(recordForUpdate.Salary);
+                        binarywriter.Write(recordForUpdate.Gender);
+                        binarywriter.Write(firstNameLength);
+                        binarywriter.Write(firstNameBuffer);
+                        binarywriter.Write(lastNameLength);
+                        binarywriter.Write(lastNameBuffer);
+                        binarywriter.Write(recordForUpdate.DateOfBirth.Year);
+                        binarywriter.Write(recordForUpdate.DateOfBirth.Month);
+                        binarywriter.Write(recordForUpdate.DateOfBirth.Day);
+                        long i = binaryWriter.BaseStream.Length;
+                    }
+                }
+            }
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
@@ -231,20 +256,11 @@ namespace FileCabinetApp
 
         public int GetStat()
         {
-            //if (countRecordInFile == 1)
-            //{
-            //    return countRecordInFile;
-            //}
-            //if (countRecordInFile == 0)
-            //{
-            //    return countRecordInFile;
-            //}
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
                 this.list = this.BytesToFileCabinetRecord(recordBuffer);
-                //this.countRecordInFile = ((int)file.Length / RecordSize) + 1;
             }
 
             return this.list.Count;
