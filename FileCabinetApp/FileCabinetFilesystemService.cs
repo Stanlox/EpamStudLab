@@ -16,6 +16,7 @@ namespace FileCabinetApp
         private const int ShortSize = sizeof(short);
         private const int DecimalSize = sizeof(decimal);
         private const int RecordSize = (IntSize * 4) + (StringLengthSize * 2) + DecimalSize + ShortSize + CharSize + (MaxStringLength * 2);
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
         private int recordId = 0;
@@ -31,7 +32,14 @@ namespace FileCabinetApp
 
         public void AddInDictionaryFirstName(string firstName, FileCabinetRecord record)
         {
-            throw new NotImplementedException();
+            if (this.firstNameDictionary.ContainsKey(firstName))
+            {
+                this.firstNameDictionary[firstName].Add(record);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(firstName, new List<FileCabinetRecord> { record });
+            }
         }
 
         public void AddInDictionaryLastName(string lastName, FileCabinetRecord record)
@@ -59,10 +67,8 @@ namespace FileCabinetApp
                     this.list = this.BytesToFileCabinetRecord(recordBuffer);
                     this.recordId = this.list.Max(maxRecordID => maxRecordID.Id) + 1;
                 }
-
-                this.FileCabinetRecordToBytes(
-                    new FileCabinetRecord
-                 {
+                var record = new FileCabinetRecord
+                {
                     Id = this.recordId,
                     Age = objectParameter.Age,
                     Salary = objectParameter.Salary,
@@ -70,7 +76,9 @@ namespace FileCabinetApp
                     FirstName = objectParameter.FirstName,
                     LastName = objectParameter.LastName,
                     DateOfBirth = objectParameter.DateOfBirth,
-                 });
+                };
+
+                this.FileCabinetRecordToBytes(record);
                 return this.recordId;
             }
         }
@@ -180,7 +188,6 @@ namespace FileCabinetApp
                         binarywriter.Write(recordForUpdate.DateOfBirth.Year);
                         binarywriter.Write(recordForUpdate.DateOfBirth.Month);
                         binarywriter.Write(recordForUpdate.DateOfBirth.Day);
-                        long i = binaryWriter.BaseStream.Length;
                     }
                 }
             }
@@ -193,7 +200,28 @@ namespace FileCabinetApp
 
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            throw new NotImplementedException();
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                foreach (var record in this.list)
+                {
+                    this.AddInDictionaryFirstName(record.FirstName, record);
+                }
+
+                if (this.firstNameDictionary.ContainsKey(firstName))
+                {
+                    List<FileCabinetRecord> listOfRecords = this.firstNameDictionary[firstName].ToList();
+                    ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
+                    return readOnlyCollection;
+                }
+                else
+                {
+                    ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                    return readOnlyCollection;
+                }
+            }
         }
 
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)

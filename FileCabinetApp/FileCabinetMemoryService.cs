@@ -52,7 +52,7 @@ namespace FileCabinetApp
         /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.list.Select(x => DeepCopy(x)).ToArray());
+            return new FileCabinetServiceSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
         }
 
         /// <summary>
