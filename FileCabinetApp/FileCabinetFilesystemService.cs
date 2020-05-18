@@ -17,6 +17,7 @@ namespace FileCabinetApp
         private const int DecimalSize = sizeof(decimal);
         private const int RecordSize = (IntSize * 4) + (StringLengthSize * 2) + DecimalSize + ShortSize + CharSize + (MaxStringLength * 2);
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
         private int recordId = 0;
@@ -44,7 +45,14 @@ namespace FileCabinetApp
 
         public void AddInDictionaryLastName(string lastName, FileCabinetRecord record)
         {
-            throw new NotImplementedException();
+            if (this.lastNameDictionary.ContainsKey(lastName))
+            {
+                this.lastNameDictionary[lastName].Add(record);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(lastName, new List<FileCabinetRecord> { record });
+            }
         }
 
         public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
@@ -136,27 +144,30 @@ namespace FileCabinetApp
 
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
 
                 this.list = this.BytesToFileCabinetRecord(recordBuffer);
-                var recordForUpdate = this.list.Find(record => record.Id == id);
-                recordForUpdate.Id = id;
-                recordForUpdate.Age = objectParameter.Age;
-                recordForUpdate.Salary = objectParameter.Salary;
-                recordForUpdate.Gender = objectParameter.Gender;
-                recordForUpdate.FirstName = objectParameter.FirstName;
-                recordForUpdate.LastName = objectParameter.LastName;
-                recordForUpdate.DateOfBirth = objectParameter.DateOfBirth;
+                var updateRecord = this.list.Find(record => record.Id == id);
+                FileCabinetRecord oldrecord = updateRecord;
+                this.RemoveRecordInFirstNameDictionary(oldrecord);
+                this.RemoveRecordInLastNameDictionary(oldrecord);
+                //this.RemoveRecordInDateOfBirthDictionary(oldrecord);
+                updateRecord.Id = id;
+                updateRecord.Age = objectParameter.Age;
+                updateRecord.Salary = objectParameter.Salary;
+                updateRecord.Gender = objectParameter.Gender;
+                updateRecord.FirstName = objectParameter.FirstName;
+                updateRecord.LastName = objectParameter.LastName;
+                updateRecord.DateOfBirth = objectParameter.DateOfBirth;
                 int offset = (RecordSize * id) - RecordSize;
                 var bytes = new byte[RecordSize];
 
                 using (var memoryStream = new MemoryStream(bytes))
                 using (var binaryWriter = new BinaryWriter(memoryStream))
                 {
-                    var firstNameBytes = Encoding.ASCII.GetBytes(recordForUpdate.FirstName);
-                    var lastNameBytes = Encoding.ASCII.GetBytes(recordForUpdate.LastName);
+                    var firstNameBytes = Encoding.ASCII.GetBytes(updateRecord.FirstName);
+                    var lastNameBytes = Encoding.ASCII.GetBytes(updateRecord.LastName);
                     var firstNameBuffer = new byte[MaxStringLength];
                     var lastNameBuffer = new byte[MaxStringLength];
 
@@ -178,16 +189,16 @@ namespace FileCabinetApp
                     {
                         binarywriter.Seek(offset, SeekOrigin.Begin);
                         binarywriter.Write(id);
-                        binarywriter.Write(recordForUpdate.Age);
-                        binarywriter.Write(recordForUpdate.Salary);
-                        binarywriter.Write(recordForUpdate.Gender);
+                        binarywriter.Write(updateRecord.Age);
+                        binarywriter.Write(updateRecord.Salary);
+                        binarywriter.Write(updateRecord.Gender);
                         binarywriter.Write(firstNameLength);
                         binarywriter.Write(firstNameBuffer);
                         binarywriter.Write(lastNameLength);
                         binarywriter.Write(lastNameBuffer);
-                        binarywriter.Write(recordForUpdate.DateOfBirth.Year);
-                        binarywriter.Write(recordForUpdate.DateOfBirth.Month);
-                        binarywriter.Write(recordForUpdate.DateOfBirth.Day);
+                        binarywriter.Write(updateRecord.DateOfBirth.Year);
+                        binarywriter.Write(updateRecord.DateOfBirth.Month);
+                        binarywriter.Write(updateRecord.DateOfBirth.Day);
                     }
                 }
             }
@@ -202,6 +213,7 @@ namespace FileCabinetApp
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
+                this.firstNameDictionary.Clear();
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
                 this.list = this.BytesToFileCabinetRecord(recordBuffer);
@@ -226,7 +238,29 @@ namespace FileCabinetApp
 
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            throw new NotImplementedException();
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                this.lastNameDictionary.Clear();
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                foreach (var record in this.list)
+                {
+                    this.AddInDictionaryLastName(record.FirstName, record);
+                }
+
+                if (this.lastNameDictionary.ContainsKey(lastName))
+                {
+                    List<FileCabinetRecord> listOfRecords = this.lastNameDictionary[lastName].ToList();
+                    ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
+                    return readOnlyCollection;
+                }
+                else
+                {
+                    ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                    return readOnlyCollection;
+                }
+            }
         }
 
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
@@ -306,12 +340,26 @@ namespace FileCabinetApp
 
         public void RemoveRecordInFirstNameDictionary(FileCabinetRecord oldRecord)
         {
-            throw new NotImplementedException();
+            if (oldRecord is null)
+            {
+                throw new ArgumentNullException(nameof(oldRecord));
+            }
+            else if (this.lastNameDictionary.ContainsKey(oldRecord.LastName))
+            {
+                this.lastNameDictionary[oldRecord.LastName].Remove(oldRecord);
+            }
         }
 
         public void RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord)
         {
-            throw new NotImplementedException();
+            if (oldRecord is null)
+            {
+                throw new ArgumentNullException(nameof(oldRecord));
+            }
+            else if (this.firstNameDictionary.ContainsKey(oldRecord.FirstName))
+            {
+                this.firstNameDictionary[oldRecord.FirstName].Remove(oldRecord);
+            }
         }
 
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
