@@ -8,9 +8,9 @@ using System.Text;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// contains services for adding, editing, and modifying records.
+    /// contains memory services for adding, editing, and modifying records.
     /// </summary>
-    public class FileCabinetService : IRecordValidator, IFileCabinetService
+    public class FileCabinetMemoryService : IRecordValidator, IFileCabinetService
     {
         private readonly IRecordValidator contextStrategy;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
@@ -19,10 +19,10 @@ namespace FileCabinetApp
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
         /// </summary>
         /// <param name="strategy">specific interface representative.</param>
-        public FileCabinetService(IRecordValidator strategy)
+        public FileCabinetMemoryService(IRecordValidator strategy)
         {
             this.contextStrategy = strategy;
         }
@@ -32,7 +32,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="record">Input record.</param>
         /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
-        public static FileCabinetRecord DeepCopy(FileCabinetRecord record)
+        public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             return new FileCabinetRecord()
             {
@@ -52,7 +52,7 @@ namespace FileCabinetApp
         /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.list.Select(x => DeepCopy(x)).ToArray());
+            return new FileCabinetServiceSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
         }
 
         /// <summary>
@@ -63,7 +63,6 @@ namespace FileCabinetApp
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
             this.contextStrategy.CheckUsersDataEntry(objectParameter);
-            this.CheckUsersDataEntry(objectParameter);
 
             var record = new FileCabinetRecord
             {
@@ -102,13 +101,13 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// changes data an existing record.
+        /// changing data in an existing record.
         /// </summary>
         /// <param name="id">id of the record to edit.</param>
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-            this.CheckUsersDataEntry(objectParameter);
+            this.contextStrategy.CheckUsersDataEntry(objectParameter);
 
             FileCabinetRecord oldrecord = this.list[id - 1];
             this.RemoveRecordInFirstNameDictionary(oldrecord);

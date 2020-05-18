@@ -21,8 +21,9 @@ namespace FileCabinetApp
         private static bool isCorrect = true;
         private static bool isRunning = true;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
-        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
         private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
+        private static FileStream fileStream;
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
@@ -50,28 +51,55 @@ namespace FileCabinetApp
         /// <summary>
         /// Point of entry.
         /// </summary>
-        public static void Main()
+        /// <param name="args">command line parameter.</param>
+        public static void Main(string[] args)
         {
-            Console.Write("Validations rules: ");
-            var validationsRules = Console.ReadLine().Trim(' ').Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
-            var longDescription = "--validation-rules";
-            var shortDescription = "-v";
-            if (validationsRules.Length == 0)
+            if (args.Length != 0)
             {
-                Console.WriteLine("Using default validation rules.");
-            }
-            else if (string.Compare(validationsRules[0], longDescription, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(validationsRules[0], shortDescription, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                var parameter = "custom";
-                if (string.Equals(validationsRules[1], parameter, StringComparison.OrdinalIgnoreCase))
+                var parameterCommandLine = string.Join(' ', args);
+                var validationsRules = parameterCommandLine.Trim(' ').Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
+                var longDescriptionValidationsRules = "--validation-rules";
+                var shortDescriptionValidationsRules = "-v";
+                var longDescriptionUseTypeService = "--storage";
+                var shortDescriptionUseTypeService = "-s";
+                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService };
+                var arrayMatchingElements = validationsRules.Where(x => arrayCommandLine.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+
+                for (int i = 0; i < arrayMatchingElements.Length; i++)
                 {
-                    fileCabinetService = new FileCabinetService(new CustomValidator());
-                    Console.WriteLine("Using custom validation rules.");
+                    if (string.Compare(arrayMatchingElements[i], longDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        var parameter = "custom";
+                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        {
+                            fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                            Console.WriteLine("Using custom validation rules.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Using default validation rules.");
+                        }
+                    }
+
+                    if (string.Compare(arrayMatchingElements[i], longDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        var parameter = "file";
+                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        {
+                            fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
+                            fileCabinetService = new FileCabinetFilesystemService(fileStream);
+                        }
+                    }
                 }
-                else
+
+                if (!(arrayMatchingElements.Contains(longDescriptionValidationsRules) || arrayMatchingElements.Contains(shortDescriptionValidationsRules)) || arrayMatchingElements.Length == 0)
                 {
                     Console.WriteLine("Using default validation rules.");
                 }
+            }
+            else
+            {
+                Console.WriteLine("Using default validation rules.");
             }
 
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
@@ -141,6 +169,11 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
+            if (fileStream != null)
+            {
+                fileStream.Close();
+            }
+
             Console.WriteLine("Exiting an application...");
             isRunning = false;
         }
@@ -248,7 +281,7 @@ namespace FileCabinetApp
             try
             {
                 FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
-                var parameterArray = parameters.Split(' ');
+                var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 var nameFile = parameterArray.Last();
                 var typeFile = parameterArray[parameterArray.Length - 2];
                 if (File.Exists(nameFile))

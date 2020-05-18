@@ -99,5 +99,18 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="oldRecord">Input record for edit.</param>
         void RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord);
+
+        /// <summary>
+        /// makes a deep copy of the object.
+        /// </summary>
+        /// <param name="record">Input record.</param>
+        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
+        FileCabinetRecord DeepCopy(FileCabinetRecord record);
+
+        /// <summary>
+        /// makes a snapshot of an list.
+        /// </summary>
+        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
+        FileCabinetServiceSnapshot MakeSnapshot();
     }
 }
