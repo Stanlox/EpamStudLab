@@ -7,6 +7,9 @@ using System.Text;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// contains file services for adding, editing, and modifying records.
+    /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
         private const int StringLengthSize = sizeof(long);
@@ -18,19 +21,87 @@ namespace FileCabinetApp
         private const int RecordSize = (IntSize * 4) + (StringLengthSize * 2) + DecimalSize + ShortSize + CharSize + (MaxStringLength * 2);
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
         private int recordId = 0;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
+        /// </summary>
+        /// <param name="fileStream">Input FileStream.</param>
         public FileCabinetFilesystemService(FileStream fileStream)
         {
             this.fileStream = fileStream;
         }
 
-        public void AddInDictionaryDateOfBirth(DateTime dateofbirth, FileCabinetRecord record)
+        /// <summary>
+        /// converts an array of bytes to a record.
+        /// </summary>
+        /// <param name="bytes">Input array of bytes.</param>
+        /// <returns>list of records.</returns>
+        public static List<FileCabinetRecord> BytesToFileCabinetRecord(byte[] bytes)
         {
+            if (bytes == null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+
+            List<FileCabinetRecord> recordList = new List<FileCabinetRecord>();
+
+            using (var memoryStream = new MemoryStream(bytes))
+            {
+                using (var binaryReader = new BinaryReader(memoryStream))
+                {
+                    while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
+                    {
+                        FileCabinetRecord record = new FileCabinetRecord();
+                        record.Id = binaryReader.ReadInt32();
+                        record.Age = binaryReader.ReadInt16();
+                        record.Salary = binaryReader.ReadDecimal();
+                        record.Gender = binaryReader.ReadChar();
+                        var firstNameLength = binaryReader.ReadInt32();
+                        var firstNameBuffer = binaryReader.ReadBytes(MaxStringLength);
+                        var lastNameLength = binaryReader.ReadInt32();
+                        var lastNameBuffer = binaryReader.ReadBytes(MaxStringLength);
+
+                        record.FirstName = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameLength);
+                        record.LastName = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameLength);
+
+                        var yearOfBirth = binaryReader.ReadInt32();
+                        var monthOfBirth = binaryReader.ReadInt32();
+                        var dayOfBirth = binaryReader.ReadInt32();
+                        record.DateOfBirth = new DateTime(yearOfBirth, monthOfBirth, dayOfBirth);
+                        recordList.Add(record);
+                    }
+                }
+            }
+
+            return recordList;
         }
 
+        /// <summary>
+        /// adds a dictionary record by key <paramref name="dateofbirth"/>.
+        /// </summary>
+        /// <param name="dateofbirth">Input key.</param>
+        /// <param name="record">Input record.</param>
+        public void AddInDictionaryDateOfBirth(DateTime dateofbirth, FileCabinetRecord record)
+        {
+            if (this.dateofbirthDictionary.ContainsKey(dateofbirth))
+            {
+                this.dateofbirthDictionary[dateofbirth].Add(record);
+            }
+            else
+            {
+                this.dateofbirthDictionary.Add(dateofbirth, new List<FileCabinetRecord> { record });
+            }
+        }
+
+        /// <summary>
+        /// adds a dictionary record by key <paramref name="firstName"/>.
+        /// </summary>
+        /// <param name="firstName">Input key.</param>
+        /// <param name="record">Input record.</param>
         public void AddInDictionaryFirstName(string firstName, FileCabinetRecord record)
         {
             if (this.firstNameDictionary.ContainsKey(firstName))
@@ -43,6 +114,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// adds a dictionary record by key <paramref name="lastName"/>.
+        /// </summary>
+        /// <param name="lastName">Input key.</param>
+        /// <param name="record">Input record.</param>
         public void AddInDictionaryLastName(string lastName, FileCabinetRecord record)
         {
             if (this.lastNameDictionary.ContainsKey(lastName))
@@ -55,11 +131,11 @@ namespace FileCabinetApp
             }
         }
 
-        public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// creates a new records.
+        /// </summary>
+        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        /// <returns>id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -72,9 +148,10 @@ namespace FileCabinetApp
                 {
                     byte[] recordBuffer = new byte[file.Length];
                     file.Read(recordBuffer, 0, recordBuffer.Length);
-                    this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                    this.list = BytesToFileCabinetRecord(recordBuffer);
                     this.recordId = this.list.Max(maxRecordID => maxRecordID.Id) + 1;
                 }
+
                 var record = new FileCabinetRecord
                 {
                     Id = this.recordId,
@@ -91,6 +168,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// converts an input record to bytes.
+        /// </summary>
+        /// <param name="record">Input record.</param>
+        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
         public void FileCabinetRecordToBytes(FileCabinetRecord record)
         {
             var bytes = new byte[RecordSize];
@@ -139,20 +221,24 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// changing data in an existing record.
+        /// </summary>
+        /// <param name="id">id of the record to edit.</param>
+        /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
 
-                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
                 var updateRecord = this.list.Find(record => record.Id == id);
                 FileCabinetRecord oldrecord = updateRecord;
                 this.RemoveRecordInFirstNameDictionary(oldrecord);
                 this.RemoveRecordInLastNameDictionary(oldrecord);
-                //this.RemoveRecordInDateOfBirthDictionary(oldrecord);
+                this.RemoveRecordInDateOfBirthDictionary(oldrecord);
                 updateRecord.Id = id;
                 updateRecord.Age = objectParameter.Age;
                 updateRecord.Salary = objectParameter.Salary;
@@ -204,11 +290,51 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// find record in dictionary by DateOfBirth.
+        /// </summary>
+        /// <param name="dateOfBirth">the key for search.</param>
+        /// <returns>found a list of records.</returns>
+        /// <exception cref="ArgumentException">throw when date is not correct.</exception>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
-            throw new NotImplementedException();
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                this.dateofbirthDictionary.Clear();
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
+                foreach (var record in this.list)
+                {
+                    this.AddInDictionaryDateOfBirth(record.DateOfBirth, record);
+                }
+
+                DateTime dateValue;
+                bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
+                if (!birthDate)
+                {
+                    throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
+                }
+
+                if (this.dateofbirthDictionary.ContainsKey(dateValue))
+                {
+                    List<FileCabinetRecord> listOfRecords = this.dateofbirthDictionary[dateValue].ToList();
+                    ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
+                    return readOnlyCollection;
+                }
+                else
+                {
+                    ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+                    return readOnlyCollection;
+                }
+            }
         }
 
+        /// <summary>
+        /// find record in dictionary by FirstName.
+        /// </summary>
+        /// <param name="firstName">the key for search.</param>
+        /// <returns>found a list of records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -216,7 +342,7 @@ namespace FileCabinetApp
                 this.firstNameDictionary.Clear();
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
                 foreach (var record in this.list)
                 {
                     this.AddInDictionaryFirstName(record.FirstName, record);
@@ -236,6 +362,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// find record in dictionary by LastName.
+        /// </summary>
+        /// <param name="lastName">the key for search.</param>
+        /// <returns>found a list of records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -243,10 +374,10 @@ namespace FileCabinetApp
                 this.lastNameDictionary.Clear();
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
                 foreach (var record in this.list)
                 {
-                    this.AddInDictionaryLastName(record.FirstName, record);
+                    this.AddInDictionaryLastName(record.LastName, record);
                 }
 
                 if (this.lastNameDictionary.ContainsKey(lastName))
@@ -263,81 +394,61 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Gets records.
+        /// </summary>
+        /// <returns>ReadOnlyCollection of records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             using (var file2 = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] recordBuffer = new byte[file2.Length];
                 file2.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
             }
 
             ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
             return records;
         }
 
-        public List<FileCabinetRecord> BytesToFileCabinetRecord(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                throw new ArgumentNullException(nameof(bytes));
-            }
-
-            List<FileCabinetRecord> recordList = new List<FileCabinetRecord>();
-
-            using (var memoryStream = new MemoryStream(bytes))
-            {
-                using (var binaryReader = new BinaryReader(memoryStream))
-                {
-                    while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                    {
-                        FileCabinetRecord record = new FileCabinetRecord();
-                        record.Id = binaryReader.ReadInt32();
-                        record.Age = binaryReader.ReadInt16();
-                        record.Salary = binaryReader.ReadDecimal();
-                        record.Gender = binaryReader.ReadChar();
-                        var firstNameLength = binaryReader.ReadInt32();
-                        var firstNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                        var lastNameLength = binaryReader.ReadInt32();
-                        var lastNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-
-                        record.FirstName = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameLength);
-                        record.LastName = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameLength);
-
-                        var yearOfBirth = binaryReader.ReadInt32();
-                        var monthOfBirth = binaryReader.ReadInt32();
-                        var dayOfBirth = binaryReader.ReadInt32();
-                        record.DateOfBirth = new DateTime(yearOfBirth, monthOfBirth, dayOfBirth);
-                        recordList.Add(record);
-                    }
-                }
-            }
-
-            return recordList;
-        }
-
+        /// <summary>
+        /// gets statistics by records.
+        /// </summary>
+        /// <returns>Count of records.</returns>
         public int GetStat()
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = this.BytesToFileCabinetRecord(recordBuffer);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
             }
 
             return this.list.Count;
         }
 
-        public FileCabinetServiceSnapshot MakeSnapshot()
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// remove record in <see cref="dateofbirthDictionary"/>.
+        /// </summary>
+        /// <param name="oldRecord">the record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
         public void RemoveRecordInDateOfBirthDictionary(FileCabinetRecord oldRecord)
         {
-            throw new NotImplementedException();
+            if (oldRecord is null)
+            {
+                throw new ArgumentNullException(nameof(oldRecord));
+            }
+            else if (this.dateofbirthDictionary.ContainsKey(oldRecord.DateOfBirth))
+            {
+                this.dateofbirthDictionary[oldRecord.DateOfBirth].Remove(oldRecord);
+            }
         }
 
+        /// <summary>
+        /// remove record in <see cref="firstNameDictionary"/>.
+        /// </summary>
+        /// <param name="oldRecord">the record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
         public void RemoveRecordInFirstNameDictionary(FileCabinetRecord oldRecord)
         {
             if (oldRecord is null)
@@ -350,6 +461,11 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// remove record in <see cref="lastNameDictionary"/>.
+        /// </summary>
+        /// <param name="oldRecord">the record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
         public void RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord)
         {
             if (oldRecord is null)
@@ -362,7 +478,30 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// unrealized method.
+        /// </summary>
+        /// <param name="record">Input record.</param>
+        /// <returns> throw new NotImplementedException.</returns>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// unrealized method.
+        /// </summary>
+        /// <returns>throw new NotImplementedException.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// unrealized method.
+        /// </summary>
+        /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
         {
             throw new NotImplementedException();
         }

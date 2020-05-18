@@ -8,7 +8,7 @@ using System.Text;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// contains services for adding, editing, and modifying records.
+    /// contains memory services for adding, editing, and modifying records.
     /// </summary>
     public class FileCabinetMemoryService : IRecordValidator, IFileCabinetService
     {
@@ -101,7 +101,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// changes data an existing record.
+        /// changing data in an existing record.
         /// </summary>
         /// <param name="id">id of the record to edit.</param>
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
