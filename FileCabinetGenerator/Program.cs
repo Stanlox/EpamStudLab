@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using FileCabinetApp;
 
@@ -6,12 +7,13 @@ namespace FileCabinetGenerator
 {
     public static class Program
     {
-        private static readonly DateTime MinDate = new DateTime(1950, 1, 1);
+        private static bool isRunning = true;
         private static string outputFileName;
         private static string outputFormatType;
         private static int amountOfGeneratedRecords;
         private static int valueToStart;
         private static bool isCorrectData = true;
+        private static ServiceGenerator fileCabinetGenerator = new ServiceGenerator();
 
         private static void Main(string[] args)
         {
@@ -55,28 +57,59 @@ namespace FileCabinetGenerator
                 }
             }
 
-            Console.WriteLine($"{amountOfGeneratedRecords} records were written to {outputFileName}");
-            Program.CreateRecordRandomValues();
-            Console.ReadKey();
+            CreateRecord();
+            Export();
+            if (!isRunning)
+            {
+                Console.WriteLine("\t Check the file path you entered");
+            }
+            else
+            {
+                Console.WriteLine($"{amountOfGeneratedRecords} records were written to {outputFileName}");
+            }
         }
 
-        private static void CreateRecordRandomValues()
+        private static void CreateRecord()
         {
-            Random rnd = new Random();
-            char[] arrayGender = { 'M', 'W' };
-            var index = rnd.Next(arrayGender.Length - 1);
-            var randomYear = rnd.Next(MinDate.Year, DateTime.Now.Year);
-            var randomMonth = rnd.Next(1, 12);
-            var randomDay = rnd.Next(1, DateTime.DaysInMonth(randomYear, randomMonth));
-            FileCabinetRecord fileCabinetRecord = new FileCabinetRecord();
-            fileCabinetRecord.Id = valueToStart;
-            fileCabinetRecord.FirstName = Faker.Name.First();
-            fileCabinetRecord.LastName = Faker.Name.Last();
-            fileCabinetRecord.DateOfBirth = new DateTime(randomYear, randomMonth, randomDay);
-            fileCabinetRecord.Salary = Faker.RandomNumber.Next(0, int.MaxValue);
-            fileCabinetRecord.Age = (short)Faker.RandomNumber.Next(0, 130);
-            fileCabinetRecord.Gender = arrayGender[index];
-            valueToStart++;
+            fileCabinetGenerator.CreateRecordRandomValues(valueToStart, amountOfGeneratedRecords);
+        }
+
+        private static void Export()
+        {
+            const string csv = "csv";
+            string shortPath = Path.GetFileName(outputFileName);
+            try
+            {
+                try
+                {
+                    if (string.Equals(csv, outputFormatType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        FileCabinetServiceSnapshot fileCabinetServiceSnapshot = fileCabinetGenerator.MakeSnapshot();
+                        using (var sw = new StreamWriter(shortPath))
+                        {
+                            fileCabinetServiceSnapshot.SaveToCsv(sw);
+                        }
+                    }
+                    else
+                    {
+                        isRunning = false;
+                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.WriteLine($"Export failed: can't open file {outputFileName}");
+                    isRunning = false;
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Enter the file extension and his name or path");
+                isRunning = false;
+            }
         }
     }
 }
