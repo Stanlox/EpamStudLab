@@ -13,7 +13,8 @@ namespace FileCabinetGenerator
         private static int amountOfGeneratedRecords;
         private static int valueToStart;
         private static bool isCorrectData = true;
-        private static ServiceGenerator fileCabinetGenerator = new ServiceGenerator();
+        private static ServiceGenerator serviceGenerator = new ServiceGenerator();
+        private static FileCabinetServiceGeneratorSnapshot fileCabinetServiceGeneratorSnapshot;
 
         private static void Main(string[] args)
         {
@@ -71,23 +72,31 @@ namespace FileCabinetGenerator
 
         private static void CreateRecord()
         {
-            fileCabinetGenerator.CreateRecordRandomValues(valueToStart, amountOfGeneratedRecords);
+            serviceGenerator.CreateRecordRandomValues(valueToStart, amountOfGeneratedRecords);
         }
 
         private static void Export()
         {
             const string csv = "csv";
+            const string xml = "xml";
             string shortPath = Path.GetFileName(outputFileName);
             try
             {
+                fileCabinetServiceGeneratorSnapshot = serviceGenerator.MakeSnapshot();
                 try
                 {
                     if (string.Equals(csv, outputFormatType, StringComparison.OrdinalIgnoreCase))
                     {
-                        FileCabinetServiceSnapshot fileCabinetServiceSnapshot = fileCabinetGenerator.MakeSnapshot();
                         using (var sw = new StreamWriter(shortPath))
                         {
-                            fileCabinetServiceSnapshot.SaveToCsv(sw);
+                            fileCabinetServiceGeneratorSnapshot.SaveToCsv(sw);
+                        }
+                    }
+                    else if (string.Equals(xml, outputFormatType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var sw = new StreamWriter(shortPath))
+                        {
+                            fileCabinetServiceGeneratorSnapshot.SaveToXml(sw);
                         }
                     }
                     else

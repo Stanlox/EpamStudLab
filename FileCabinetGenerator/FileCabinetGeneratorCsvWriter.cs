@@ -10,15 +10,15 @@ namespace FileCabinetGenerator
     /// <summary>
     /// contains methods for writing records to a file.
     /// </summary>
-    public class FileCabinetRecordCsvWriter
+    public class FileCabinetGeneratorCsvWriter
     {
         private TextWriter textWriter;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetRecordCsvWriter"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetGeneratorCsvWriter"/> class.
         /// </summary>
         /// <param name="writer">Thread.</param>
-        public FileCabinetRecordCsvWriter(TextWriter writer)
+        public FileCabinetGeneratorCsvWriter(TextWriter writer)
         {
             this.textWriter = writer;
         }

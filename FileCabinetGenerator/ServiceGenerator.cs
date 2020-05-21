@@ -27,7 +27,8 @@ namespace FileCabinetGenerator
 
         public void CreateRecordRandomValues(int valueToStart, int amountOfGeneratedRecords)
         {
-            while (valueToStart <= amountOfGeneratedRecords)
+            var idLastRecord = amountOfGeneratedRecords + valueToStart;
+            while (valueToStart <= idLastRecord)
             {
                 this.GeneratorGenderAndDateOfBirth();
                 var record = new FileCabinetRecord
@@ -48,8 +49,8 @@ namespace FileCabinetGenerator
         /// <summary>
         /// makes a deep copy of the object.
         /// </summary>
-        /// <param name="record">Input record.</param>
-        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
+        /// <param name = "record" > Input record.</param>
+        /// <returns>new new cloned object <see cref = "FileCabinetRecord" />.</ returns >
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             return new FileCabinetRecord()
@@ -67,10 +68,10 @@ namespace FileCabinetGenerator
         /// <summary>
         /// makes a snapshot of an list.
         /// </summary>
-        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
-        public FileCabinetServiceSnapshot MakeSnapshot()
+        /// <returns>new cloned object type of<see cref="FileCabinetServiceGeneratorSnapshot"/> as an array.</returns>
+        public FileCabinetServiceGeneratorSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
+            return new FileCabinetServiceGeneratorSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
         }
     }
 }
