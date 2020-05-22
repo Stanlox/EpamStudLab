@@ -34,6 +34,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -46,6 +47,7 @@ namespace FileCabinetApp
             new string[] { "edit", "edit record." },
             new string[] { "find", "find record by a known value." },
             new string[] { "export ", "export data to a file in format csv or xml." },
+            new string[] { "import", "import data from a file." },
         };
 
         /// <summary>
@@ -282,8 +284,8 @@ namespace FileCabinetApp
             {
                 FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var nameFile = parameterArray.Last();
-                var typeFile = parameterArray[parameterArray.Length - 2];
+                var nameFile = Path.GetFileName(parameterArray.Last());
+                var typeFile = parameterArray.First();
                 if (File.Exists(nameFile))
                 {
                     Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
@@ -327,6 +329,22 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Enter the file extension and his name or path");
             }
+        }
+
+        private static void Import(string parameters)
+        {
+            const string csv = "csv";
+            try
+            {
+                var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var nameFile = Path.GetFileName(parameterArray.Last());
+                var typeFile = Path.GetExtension(nameFile);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Enter the file extension and his name or path");
+            }
+
         }
 
         private static void ListRecord(ReadOnlyCollection<FileCabinetRecord> listRecordsInService)
