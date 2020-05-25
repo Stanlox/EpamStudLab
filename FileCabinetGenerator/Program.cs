@@ -10,11 +10,11 @@ namespace FileCabinetGenerator
         private static bool isRunning = true;
         private static string outputFileName;
         private static string outputFormatType;
-        private static int amountOfGeneratedRecords;
         private static int valueToStart;
         private static bool isCorrectData = true;
         private static ServiceGenerator serviceGenerator = new ServiceGenerator();
         private static FileCabinetServiceGeneratorSnapshot fileCabinetServiceGeneratorSnapshot;
+        private static int amountOfGeneratedRecords;
 
         private static void Main(string[] args)
         {

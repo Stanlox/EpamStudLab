@@ -112,5 +112,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         FileCabinetServiceSnapshot MakeSnapshot();
+
+        void Restore(FileCabinetServiceSnapshot snapshot);
     }
 }

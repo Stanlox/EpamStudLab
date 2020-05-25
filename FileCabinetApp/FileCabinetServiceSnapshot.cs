@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -17,6 +18,11 @@ namespace FileCabinetApp
         private FileCabinetRecordCsvWriter csvWriter;
         private FileCabinetRecordXmlWriter xmlWriter;
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private FileCabinetRecordCsvReader fileCabinetRecordCsvReader;
+
+        public ReadOnlyCollection<FileCabinetRecord> Records { get; }
+
+        public IList<FileCabinetRecord> ListFromFile { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
@@ -26,6 +32,7 @@ namespace FileCabinetApp
         public FileCabinetServiceSnapshot(FileCabinetRecord[] fileCabinetRecord)
         {
             this.records = fileCabinetRecord;
+            this.Records = new ReadOnlyCollection<FileCabinetRecord>(fileCabinetRecord);
         }
 
         /// <summary>
@@ -54,6 +61,15 @@ namespace FileCabinetApp
             }
 
             this.xmlWriter.Write(this.list);
+        }
+
+        public void LoadFromCsv(FileStream filestream)
+        {
+            using (StreamReader streamReader = new StreamReader(filestream.Name, Encoding.ASCII))
+            {
+                this.fileCabinetRecordCsvReader = new FileCabinetRecordCsvReader(streamReader);
+                this.ListFromFile = new ReadOnlyCollection<FileCabinetRecord>(this.fileCabinetRecordCsvReader.ReadAll());
+            }
         }
     }
 }

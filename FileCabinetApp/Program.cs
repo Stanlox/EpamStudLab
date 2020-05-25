@@ -24,6 +24,7 @@ namespace FileCabinetApp
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
         private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
         private static FileStream fileStream;
+        private static FileCabinetServiceSnapshot snapshot;
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
@@ -282,9 +283,10 @@ namespace FileCabinetApp
             const string csv = "csv";
             try
             {
-                FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
+                snapshot = fileCabinetService.MakeSnapshot();
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var nameFile = Path.GetFileName(parameterArray.Last());
+                var fullPath = parameterArray.Last();
+                var nameFile = Path.GetFileName(fullPath);
                 var typeFile = parameterArray.First();
                 if (File.Exists(nameFile))
                 {
@@ -318,7 +320,7 @@ namespace FileCabinetApp
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    Console.WriteLine($"Export failed: can't open file {nameFile}");
+                    Console.WriteLine($"Export failed: can't open file {fullPath}");
                 }
                 catch (ArgumentException ex)
                 {
@@ -333,12 +335,26 @@ namespace FileCabinetApp
 
         private static void Import(string parameters)
         {
-            const string csv = "csv";
             try
             {
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var nameFile = Path.GetFileName(parameterArray.Last());
-                var typeFile = Path.GetExtension(nameFile);
+                var fullPath = parameterArray.Last();
+                var nameFile = Path.GetFileName(fullPath);
+                var typeFile = parameterArray.First();
+                if (File.Exists(nameFile))
+                {
+                    snapshot = fileCabinetService.MakeSnapshot();
+                    using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        snapshot.LoadFromCsv(fileStream);
+                        Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
+                        fileCabinetService.Restore(snapshot);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Import error: {fullPath} is not exist.");
+                }
             }
             catch (IndexOutOfRangeException)
             {
