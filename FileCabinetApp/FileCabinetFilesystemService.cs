@@ -19,9 +19,11 @@ namespace FileCabinetApp
         private const int ShortSize = sizeof(short);
         private const int DecimalSize = sizeof(decimal);
         private const int RecordSize = (IntSize * 4) + (StringLengthSize * 2) + DecimalSize + ShortSize + CharSize + (MaxStringLength * 2);
+        private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+        private readonly IRecordValidator contextStrategy = new DefaultValidator();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
         private int recordId = 0;
@@ -138,6 +140,7 @@ namespace FileCabinetApp
         /// <returns>id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
+            this.contextStrategy.CheckUsersDataEntry(objectParameter);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 if (file.Length <= 0)
@@ -228,6 +231,7 @@ namespace FileCabinetApp
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
+            this.contextStrategy.CheckUsersDataEntry(objectParameter);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] recordBuffer = new byte[file.Length];
@@ -400,10 +404,10 @@ namespace FileCabinetApp
         /// <returns>ReadOnlyCollection of records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            using (var file2 = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                byte[] recordBuffer = new byte[file2.Length];
-                file2.Read(recordBuffer, 0, recordBuffer.Length);
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
                 this.list = BytesToFileCabinetRecord(recordBuffer);
             }
 
@@ -478,23 +482,30 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// unrealized method.
-        /// </summary>
-        /// <param name="record">Input record.</param>
-        /// <returns> throw new NotImplementedException.</returns>
+
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
-            throw new NotImplementedException();
+            return new FileCabinetRecord()
+            {
+                Id = record.Id,
+                FirstName = record.FirstName,
+                LastName = record.LastName,
+                DateOfBirth = record.DateOfBirth,
+                Salary = record.Salary,
+                Gender = record.Gender,
+                Age = record.Age,
+            };
         }
 
-        /// <summary>
-        /// unrealized method.
-        /// </summary>
-        /// <returns>throw new NotImplementedException.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
-            throw new NotImplementedException();
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
+                return new FileCabinetServiceSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
+            }
         }
 
         /// <summary>
@@ -503,12 +514,37 @@ namespace FileCabinetApp
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
         {
-            throw new NotImplementedException();
         }
 
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
-            //snapshot.
+            var record = snapshot.Records;
+            var recordFromFile = snapshot.ListFromFile;
+            for (int i = 0; i < recordFromFile.Count; i++)
+            {
+                 try
+                 {
+                        fileCabinetServiceContext.FirstName = recordFromFile[i].FirstName;
+                        fileCabinetServiceContext.LastName = recordFromFile[i].LastName;
+                        fileCabinetServiceContext.DateOfBirth = recordFromFile[i].DateOfBirth;
+                        fileCabinetServiceContext.Age = recordFromFile[i].Age;
+                        fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
+                        fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
+                        this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
+                        if (record.Any(c => c.Id == recordFromFile[i].Id))
+                        {
+                            this.EditRecord(this.list[i].Id, fileCabinetServiceContext);
+                        }
+                        else
+                        {
+                            this.CreateRecord(fileCabinetServiceContext);
+                        }
+                 }
+                 catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
+                 {
+                      Console.WriteLine($"{recordFromFile[i].Id} : {ex.Message}");
+                 }
+            }
         }
     }
 }

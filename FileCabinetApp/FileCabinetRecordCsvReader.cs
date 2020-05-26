@@ -23,6 +23,7 @@ namespace FileCabinetApp
             IList<FileCabinetRecord> list = new List<FileCabinetRecord>();
             string line;
             string[] values;
+            this.reader.BaseStream.Position = 0;
             while (!this.reader.EndOfStream)
             {
                 FileCabinetRecord record = new FileCabinetRecord();

@@ -73,7 +73,7 @@ namespace FileCabinetApp
                     if (string.Compare(arrayMatchingElements[i], longDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         var parameter = "custom";
-                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
                         {
                             fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                             Console.WriteLine("Using custom validation rules.");
@@ -87,7 +87,7 @@ namespace FileCabinetApp
                     if (string.Compare(arrayMatchingElements[i], longDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         var parameter = "file";
-                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
                         {
                             fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
                             fileCabinetService = new FileCabinetFilesystemService(fileStream);

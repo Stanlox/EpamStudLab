@@ -67,7 +67,7 @@ namespace FileCabinetApp
 
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count != 0 ? this.list.Last().Id + 1 : 1,
+                Id = this.list.Count != 0 ? this.list.Count + 1 : 1,
                 FirstName = objectParameter.FirstName,
                 LastName = objectParameter.LastName,
                 DateOfBirth = objectParameter.DateOfBirth,
@@ -311,6 +311,7 @@ namespace FileCabinetApp
         {
             var record = snapshot.Records;
             var recordFromFile = snapshot.ListFromFile;
+            bool isFind = false;
             if (this.contextStrategy is CustomValidator)
             {
                 for (int i = 0; i < recordFromFile.Count; i++)
@@ -324,18 +325,44 @@ namespace FileCabinetApp
                         fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
                         fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
                         this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
-                        if (record.Any(c => c.Id == recordFromFile[i].Id))
+                        for (int j = 0; j < record.Count; j++)
                         {
-                            this.list[i] = recordFromFile[i];
+                            if (record[j].Id == recordFromFile[i].Id)
+                            {
+                                this.list[j] = recordFromFile[i];
+                                isFind = true;
+                            }
                         }
-                        else
+
+                        if (!isFind)
                         {
+                            recordFromFile[i].Id = this.list.Count + 1;
                             this.list.Add(recordFromFile[i]);
                         }
                     }
                     catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
                     {
                         Console.WriteLine($"{recordFromFile[i].Id} : {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < recordFromFile.Count; i++)
+                {
+                    for (int j = 0; j < record.Count; j++)
+                    {
+                        if (record[j].Id == recordFromFile[i].Id)
+                        {
+                            this.list[j] = recordFromFile[i];
+                            isFind = true;
+                        }
+                    }
+
+                    if (!isFind)
+                    {
+                        recordFromFile[i].Id = this.list.Count + 1;
+                        this.list.Add(recordFromFile[i]);
                     }
                 }
             }
