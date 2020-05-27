@@ -33,12 +33,6 @@ namespace FileCabinetApp
         /// contains method signature.
         /// </summary>
         /// <param name="objectParameter">Input objectParameter.</param>
-        void CheckUsersDataEntry(FileCabinetServiceContext objectParameter);
-
-        /// <summary>
-        /// contains method signature.
-        /// </summary>
-        /// <param name="objectParameter">Input objectParameter.</param>
         /// <returns>New record.</returns>
         int CreateRecord(FileCabinetServiceContext objectParameter);
 
@@ -113,6 +107,10 @@ namespace FileCabinetApp
         /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         FileCabinetServiceSnapshot MakeSnapshot();
 
+        /// <summary>
+        /// Restore data.
+        /// </summary>
+        /// <param name="snapshot">Input object to retrieve a list.</param>
         void Restore(FileCabinetServiceSnapshot snapshot);
     }
 }

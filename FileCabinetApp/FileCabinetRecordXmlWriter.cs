@@ -31,7 +31,7 @@ namespace FileCabinetApp
         {
             foreach (var item in records)
             {
-                this.serializebleCollection.Records.Add(item);
+                this.serializebleCollection.Record.Add(item);
             }
 
             this.serializer.Serialize(this.xmlWriter, this.serializebleCollection);

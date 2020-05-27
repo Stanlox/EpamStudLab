@@ -13,12 +13,12 @@ namespace FileCabinetGenerator
     [XmlRoot(IsNullable = false)]
     [XmlInclude(typeof(FileCabinetRecord))]
     [Serializable]
-    public class SerializeCollectionsOfRecords
+    public class SerializebleCollection
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerializeCollectionsOfRecords"/> class.
+        /// Initializes a new instance of the <see cref="SerializebleCollection"/> class.
         /// </summary>
-        public SerializeCollectionsOfRecords()
+        public SerializebleCollection()
         {
             this.Record = new List<FileCabinetRecord>();
         }
@@ -30,7 +30,7 @@ namespace FileCabinetGenerator
         /// Records.
         /// </value>
         [XmlAttribute]
-        public string Records { get; set; } = "Records";
+        public string Records { get; set; }
 
         /// <summary>
         /// Gets collection for serialize.

@@ -6,6 +6,9 @@ using FileCabinetApp;
 
 namespace FileCabinetGenerator
 {
+    /// <summary>
+    /// Сontains methods for generating values for fields <see cref="FileCabinetRecord"/>.
+    /// </summary>
     public class ServiceGenerator
     {
         private static readonly DateTime MinDate = new DateTime(1950, 1, 1);
@@ -16,6 +19,28 @@ namespace FileCabinetGenerator
         private int randomDay;
         private int index;
 
+        /// <summary>
+        /// Makes a deep copy of the object.
+        /// </summary>
+        /// <param name ="record">Input record.</param>
+        /// <returns>new new cloned object <see cref ="FileCabinetRecord"/>.</returns>
+        public static FileCabinetRecord DeepCopy(FileCabinetRecord record)
+        {
+            return new FileCabinetRecord()
+            {
+                Id = record.Id,
+                FirstName = record.FirstName,
+                LastName = record.LastName,
+                DateOfBirth = record.DateOfBirth,
+                Salary = record.Salary,
+                Gender = record.Gender,
+                Age = record.Age,
+            };
+        }
+
+        /// <summary>
+        /// Generating random data for Gender and DateOfBirth.
+        /// </summary>
         public void GeneratorGenderAndDateOfBirth()
         {
             Random rnd = new Random();
@@ -25,10 +50,15 @@ namespace FileCabinetGenerator
             this.randomDay = rnd.Next(1, DateTime.DaysInMonth(this.randomYear, this.randomMonth));
         }
 
+        /// <summary>
+        /// Generating random data in the interval.
+        /// </summary>
+        /// <param name="valueToStart">Start id.</param>
+        /// <param name="amountOfGeneratedRecords">Count of generated records.</param>
         public void CreateRecordRandomValues(int valueToStart, int amountOfGeneratedRecords)
         {
-            var idLastRecord = amountOfGeneratedRecords + valueToStart;
-            while (valueToStart <= idLastRecord)
+            var lastIdRecord = amountOfGeneratedRecords + valueToStart;
+            while (valueToStart < lastIdRecord)
             {
                 this.GeneratorGenderAndDateOfBirth();
                 var record = new FileCabinetRecord
@@ -47,31 +77,12 @@ namespace FileCabinetGenerator
         }
 
         /// <summary>
-        /// makes a deep copy of the object.
-        /// </summary>
-        /// <param name = "record" > Input record.</param>
-        /// <returns>new new cloned object <see cref = "FileCabinetRecord" />.</ returns >
-        public FileCabinetRecord DeepCopy(FileCabinetRecord record)
-        {
-            return new FileCabinetRecord()
-            {
-                Id = record.Id,
-                FirstName = record.FirstName,
-                LastName = record.LastName,
-                DateOfBirth = record.DateOfBirth,
-                Salary = record.Salary,
-                Gender = record.Gender,
-                Age = record.Age,
-            };
-        }
-
-        /// <summary>
         /// makes a snapshot of an list.
         /// </summary>
         /// <returns>new cloned object type of<see cref="FileCabinetServiceGeneratorSnapshot"/> as an array.</returns>
         public FileCabinetServiceGeneratorSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceGeneratorSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
+            return new FileCabinetServiceGeneratorSnapshot(this.list.Select(x => DeepCopy(x)).ToArray());
         }
     }
 }

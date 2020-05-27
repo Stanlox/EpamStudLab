@@ -247,22 +247,22 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.DeepCopy(FileCabinetApp.FileCabinetRecord)">
             <summary>
-            unrealized method.
+            makes a deep copy of the object.
             </summary>
             <param name="record">Input record.</param>
-            <returns> throw new NotImplementedException.</returns>
+            <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.MakeSnapshot">
             <summary>
-            unrealized method.
+            makes a snapshot of an list.
             </summary>
-            <returns>throw new NotImplementedException.</returns>
+            <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>
-            unrealized method.
+            Restore data.
             </summary>
-            <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <param name="snapshot">Input object to retrieve a list of records.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
@@ -384,6 +384,12 @@
             </summary>
             <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <summary>
+            Restore data.
+            </summary>
+            <param name="snapshot">Input object to retrieve a list of records.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             properties that describe the model.
@@ -431,6 +437,23 @@
             </summary>
             <value>The Salary property gets/sets the value.</value>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvReader">
+            <summary>
+            contains methods for reading records from a file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.#ctor(System.IO.StreamReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvReader"/> class.
+            </summary>
+            <param name="streamReader">Thread.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.ReadAll">
+            <summary>
+            Read all data from a file.
+            </summary>
+            <returns>list of records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
             <summary>
             contains methods for writing records to a file.
@@ -447,6 +470,23 @@
             writes to a record file.
             </summary>
             <param name="fileCabinetRecord">the record of a <see cref="T:FileCabinetApp.FileCabinetRecord"/> type.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlReader">
+            <summary>
+            deserialize with help xmlWriter.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.#ctor(System.Xml.XmlReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlReader"/> class.
+            </summary>
+            <param name="xmlReader">XmlReader.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.ReadAll">
+            <summary>
+            Read all data from xml file.
+            </summary>
+            <returns>list of records.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
             <summary>
@@ -511,6 +551,18 @@
             contains a method for writing data type of <see cref="T:FileCabinetApp.FileCabinetRecord"/> in the format csv.
             </summary>
         </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceSnapshot.Records">
+            <summary>
+            Gets сollection of records from the program.
+            </summary>
+            <value>Сollection of records from the program.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetServiceSnapshot.ListFromFile">
+            <summary>
+            Gets list of records from file.
+            </summary>
+            <value>list of records from file.</value>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(FileCabinetApp.FileCabinetRecord[])">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
@@ -529,6 +581,18 @@
             passing a stream to a class <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> and list of record.
             </summary>
             <param name="sw">stream.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.LoadFromCsv(System.IO.FileStream)">
+            <summary>
+            Load data from csv file.
+            </summary>
+            <param name="filestream">Input filestream.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.LoadFromXml(System.IO.FileStream)">
+            <summary>
+            Load data from xml file.
+            </summary>
+            <param name="filestream">Input filestream.</param>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
@@ -555,12 +619,6 @@
             </summary>
             <param name="lastName">Input lastName.</param>
             <param name="record">Input record.</param>
-        </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
-            <summary>
-            contains method signature.
-            </summary>
-            <param name="objectParameter">Input objectParameter.</param>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
@@ -640,6 +698,12 @@
             </summary>
             <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <summary>
+            Restore data.
+            </summary>
+            <param name="snapshot">Input object to retrieve a list.</param>
+        </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
             class, that contains a single method for checking user input.
@@ -673,6 +737,14 @@
             </summary>
         </member>
         <member name="P:FileCabinetApp.SerializebleCollection.Records">
+            <summary>
+            Gets or sets an attribute.
+            </summary>
+            <value>
+            Records.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.SerializebleCollection.Record">
             <summary>
             Gets collection for serialize.
             </summary>

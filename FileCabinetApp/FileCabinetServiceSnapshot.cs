@@ -19,9 +19,18 @@ namespace FileCabinetApp
         private FileCabinetRecordXmlWriter xmlWriter;
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileCabinetRecordCsvReader fileCabinetRecordCsvReader;
+        private FileCabinetRecordXmlReader fileCabinetRecordXmlReader;
 
+        /// <summary>
+        /// Gets сollection of records from the program.
+        /// </summary>
+        /// <value>Сollection of records from the program.</value>
         public ReadOnlyCollection<FileCabinetRecord> Records { get; }
 
+        /// <summary>
+        /// Gets list of records from file.
+        /// </summary>
+        /// <value>list of records from file.</value>
         public IList<FileCabinetRecord> ListFromFile { get; private set; }
 
         /// <summary>
@@ -63,12 +72,29 @@ namespace FileCabinetApp
             this.xmlWriter.Write(this.list);
         }
 
+        /// <summary>
+        /// Load data from csv file.
+        /// </summary>
+        /// <param name="filestream">Input filestream.</param>
         public void LoadFromCsv(FileStream filestream)
         {
             using (StreamReader streamReader = new StreamReader(filestream.Name, Encoding.ASCII))
             {
                 this.fileCabinetRecordCsvReader = new FileCabinetRecordCsvReader(streamReader);
                 this.ListFromFile = new ReadOnlyCollection<FileCabinetRecord>(this.fileCabinetRecordCsvReader.ReadAll());
+            }
+        }
+
+        /// <summary>
+        /// Load data from xml file.
+        /// </summary>
+        /// <param name="filestream">Input filestream.</param>
+        public void LoadFromXml(FileStream filestream)
+        {
+            using (XmlReader xmlReader = XmlReader.Create(filestream.Name))
+            {
+                this.fileCabinetRecordXmlReader = new FileCabinetRecordXmlReader(xmlReader);
+                this.ListFromFile = new ReadOnlyCollection<FileCabinetRecord>(this.fileCabinetRecordXmlReader.ReadAll());
             }
         }
     }

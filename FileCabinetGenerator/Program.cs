@@ -5,6 +5,9 @@ using FileCabinetApp;
 
 namespace FileCabinetGenerator
 {
+    /// <summary>
+    /// Сlass designed for processing input parameters and generating data.
+    /// </summary>
     public static class Program
     {
         private static bool isRunning = true;

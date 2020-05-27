@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 using System.Xml.Serialization;
+using FileCabinetApp;
 
 namespace FileCabinetApp
 {
     /// <summary>
     /// class for serialize cillection.
     /// </summary>
+    [XmlRoot(IsNullable = false)]
     [XmlInclude(typeof(FileCabinetRecord))]
+    [Serializable]
     public class SerializebleCollection
     {
         /// <summary>
@@ -18,15 +20,23 @@ namespace FileCabinetApp
         /// </summary>
         public SerializebleCollection()
         {
-            this.Records = new List<FileCabinetRecord>();
+            this.Record = new List<FileCabinetRecord>();
         }
+
+        /// <summary>
+        /// Gets or sets an attribute.
+        /// </summary>
+        /// <value>
+        /// Records.
+        /// </value>
+        [XmlAttribute]
+        public string Records { get; set; }
 
         /// <summary>
         /// Gets collection for serialize.
         /// </summary>
         /// <value>The Records property gets/sets the value.</value>
-        [XmlArray("Records")]
-        [XmlArrayItem("Record")]
-        public List<FileCabinetRecord> Records { get; }
+        [XmlElement]
+        public List<FileCabinetRecord> Record { get; }
     }
 }

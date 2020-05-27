@@ -307,6 +307,10 @@ namespace FileCabinetApp
         {
         }
 
+        /// <summary>
+        /// Restore data.
+        /// </summary>
+        /// <param name="snapshot">Input object to retrieve a list of records.</param>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
             var record = snapshot.Records;
@@ -332,13 +336,14 @@ namespace FileCabinetApp
                                 this.list[j] = recordFromFile[i];
                                 isFind = true;
                             }
+                            else if (!isFind)
+                            {
+                                recordFromFile[i].Id = this.list.Count + 1;
+                                this.list.Add(recordFromFile[i]);
+                            }
                         }
 
-                        if (!isFind)
-                        {
-                            recordFromFile[i].Id = this.list.Count + 1;
-                            this.list.Add(recordFromFile[i]);
-                        }
+                        isFind = false;
                     }
                     catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
                     {
@@ -357,13 +362,14 @@ namespace FileCabinetApp
                             this.list[j] = recordFromFile[i];
                             isFind = true;
                         }
+                        else if (!isFind)
+                        {
+                            recordFromFile[i].Id = this.list.Count + 1;
+                            this.list.Add(recordFromFile[i]);
+                        }
                     }
 
-                    if (!isFind)
-                    {
-                        recordFromFile[i].Id = this.list.Count + 1;
-                        this.list.Add(recordFromFile[i]);
-                    }
+                    isFind = false;
                 }
             }
         }

@@ -62,17 +62,22 @@
             </summary>
             <param name="sw">stream.</param>
         </member>
-        <member name="T:FileCabinetGenerator.SerializeCollectionsOfRecords">
+        <member name="T:FileCabinetGenerator.Program">
+            <summary>
+            Сlass designed for processing input parameters and generating data.
+            </summary>
+        </member>
+        <member name="T:FileCabinetGenerator.SerializebleCollection">
             <summary>
             class for serialize cillection.
             </summary>
         </member>
-        <member name="M:FileCabinetGenerator.SerializeCollectionsOfRecords.#ctor">
+        <member name="M:FileCabinetGenerator.SerializebleCollection.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetGenerator.SerializeCollectionsOfRecords"/> class.
+            Initializes a new instance of the <see cref="T:FileCabinetGenerator.SerializebleCollection"/> class.
             </summary>
         </member>
-        <member name="P:FileCabinetGenerator.SerializeCollectionsOfRecords.Records">
+        <member name="P:FileCabinetGenerator.SerializebleCollection.Records">
             <summary>
             Gets or sets an attribute.
             </summary>
@@ -80,13 +85,36 @@
             Records.
             </value>
         </member>
-        <member name="P:FileCabinetGenerator.SerializeCollectionsOfRecords.Record">
+        <member name="P:FileCabinetGenerator.SerializebleCollection.Record">
             <summary>
             Gets collection for serialize.
             </summary>
             <value>The Records property gets/sets the value.</value>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:FileCabinetGenerator.ServiceGenerator.DeepCopy(FileCabinetApp.FileCabinetRecord)" -->
+        <member name="T:FileCabinetGenerator.ServiceGenerator">
+            <summary>
+            Сontains methods for generating values for fields <see cref="T:FileCabinetApp.FileCabinetRecord"/>.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.ServiceGenerator.DeepCopy(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Makes a deep copy of the object.
+            </summary>
+            <param name ="record">Input record.</param>
+            <returns>new new cloned object <see cref ="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetGenerator.ServiceGenerator.GeneratorGenderAndDateOfBirth">
+            <summary>
+            Generating random data for Gender and DateOfBirth.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.ServiceGenerator.CreateRecordRandomValues(System.Int32,System.Int32)">
+            <summary>
+            Generating random data in the interval.
+            </summary>
+            <param name="valueToStart">Start id.</param>
+            <param name="amountOfGeneratedRecords">Count of generated records.</param>
+        </member>
         <member name="M:FileCabinetGenerator.ServiceGenerator.MakeSnapshot">
             <summary>
             makes a snapshot of an list.

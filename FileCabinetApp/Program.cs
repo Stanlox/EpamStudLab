@@ -335,6 +335,8 @@ namespace FileCabinetApp
 
         private static void Import(string parameters)
         {
+            const string xml = "xml";
+            const string csv = "csv";
             try
             {
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -344,11 +346,23 @@ namespace FileCabinetApp
                 if (File.Exists(nameFile))
                 {
                     snapshot = fileCabinetService.MakeSnapshot();
-                    using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
                     {
-                        snapshot.LoadFromCsv(fileStream);
-                        Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
-                        fileCabinetService.Restore(snapshot);
+                        using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            snapshot.LoadFromCsv(fileStream);
+                            Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
+                            fileCabinetService.Restore(snapshot);
+                        }
+                    }
+                    else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            snapshot.LoadFromXml(fileStream);
+                            Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
+                            fileCabinetService.Restore(snapshot);
+                        }
                     }
                 }
                 else
@@ -360,7 +374,6 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Enter the file extension and his name or path");
             }
-
         }
 
         private static void ListRecord(ReadOnlyCollection<FileCabinetRecord> listRecordsInService)

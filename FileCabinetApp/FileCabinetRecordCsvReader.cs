@@ -9,15 +9,26 @@ using System.Text;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// contains methods for reading records from a file.
+    /// </summary>
     public class FileCabinetRecordCsvReader
     {
         private StreamReader reader;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetRecordCsvReader"/> class.
+        /// </summary>
+        /// <param name="streamReader">Thread.</param>
         public FileCabinetRecordCsvReader(StreamReader streamReader)
         {
             this.reader = streamReader;
         }
 
+        /// <summary>
+        /// Read all data from a file.
+        /// </summary>
+        /// <returns>list of records.</returns>
         public IList<FileCabinetRecord> ReadAll()
         {
             IList<FileCabinetRecord> list = new List<FileCabinetRecord>();

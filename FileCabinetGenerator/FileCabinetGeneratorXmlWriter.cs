@@ -13,9 +13,9 @@ namespace FileCabinetGenerator
     /// </summary>
     public class FileCabinetGeneratorXmlWriter
     {
-        private XmlSerializer serializer = new XmlSerializer(typeof(SerializeCollectionsOfRecords));
+        private XmlSerializer serializer = new XmlSerializer(typeof(SerializebleCollection));
         private XmlWriter xmlWriter;
-        private SerializeCollectionsOfRecords serializebleCollection = new SerializeCollectionsOfRecords();
+        private SerializebleCollection serializebleCollection = new SerializebleCollection();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetGeneratorXmlWriter"/> class.

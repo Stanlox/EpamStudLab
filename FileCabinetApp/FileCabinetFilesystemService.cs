@@ -482,7 +482,11 @@ namespace FileCabinetApp
             }
         }
 
-
+        /// <summary>
+        /// makes a deep copy of the object.
+        /// </summary>
+        /// <param name="record">Input record.</param>
+        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             return new FileCabinetRecord()
@@ -497,6 +501,10 @@ namespace FileCabinetApp
             };
         }
 
+        /// <summary>
+        /// makes a snapshot of an list.
+        /// </summary>
+        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -509,13 +517,9 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// unrealized method.
+        /// Restore data.
         /// </summary>
-        /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
-        {
-        }
-
+        /// <param name="snapshot">Input object to retrieve a list of records.</param>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
             var record = snapshot.Records;
