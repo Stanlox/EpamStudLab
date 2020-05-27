@@ -1,24 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using FileCabinetApp;
 
-namespace FileCabinetApp
+namespace FileCabinetGenerator
 {
     /// <summary>
     /// serialize with help xmlWriter.
     /// </summary>
-    public class FileCabinetRecordXmlWriter
+    public class FileCabinetGeneratorXmlWriter
     {
         private XmlSerializer serializer = new XmlSerializer(typeof(SerializebleCollection));
         private XmlWriter xmlWriter;
         private SerializebleCollection serializebleCollection = new SerializebleCollection();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetRecordXmlWriter"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetGeneratorXmlWriter"/> class.
         /// </summary>
         /// <param name="writer">XmlWriter.</param>
-        public FileCabinetRecordXmlWriter(XmlWriter writer)
+        public FileCabinetGeneratorXmlWriter(XmlWriter writer)
         {
             this.xmlWriter = writer;
         }

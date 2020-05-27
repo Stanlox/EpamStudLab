@@ -24,6 +24,7 @@ namespace FileCabinetApp
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
         private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
         private static FileStream fileStream;
+        private static FileCabinetServiceSnapshot snapshot;
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
@@ -34,6 +35,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -46,6 +48,7 @@ namespace FileCabinetApp
             new string[] { "edit", "edit record." },
             new string[] { "find", "find record by a known value." },
             new string[] { "export ", "export data to a file in format csv or xml." },
+            new string[] { "import", "import data from a file." },
         };
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace FileCabinetApp
                     if (string.Compare(arrayMatchingElements[i], longDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         var parameter = "custom";
-                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
                         {
                             fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
                             Console.WriteLine("Using custom validation rules.");
@@ -84,7 +87,7 @@ namespace FileCabinetApp
                     if (string.Compare(arrayMatchingElements[i], longDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         var parameter = "file";
-                        if (string.Equals(validationsRules[i + 1], parameter, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
                         {
                             fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
                             fileCabinetService = new FileCabinetFilesystemService(fileStream);
@@ -280,10 +283,11 @@ namespace FileCabinetApp
             const string csv = "csv";
             try
             {
-                FileCabinetServiceSnapshot snapshot = fileCabinetService.MakeSnapshot();
+                snapshot = fileCabinetService.MakeSnapshot();
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var nameFile = parameterArray.Last();
-                var typeFile = parameterArray[parameterArray.Length - 2];
+                var fullPath = parameterArray.Last();
+                var nameFile = Path.GetFileName(fullPath);
+                var typeFile = parameterArray.First();
                 if (File.Exists(nameFile))
                 {
                     Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
@@ -316,11 +320,54 @@ namespace FileCabinetApp
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    Console.WriteLine($"Export failed: can't open file {nameFile}");
+                    Console.WriteLine($"Export failed: can't open file {fullPath}");
                 }
                 catch (ArgumentException ex)
                 {
                     Console.WriteLine(ex.Message);
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Enter the file extension and his name or path");
+            }
+        }
+
+        private static void Import(string parameters)
+        {
+            const string xml = "xml";
+            const string csv = "csv";
+            try
+            {
+                var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var fullPath = parameterArray.Last();
+                var nameFile = Path.GetFileName(fullPath);
+                var typeFile = parameterArray.First();
+                if (File.Exists(nameFile))
+                {
+                    snapshot = fileCabinetService.MakeSnapshot();
+                    if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            snapshot.LoadFromCsv(fileStream);
+                            Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
+                            fileCabinetService.Restore(snapshot);
+                        }
+                    }
+                    else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            snapshot.LoadFromXml(fileStream);
+                            Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
+                            fileCabinetService.Restore(snapshot);
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Import error: {fullPath} is not exist.");
                 }
             }
             catch (IndexOutOfRangeException)

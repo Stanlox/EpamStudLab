@@ -12,6 +12,7 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetMemoryService : IRecordValidator, IFileCabinetService
     {
+        private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private readonly IRecordValidator contextStrategy;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
@@ -66,7 +67,7 @@ namespace FileCabinetApp
 
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count + 1,
+                Id = this.list.Count != 0 ? this.list.Count + 1 : 1,
                 FirstName = objectParameter.FirstName,
                 LastName = objectParameter.LastName,
                 DateOfBirth = objectParameter.DateOfBirth,
@@ -304,6 +305,73 @@ namespace FileCabinetApp
         /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
         {
+        }
+
+        /// <summary>
+        /// Restore data.
+        /// </summary>
+        /// <param name="snapshot">Input object to retrieve a list of records.</param>
+        public void Restore(FileCabinetServiceSnapshot snapshot)
+        {
+            var record = snapshot.Records;
+            var recordFromFile = snapshot.ListFromFile;
+            bool isFind = false;
+            if (this.contextStrategy is CustomValidator)
+            {
+                for (int i = 0; i < recordFromFile.Count; i++)
+                {
+                    try
+                    {
+                        fileCabinetServiceContext.FirstName = recordFromFile[i].FirstName;
+                        fileCabinetServiceContext.LastName = recordFromFile[i].LastName;
+                        fileCabinetServiceContext.DateOfBirth = recordFromFile[i].DateOfBirth;
+                        fileCabinetServiceContext.Age = recordFromFile[i].Age;
+                        fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
+                        fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
+                        this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
+                        for (int j = 0; j < record.Count; j++)
+                        {
+                            if (record[j].Id == recordFromFile[i].Id)
+                            {
+                                this.list[j] = recordFromFile[i];
+                                isFind = true;
+                            }
+                            else if (!isFind)
+                            {
+                                recordFromFile[i].Id = this.list.Count + 1;
+                                this.list.Add(recordFromFile[i]);
+                            }
+                        }
+
+                        isFind = false;
+                    }
+                    catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
+                    {
+                        Console.WriteLine($"{recordFromFile[i].Id} : {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < recordFromFile.Count; i++)
+                {
+                    for (int j = 0; j < record.Count; j++)
+                    {
+                        if (record[j].Id == recordFromFile[i].Id)
+                        {
+                            this.list[j] = recordFromFile[i];
+                            isFind = true;
+                        }
+                        else if (!isFind)
+                        {
+                            recordFromFile[i].Id = this.list.Count + 1;
+                            this.list.Add(recordFromFile[i]);
+                        }
+                    }
+
+                    isFind = false;
+                }
+            }
         }
     }
 }

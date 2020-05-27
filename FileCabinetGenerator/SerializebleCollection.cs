@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml.Serialization;
 using FileCabinetApp;
 
-namespace FileCabinetApp
+namespace FileCabinetGenerator
 {
     /// <summary>
     /// class for serialize cillection.

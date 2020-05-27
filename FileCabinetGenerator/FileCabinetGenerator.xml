@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FileCabinetGenerator</name>
+    </assembly>
+    <members>
+        <member name="T:FileCabinetGenerator.FileCabinetGeneratorCsvWriter">
+            <summary>
+            contains methods for writing records to a file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.FileCabinetGeneratorCsvWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetGenerator.FileCabinetGeneratorCsvWriter"/> class.
+            </summary>
+            <param name="writer">Thread.</param>
+        </member>
+        <member name="M:FileCabinetGenerator.FileCabinetGeneratorCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            writes to a record file.
+            </summary>
+            <param name="fileCabinetRecord">the record of a <see cref="T:FileCabinetApp.FileCabinetRecord"/> type.</param>
+        </member>
+        <member name="T:FileCabinetGenerator.FileCabinetGeneratorXmlWriter">
+            <summary>
+            serialize with help xmlWriter.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.FileCabinetGeneratorXmlWriter.#ctor(System.Xml.XmlWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetGenerator.FileCabinetGeneratorXmlWriter"/> class.
+            </summary>
+            <param name="writer">XmlWriter.</param>
+        </member>
+        <member name="M:FileCabinetGenerator.FileCabinetGeneratorXmlWriter.Write(System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Serialise records to a file.
+            </summary>
+            <param name="records">list <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</param>
+        </member>
+        <member name="T:FileCabinetGenerator.FileCabinetServiceGeneratorSnapshot">
+            <summary>
+            contains a method for writing data type of <see cref="T:FileCabinetApp.FileCabinetRecord"/> in the format csv.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.FileCabinetServiceGeneratorSnapshot.#ctor(FileCabinetApp.FileCabinetRecord[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetGenerator.FileCabinetServiceGeneratorSnapshot"/> class.
+            initializes a record.
+            </summary>
+            <param name="fileCabinetRecord">Input record.</param>
+        </member>
+        <member name="M:FileCabinetGenerator.FileCabinetServiceGeneratorSnapshot.SaveToCsv(System.IO.StreamWriter)">
+            <summary>
+            passing a stream to a class <see cref="T:FileCabinetGenerator.FileCabinetGeneratorCsvWriter"/> and record.
+            </summary>
+            <param name="sw">stream.</param>
+        </member>
+        <member name="M:FileCabinetGenerator.FileCabinetServiceGeneratorSnapshot.SaveToXml(System.IO.StreamWriter)">
+            <summary>
+            passing a stream to a class <see cref="T:FileCabinetGenerator.FileCabinetGeneratorXmlWriter"/> and list of record.
+            </summary>
+            <param name="sw">stream.</param>
+        </member>
+        <member name="T:FileCabinetGenerator.Program">
+            <summary>
+            Сlass designed for processing input parameters and generating data.
+            </summary>
+        </member>
+        <member name="T:FileCabinetGenerator.SerializebleCollection">
+            <summary>
+            class for serialize cillection.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.SerializebleCollection.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetGenerator.SerializebleCollection"/> class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetGenerator.SerializebleCollection.Records">
+            <summary>
+            Gets or sets an attribute.
+            </summary>
+            <value>
+            Records.
+            </value>
+        </member>
+        <member name="P:FileCabinetGenerator.SerializebleCollection.Record">
+            <summary>
+            Gets collection for serialize.
+            </summary>
+            <value>The Records property gets/sets the value.</value>
+        </member>
+        <member name="T:FileCabinetGenerator.ServiceGenerator">
+            <summary>
+            Сontains methods for generating values for fields <see cref="T:FileCabinetApp.FileCabinetRecord"/>.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.ServiceGenerator.DeepCopy(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Makes a deep copy of the object.
+            </summary>
+            <param name ="record">Input record.</param>
+            <returns>new new cloned object <see cref ="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetGenerator.ServiceGenerator.GeneratorGenderAndDateOfBirth">
+            <summary>
+            Generating random data for Gender and DateOfBirth.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.ServiceGenerator.CreateRecordRandomValues(System.Int32,System.Int32)">
+            <summary>
+            Generating random data in the interval.
+            </summary>
+            <param name="valueToStart">Start id.</param>
+            <param name="amountOfGeneratedRecords">Count of generated records.</param>
+        </member>
+        <member name="M:FileCabinetGenerator.ServiceGenerator.MakeSnapshot">
+            <summary>
+            makes a snapshot of an list.
+            </summary>
+            <returns>new cloned object type of<see cref="T:FileCabinetGenerator.FileCabinetServiceGeneratorSnapshot"/> as an array.</returns>
+        </member>
+    </members>
+</doc>
