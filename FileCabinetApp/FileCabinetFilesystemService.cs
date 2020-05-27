@@ -517,6 +517,15 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Remove record by id.
+        /// </summary>
+        /// <param name="id">Input id record.</param>
+        public void RemoveRecord(int id)
+        {
+
+        }
+
+        /// <summary>
         /// Restore data.
         /// </summary>
         /// <param name="snapshot">Input object to retrieve a list of records.</param>

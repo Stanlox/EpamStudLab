@@ -36,6 +36,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -49,6 +50,7 @@ namespace FileCabinetApp
             new string[] { "find", "find record by a known value." },
             new string[] { "export ", "export data to a file in format csv or xml." },
             new string[] { "import", "import data from a file." },
+            new string[] { "remove", "remove record by id." },
         };
 
         /// <summary>
@@ -373,6 +375,25 @@ namespace FileCabinetApp
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine("Enter the file extension and his name or path");
+            }
+        }
+
+        private static void Remove(string parameters)
+        {
+            try
+            {
+                int recordId = int.Parse(parameters, CultureInfo.CurrentCulture);
+                if (recordId > Program.fileCabinetService.GetStat() || recordId < 1)
+                {
+                    throw new ArgumentException($"Record #{recordId} doesn't exists.");
+                }
+
+                fileCabinetService.RemoveRecord(recordId);
+                Console.WriteLine($"Record #{recordId} is removed");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 

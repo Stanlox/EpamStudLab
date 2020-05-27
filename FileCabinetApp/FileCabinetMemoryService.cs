@@ -300,6 +300,19 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Remove record by id.
+        /// </summary>
+        /// <param name="id">Input id record.</param>
+        public void RemoveRecord(int id)
+        {
+            var removeRecord = this.list.Find(record => record.Id == id);
+            this.list.Remove(removeRecord);
+            this.RemoveRecordInDateOfBirthDictionary(removeRecord);
+            this.RemoveRecordInFirstNameDictionary(removeRecord);
+            this.RemoveRecordInLastNameDictionary(removeRecord);
+        }
+
+        /// <summary>
         /// virtual method for checking the correctness of user input.
         /// </summary>
         /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
