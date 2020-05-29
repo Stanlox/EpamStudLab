@@ -12,14 +12,14 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
-        private const int StringLengthSize = sizeof(long);
-        private const int MaxStringLength = 30;
+        private const int MaxStringLength = 120;
         private const int CharSize = sizeof(char);
         private const int IntSize = sizeof(int);
         private const int ShortSize = sizeof(short);
         private const int DecimalSize = sizeof(decimal);
-        private const int RecordSize = (IntSize * 4) + (StringLengthSize * 2) + DecimalSize + ShortSize + CharSize + (MaxStringLength * 2);
+        private const int RecordSize = (IntSize * 4) + DecimalSize + (ShortSize * 2) + CharSize + (MaxStringLength * 2) - 1;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
+        private static short status = 0;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
@@ -58,23 +58,25 @@ namespace FileCabinetApp
                     while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
                     {
                         FileCabinetRecord record = new FileCabinetRecord();
+                        status = binaryReader.ReadInt16();
                         record.Id = binaryReader.ReadInt32();
-                        record.Age = binaryReader.ReadInt16();
-                        record.Salary = binaryReader.ReadDecimal();
-                        record.Gender = binaryReader.ReadChar();
-                        var firstNameLength = binaryReader.ReadInt32();
                         var firstNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                        var lastNameLength = binaryReader.ReadInt32();
                         var lastNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-
-                        record.FirstName = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameLength);
-                        record.LastName = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameLength);
-
+                        var firstNameLength = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameBuffer.Length);
+                        var lastNameLength = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameBuffer.Length);
+                        record.FirstName = firstNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
+                        record.LastName = lastNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
                         var yearOfBirth = binaryReader.ReadInt32();
                         var monthOfBirth = binaryReader.ReadInt32();
                         var dayOfBirth = binaryReader.ReadInt32();
                         record.DateOfBirth = new DateTime(yearOfBirth, monthOfBirth, dayOfBirth);
-                        recordList.Add(record);
+                        record.Age = binaryReader.ReadInt16();
+                        record.Salary = binaryReader.ReadDecimal();
+                        record.Gender = binaryReader.ReadChar();
+                        if (status != 1)
+                        {
+                            recordList.Add(record);
+                        }
                     }
                 }
             }
@@ -185,7 +187,7 @@ namespace FileCabinetApp
             }
 
             using (var memoryStream = new MemoryStream(bytes))
-            using (var binaryWriter = new BinaryWriter(memoryStream))
+            using (var writer = new BinaryWriter(memoryStream))
             {
                 var firstNameBytes = Encoding.ASCII.GetBytes(record.FirstName);
                 var lastNameBytes = Encoding.ASCII.GetBytes(record.LastName);
@@ -208,18 +210,35 @@ namespace FileCabinetApp
                 Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
                 using (var binarywriter = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
                 {
-                    binarywriter.Seek(0, SeekOrigin.End);
+                    if (this.list.Exists(x => x.Id == record.Id))
+                    {
+                        using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            int offset = (RecordSize * record.Id) - RecordSize;
+                            file.Seek(offset, SeekOrigin.Begin);
+                            byte[] recordBuffer = new byte[sizeof(short)];
+                            file.Read(recordBuffer, 0, recordBuffer.Length);
+                            status = BitConverter.ToInt16(recordBuffer, 0);
+                            binarywriter.Seek(offset, SeekOrigin.Begin);
+                        }
+                    }
+                    else
+                    {
+                        status = 0;
+                        binarywriter.Seek(0, SeekOrigin.End);
+                    }
+
+                    binarywriter.Write(status);
                     binarywriter.Write(this.recordId);
-                    binarywriter.Write(record.Age);
-                    binarywriter.Write(record.Salary);
-                    binarywriter.Write(record.Gender);
-                    binarywriter.Write(firstNameLength);
                     binarywriter.Write(firstNameBuffer);
-                    binarywriter.Write(lastNameLength);
                     binarywriter.Write(lastNameBuffer);
                     binarywriter.Write(record.DateOfBirth.Year);
                     binarywriter.Write(record.DateOfBirth.Month);
                     binarywriter.Write(record.DateOfBirth.Day);
+                    binarywriter.Write(record.Age);
+                    binarywriter.Write(record.Salary);
+                    binarywriter.Write(record.Gender);
+                    binarywriter.Flush();
                 }
             }
         }
@@ -250,47 +269,7 @@ namespace FileCabinetApp
                 updateRecord.FirstName = objectParameter.FirstName;
                 updateRecord.LastName = objectParameter.LastName;
                 updateRecord.DateOfBirth = objectParameter.DateOfBirth;
-                int offset = (RecordSize * id) - RecordSize;
-                var bytes = new byte[RecordSize];
-
-                using (var memoryStream = new MemoryStream(bytes))
-                using (var binaryWriter = new BinaryWriter(memoryStream))
-                {
-                    var firstNameBytes = Encoding.ASCII.GetBytes(updateRecord.FirstName);
-                    var lastNameBytes = Encoding.ASCII.GetBytes(updateRecord.LastName);
-                    var firstNameBuffer = new byte[MaxStringLength];
-                    var lastNameBuffer = new byte[MaxStringLength];
-
-                    var lastNameLength = lastNameBytes.Length;
-                    var firstNameLength = firstNameBytes.Length;
-                    if (firstNameLength > MaxStringLength)
-                    {
-                        firstNameLength = MaxStringLength;
-                    }
-
-                    if (lastNameLength > MaxStringLength)
-                    {
-                        lastNameLength = MaxStringLength;
-                    }
-
-                    Array.Copy(firstNameBytes, 0, firstNameBuffer, 0, firstNameLength);
-                    Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
-                    using (var binarywriter = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
-                    {
-                        binarywriter.Seek(offset, SeekOrigin.Begin);
-                        binarywriter.Write(id);
-                        binarywriter.Write(updateRecord.Age);
-                        binarywriter.Write(updateRecord.Salary);
-                        binarywriter.Write(updateRecord.Gender);
-                        binarywriter.Write(firstNameLength);
-                        binarywriter.Write(firstNameBuffer);
-                        binarywriter.Write(lastNameLength);
-                        binarywriter.Write(lastNameBuffer);
-                        binarywriter.Write(updateRecord.DateOfBirth.Year);
-                        binarywriter.Write(updateRecord.DateOfBirth.Month);
-                        binarywriter.Write(updateRecord.DateOfBirth.Day);
-                    }
-                }
+                this.FileCabinetRecordToBytes(updateRecord);
             }
         }
 
@@ -522,7 +501,21 @@ namespace FileCabinetApp
         /// <param name="id">Input id record.</param>
         public void RemoveRecord(int id)
         {
-
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                status = 1;
+                int offset = (id * RecordSize) - RecordSize;
+                file.Seek(offset, SeekOrigin.Begin);
+                byte[] recordBuffer = new byte[RecordSize];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+                var bytes = BitConverter.GetBytes(status);
+                Array.Copy(bytes, 0, recordBuffer, 0, 2);
+                using (var binarywriter = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
+                {
+                    binarywriter.Seek(offset, SeekOrigin.Begin);
+                    binarywriter.Write(recordBuffer);
+                }
+            }
         }
 
         /// <summary>

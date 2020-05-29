@@ -382,7 +382,13 @@ namespace FileCabinetApp
         {
             try
             {
-                int recordId = int.Parse(parameters, CultureInfo.CurrentCulture);
+                int recordId;
+                bool success = int.TryParse(parameters, out recordId);
+                if (!success)
+                {
+                    Console.WriteLine("Conversion error.");
+                }
+
                 if (recordId > Program.fileCabinetService.GetStat() || recordId < 1)
                 {
                     throw new ArgumentException($"Record #{recordId} doesn't exists.");
