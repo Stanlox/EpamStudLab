@@ -67,7 +67,7 @@ namespace FileCabinetApp
 
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count != 0 ? this.list.Count + 1 : 1,
+                Id = this.list.Count + 1, /*!= 0 ? this.list.Count + 1 : 1*/
                 FirstName = objectParameter.FirstName,
                 LastName = objectParameter.LastName,
                 DateOfBirth = objectParameter.DateOfBirth,
@@ -342,18 +342,20 @@ namespace FileCabinetApp
                         fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
                         fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
                         this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
+
                         for (int j = 0; j < record.Count; j++)
                         {
                             if (record[j].Id == recordFromFile[i].Id)
                             {
-                                this.list[j] = recordFromFile[i];
+                                this.list[i] = recordFromFile[j];
                                 isFind = true;
+                                break;
                             }
-                            else if (!isFind)
-                            {
-                                recordFromFile[i].Id = this.list.Count + 1;
-                                this.list.Add(recordFromFile[i]);
-                            }
+                        }
+
+                        if (!isFind)
+                        {
+                            this.list.Add(recordFromFile[i]);
                         }
 
                         isFind = false;
@@ -372,14 +374,15 @@ namespace FileCabinetApp
                     {
                         if (record[j].Id == recordFromFile[i].Id)
                         {
-                            this.list[j] = recordFromFile[i];
+                            this.list[i] = recordFromFile[j];
                             isFind = true;
+                            break;
                         }
-                        else if (!isFind)
-                        {
-                            recordFromFile[i].Id = this.list.Count + 1;
-                            this.list.Add(recordFromFile[i]);
-                        }
+                    }
+
+                    if (!isFind)
+                    {
+                        this.list.Add(recordFromFile[i]);
                     }
 
                     isFind = false;

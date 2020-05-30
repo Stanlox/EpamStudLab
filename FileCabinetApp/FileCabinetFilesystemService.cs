@@ -570,12 +570,25 @@ namespace FileCabinetApp
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 status = 1;
-                int offset = (id * RecordSize) - RecordSize;
-                file.Seek(offset, SeekOrigin.Begin);
+                int findIdRecord = 0;
+                int offset = 0;
                 byte[] recordBuffer = new byte[RecordSize];
-                file.Read(recordBuffer, 0, recordBuffer.Length);
+                do
+                {
+                    file.Seek(offset, SeekOrigin.Begin);
+                    recordBuffer = new byte[RecordSize];
+                    file.Read(recordBuffer, 0, recordBuffer.Length);
+                    offset = offset + RecordSize;
+                    byte[] bufferStatus = new byte[sizeof(short)];
+                    byte[] recordBufferId = new byte[sizeof(int)];
+                    findIdRecord = BitConverter.ToInt32(recordBuffer, bufferStatus.Length);
+                }
+                while (findIdRecord != id);
+
                 var bytes = BitConverter.GetBytes(status);
                 Array.Copy(bytes, 0, recordBuffer, 0, 2);
+
+                offset = offset - RecordSize;
                 using (var binarywriter = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
                 {
                     binarywriter.Seek(offset, SeekOrigin.Begin);
@@ -592,30 +605,51 @@ namespace FileCabinetApp
         {
             var record = snapshot.Records;
             var recordFromFile = snapshot.ListFromFile;
+            bool isFind = false;
             for (int i = 0; i < recordFromFile.Count; i++)
             {
-                 try
-                 {
-                        fileCabinetServiceContext.FirstName = recordFromFile[i].FirstName;
-                        fileCabinetServiceContext.LastName = recordFromFile[i].LastName;
-                        fileCabinetServiceContext.DateOfBirth = recordFromFile[i].DateOfBirth;
-                        fileCabinetServiceContext.Age = recordFromFile[i].Age;
-                        fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
-                        fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
-                        this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
-                        if (record.Any(c => c.Id == recordFromFile[i].Id))
+                try
+                {
+                    fileCabinetServiceContext.FirstName = recordFromFile[i].FirstName;
+                    fileCabinetServiceContext.LastName = recordFromFile[i].LastName;
+                    fileCabinetServiceContext.DateOfBirth = recordFromFile[i].DateOfBirth;
+                    fileCabinetServiceContext.Age = recordFromFile[i].Age;
+                    fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
+                    fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
+                    this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
+                    for (int j = 0; j < record.Count; j++)
+                    {
+                        if (record[j].Id == recordFromFile[i].Id)
                         {
                             this.EditRecord(this.list[i].Id, fileCabinetServiceContext);
+                            isFind = true;
+                            break;
                         }
-                        else
+                    }
+
+                    if (!isFind)
+                    {
+                        this.recordId = recordFromFile[i].Id;
+                        var fileCabinetRecord = new FileCabinetRecord
                         {
-                            this.CreateRecord(fileCabinetServiceContext);
-                        }
-                 }
-                 catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
-                 {
-                      Console.WriteLine($"{recordFromFile[i].Id} : {ex.Message}");
-                 }
+                            Id = recordFromFile[i].Id,
+                            Age = fileCabinetServiceContext.Age,
+                            Salary = fileCabinetServiceContext.Salary,
+                            Gender = fileCabinetServiceContext.Gender,
+                            FirstName = fileCabinetServiceContext.FirstName,
+                            LastName = fileCabinetServiceContext.LastName,
+                            DateOfBirth = fileCabinetServiceContext.DateOfBirth,
+                        };
+
+                        this.FileCabinetRecordToBytes(fileCabinetRecord);
+                    }
+
+                    isFind = false;
+                }
+                catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
+                {
+                     Console.WriteLine($"{recordFromFile[i].Id} : {ex.Message}");
+                }
             }
         }
     }
