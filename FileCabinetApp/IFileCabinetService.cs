@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace FileCabinetApp
@@ -74,7 +75,7 @@ namespace FileCabinetApp
         /// contains method signature.
         /// </summary>
         /// <returns>Count of record.</returns>
-        int GetStat();
+        Tuple<int, int> GetStat();
 
         /// <summary>
         /// contains method signature.
@@ -112,5 +113,17 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="snapshot">Input object to retrieve a list.</param>
         void Restore(FileCabinetServiceSnapshot snapshot);
+
+        /// <summary>
+        /// Remove record by id.
+        /// </summary>
+        /// <param name="id">Input id record.</param>
+        void RemoveRecord(int id);
+
+        /// <summary>
+        /// Deletes all records marked with the delete bits.
+        /// </summary>
+        /// <returns>tuple number deleted records from total number records.</returns>
+        Tuple<int, int> PurgeRecord();
     }
 }

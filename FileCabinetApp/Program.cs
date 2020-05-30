@@ -36,6 +36,8 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -49,6 +51,8 @@ namespace FileCabinetApp
             new string[] { "find", "find record by a known value." },
             new string[] { "export ", "export data to a file in format csv or xml." },
             new string[] { "import", "import data from a file." },
+            new string[] { "remove", "remove record by id." },
+            new string[] { "purge", "deleting \"voids\" in the data file.", },
         };
 
         /// <summary>
@@ -184,7 +188,8 @@ namespace FileCabinetApp
         private static void Stat(string parameters)
         {
             var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            Console.WriteLine($"{recordsCount.Item1} record(s).");
+            Console.WriteLine($"{recordsCount.Item2} deleted record(s).");
         }
 
         private static void Create(string parameters)
@@ -193,8 +198,7 @@ namespace FileCabinetApp
             try
             {
                 Program.UserData();
-                Program.fileCabinetService.CreateRecord(fileCabinetServiceContext);
-                Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
+                Console.WriteLine($"Record # {Program.fileCabinetService.CreateRecord(fileCabinetServiceContext)} is created.");
             }
             catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
             {
@@ -223,14 +227,21 @@ namespace FileCabinetApp
             try
             {
                 int getNumberEditRecord = int.Parse(parameters, CultureInfo.CurrentCulture);
-                if (getNumberEditRecord > Program.fileCabinetService.GetStat() || getNumberEditRecord < 1)
+                listRecordsInService = Program.fileCabinetService.GetRecords();
+                for (int i = 0; i < listRecordsInService.Count; i++)
                 {
-                    throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
+                    if (!listRecordsInService.Any(x => x.Id == getNumberEditRecord))
+                    {
+                        throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
+                    }
+                    else if (getNumberEditRecord == listRecordsInService[i].Id)
+                    {
+                        Program.UserData();
+                        Program.fileCabinetService.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
+                        Console.WriteLine($"Record #{getNumberEditRecord} is updated.");
+                        break;
+                    }
                 }
-
-                Program.UserData();
-                Program.fileCabinetService.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
-                Console.WriteLine($"Record #{parameters} is updated.");
             }
             catch (ArgumentException ex)
             {
@@ -373,6 +384,52 @@ namespace FileCabinetApp
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine("Enter the file extension and his name or path");
+            }
+        }
+
+        private static void Remove(string parameters)
+        {
+            try
+            {
+                int recordId;
+                bool success = int.TryParse(parameters, out recordId);
+                if (!success)
+                {
+                    Console.WriteLine("Conversion error.");
+                }
+
+                listRecordsInService = Program.fileCabinetService.GetRecords();
+                for (int i = 0; i < listRecordsInService.Count; i++)
+                {
+                    if (recordId == listRecordsInService[i].Id)
+                    {
+                        fileCabinetService.RemoveRecord(recordId);
+                        Console.WriteLine($"Record #{recordId} is removed");
+                        success = true;
+                        break;
+                    }
+                }
+
+                if (!success)
+                {
+                    throw new ArgumentException($"Record #{recordId} doesn't exists.");
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void Purge(string parameters)
+        {
+            try
+            {
+                var tuple = fileCabinetService.PurgeRecord();
+                Console.WriteLine($"Data file processing is completed: {tuple.Item1} of {tuple.Item2} records were purged.");
+            }
+            catch (NotImplementedException)
+            {
             }
         }
 

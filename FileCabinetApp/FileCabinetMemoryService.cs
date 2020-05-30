@@ -67,7 +67,7 @@ namespace FileCabinetApp
 
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count != 0 ? this.list.Count + 1 : 1,
+                Id = this.list.Count + 1, /*!= 0 ? this.list.Count + 1 : 1*/
                 FirstName = objectParameter.FirstName,
                 LastName = objectParameter.LastName,
                 DateOfBirth = objectParameter.DateOfBirth,
@@ -96,9 +96,9 @@ namespace FileCabinetApp
         /// gets statistics by records.
         /// </summary>
         /// <returns>Count of records.</returns>
-        public int GetStat()
+        public Tuple<int, int> GetStat()
         {
-            return this.list.Count;
+            return Tuple.Create(this.list.Count, 0);
         }
 
         /// <summary>
@@ -300,6 +300,19 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Remove record by id.
+        /// </summary>
+        /// <param name="id">Input id record.</param>
+        public void RemoveRecord(int id)
+        {
+            var removeRecord = this.list.Find(record => record.Id == id);
+            this.list.Remove(removeRecord);
+            this.RemoveRecordInDateOfBirthDictionary(removeRecord);
+            this.RemoveRecordInFirstNameDictionary(removeRecord);
+            this.RemoveRecordInLastNameDictionary(removeRecord);
+        }
+
+        /// <summary>
         /// virtual method for checking the correctness of user input.
         /// </summary>
         /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
@@ -329,18 +342,20 @@ namespace FileCabinetApp
                         fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
                         fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
                         this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
+
                         for (int j = 0; j < record.Count; j++)
                         {
                             if (record[j].Id == recordFromFile[i].Id)
                             {
-                                this.list[j] = recordFromFile[i];
+                                this.list[i] = recordFromFile[j];
                                 isFind = true;
+                                break;
                             }
-                            else if (!isFind)
-                            {
-                                recordFromFile[i].Id = this.list.Count + 1;
-                                this.list.Add(recordFromFile[i]);
-                            }
+                        }
+
+                        if (!isFind)
+                        {
+                            this.list.Add(recordFromFile[i]);
                         }
 
                         isFind = false;
@@ -359,19 +374,26 @@ namespace FileCabinetApp
                     {
                         if (record[j].Id == recordFromFile[i].Id)
                         {
-                            this.list[j] = recordFromFile[i];
+                            this.list[i] = recordFromFile[j];
                             isFind = true;
+                            break;
                         }
-                        else if (!isFind)
-                        {
-                            recordFromFile[i].Id = this.list.Count + 1;
-                            this.list.Add(recordFromFile[i]);
-                        }
+                    }
+
+                    if (!isFind)
+                    {
+                        this.list.Add(recordFromFile[i]);
                     }
 
                     isFind = false;
                 }
             }
         }
+
+        /// <summary>
+        /// Unrealized method.
+        /// </summary>
+        /// <returns>tuple number deleted records from total number records.</returns>
+        public Tuple<int, int> PurgeRecord() => throw new NotImplementedException();
     }
 }

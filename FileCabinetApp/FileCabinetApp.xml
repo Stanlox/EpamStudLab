@@ -224,6 +224,12 @@
             </summary>
             <returns>Count of records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.PurgeRecord">
+            <summary>
+            clears records marked with the delete bits.
+            </summary>
+            <returns>tuple number deleted records from total number records.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecordInDateOfBirthDictionary(FileCabinetApp.FileCabinetRecord)">
             <summary>
             remove record in <see cref="F:FileCabinetApp.FileCabinetFilesystemService.dateofbirthDictionary"/>.
@@ -257,6 +263,12 @@
             makes a snapshot of an list.
             </summary>
             <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecord(System.Int32)">
+            <summary>
+            Remove record by id.
+            </summary>
+            <param name="id">Input id record.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>
@@ -378,6 +390,12 @@
             <param name="dateofbirth">Input key.</param>
             <param name="record">Input record.</param>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecord(System.Int32)">
+            <summary>
+            Remove record by id.
+            </summary>
+            <param name="id">Input id record.</param>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.CheckUsersDataEntry(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
             virtual method for checking the correctness of user input.
@@ -389,6 +407,12 @@
             Restore data.
             </summary>
             <param name="snapshot">Input object to retrieve a list of records.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.PurgeRecord">
+            <summary>
+            Unrealized method.
+            </summary>
+            <returns>tuple number deleted records from total number records.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -703,6 +727,18 @@
             Restore data.
             </summary>
             <param name="snapshot">Input object to retrieve a list.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecord(System.Int32)">
+            <summary>
+            Remove record by id.
+            </summary>
+            <param name="id">Input id record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.PurgeRecord">
+            <summary>
+            Deletes all records marked with the delete bits.
+            </summary>
+            <returns>tuple number deleted records from total number records.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
