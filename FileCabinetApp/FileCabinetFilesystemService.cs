@@ -151,10 +151,13 @@ namespace FileCabinetApp
                 }
                 else
                 {
-                    byte[] recordBuffer = new byte[file.Length];
+                    byte[] recordBuffer = new byte[RecordSize];
+                    int offset = (int)file.Length - RecordSize;
+                    file.Seek(offset, SeekOrigin.Begin);
                     file.Read(recordBuffer, 0, recordBuffer.Length);
-                    this.list = BytesToFileCabinetRecord(recordBuffer);
-                    this.recordId = this.list.Max(maxRecordID => maxRecordID.Id) + 1;
+                    byte[] bufferStatus = new byte[sizeof(short)];
+                    byte[] recordBufferId = new byte[sizeof(int)];
+                    this.recordId = BitConverter.ToInt32(recordBuffer, bufferStatus.Length) + 1;
                 }
 
                 var record = new FileCabinetRecord
@@ -216,9 +219,12 @@ namespace FileCabinetApp
                         {
                             int offset = (RecordSize * record.Id) - RecordSize;
                             file.Seek(offset, SeekOrigin.Begin);
-                            byte[] recordBuffer = new byte[sizeof(short)];
-                            file.Read(recordBuffer, 0, recordBuffer.Length);
-                            status = BitConverter.ToInt16(recordBuffer, 0);
+                            byte[] bufferStatus = new byte[sizeof(short)];
+                            byte[] recordBufferId = new byte[sizeof(int)];
+                            file.Read(bufferStatus, 0, bufferStatus.Length);
+                            status = BitConverter.ToInt16(bufferStatus, 0);
+                            file.Read(recordBufferId, 0, recordBufferId.Length);
+                            this.recordId = BitConverter.ToInt32(recordBufferId, 0);
                             binarywriter.Seek(offset, SeekOrigin.Begin);
                         }
                     }
@@ -408,6 +414,77 @@ namespace FileCabinetApp
             }
 
             return this.list.Count;
+        }
+
+        public (int, int) PurgeRecord()
+        {
+            List<FileCabinetRecord> purgeList = new List<FileCabinetRecord>();
+            List<FileCabinetRecord> notPurgeList = new List<FileCabinetRecord>();
+            using (var binaryReader = new BinaryReader(this.fileStream, Encoding.ASCII, true))
+            {
+                binaryReader.BaseStream.Position = 0;
+                while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
+                {
+                     FileCabinetRecord record = new FileCabinetRecord();
+                     status = binaryReader.ReadInt16();
+                     record.Id = binaryReader.ReadInt32();
+                     var firstNameBuffer = binaryReader.ReadBytes(MaxStringLength);
+                     var lastNameBuffer = binaryReader.ReadBytes(MaxStringLength);
+                     var firstNameLength = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameBuffer.Length);
+                     var lastNameLength = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameBuffer.Length);
+                     record.FirstName = firstNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
+                     record.LastName = lastNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
+                     var yearOfBirth = binaryReader.ReadInt32();
+                     var monthOfBirth = binaryReader.ReadInt32();
+                     var dayOfBirth = binaryReader.ReadInt32();
+                     record.DateOfBirth = new DateTime(yearOfBirth, monthOfBirth, dayOfBirth);
+                     record.Age = binaryReader.ReadInt16();
+                     record.Salary = binaryReader.ReadDecimal();
+                     record.Gender = binaryReader.ReadChar();
+                     if (status == 1)
+                     {
+                        purgeList.Add(record);
+                     }
+                     else
+                     {
+                        notPurgeList.Add(record);
+                     }
+                }
+
+                this.fileStream.SetLength(0);
+
+                using (var writer = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
+                {
+                    for (int i = 0; i < notPurgeList.Count; i++)
+                    {
+                        status = 0;
+                        var firstNameBytes = Encoding.ASCII.GetBytes(notPurgeList[i].FirstName);
+                        var lastNameBytes = Encoding.ASCII.GetBytes(notPurgeList[i].LastName);
+                        var firstNameBuffer = new byte[MaxStringLength];
+                        var lastNameBuffer = new byte[MaxStringLength];
+
+                        var lastNameLength = lastNameBytes.Length;
+                        var firstNameLength = firstNameBytes.Length;
+                        Array.Copy(firstNameBytes, 0, firstNameBuffer, 0, firstNameLength);
+                        Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
+
+                        writer.Write(status);
+                        writer.Write(notPurgeList[i].Id);
+                        writer.Write(firstNameBuffer);
+                        writer.Write(lastNameBuffer);
+                        writer.Write(notPurgeList[i].DateOfBirth.Year);
+                        writer.Write(notPurgeList[i].DateOfBirth.Month);
+                        writer.Write(notPurgeList[i].DateOfBirth.Day);
+                        writer.Write(notPurgeList[i].Age);
+                        writer.Write(notPurgeList[i].Salary);
+                        writer.Write(notPurgeList[i].Gender);
+                        writer.Flush();
+                    }
+                }
+
+                var tupleNumberDeletedRecordsFromTotalNumber = (purgeList.Count, purgeList.Count + notPurgeList.Count);
+                return tupleNumberDeletedRecordsFromTotalNumber;
+            }
         }
 
         /// <summary>

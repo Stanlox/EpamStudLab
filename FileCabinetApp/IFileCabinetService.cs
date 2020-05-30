@@ -118,5 +118,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id">Input id record.</param>
         void RemoveRecord(int id);
+
+        /// <summary>
+        /// Deletes all records marked with the delete bits.
+        /// </summary>
+        /// <returns>tuple number deleted records from total number records.</returns>
+        (int, int) PurgeRecord();
     }
 }

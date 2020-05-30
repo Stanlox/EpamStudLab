@@ -386,5 +386,11 @@ namespace FileCabinetApp
                 }
             }
         }
+
+        /// <summary>
+        /// Unrealized method.
+        /// </summary>
+        /// <returns>tuple number deleted records from total number records.</returns>
+        public (int, int) PurgeRecord() => throw new NotImplementedException();
     }
 }
