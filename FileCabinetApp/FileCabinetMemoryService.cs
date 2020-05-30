@@ -96,9 +96,9 @@ namespace FileCabinetApp
         /// gets statistics by records.
         /// </summary>
         /// <returns>Count of records.</returns>
-        public int GetStat()
+        public Tuple<int, int> GetStat()
         {
-            return this.list.Count;
+            return Tuple.Create(this.list.Count, 0);
         }
 
         /// <summary>
@@ -391,6 +391,6 @@ namespace FileCabinetApp
         /// Unrealized method.
         /// </summary>
         /// <returns>tuple number deleted records from total number records.</returns>
-        public (int, int) PurgeRecord() => throw new NotImplementedException();
+        public Tuple<int, int> PurgeRecord() => throw new NotImplementedException();
     }
 }

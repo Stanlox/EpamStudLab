@@ -188,7 +188,8 @@ namespace FileCabinetApp
         private static void Stat(string parameters)
         {
             var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            Console.WriteLine($"{recordsCount.Item1} record(s).");
+            Console.WriteLine($"{recordsCount.Item2} deleted record(s).");
         }
 
         private static void Create(string parameters)
@@ -197,8 +198,7 @@ namespace FileCabinetApp
             try
             {
                 Program.UserData();
-                Program.fileCabinetService.CreateRecord(fileCabinetServiceContext);
-                Console.WriteLine($"Record # {Program.fileCabinetService.GetStat()} is created.");
+                Console.WriteLine($"Record # {Program.fileCabinetService.CreateRecord(fileCabinetServiceContext)} is created.");
             }
             catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
             {
@@ -401,16 +401,18 @@ namespace FileCabinetApp
                 listRecordsInService = Program.fileCabinetService.GetRecords();
                 for (int i = 0; i < listRecordsInService.Count; i++)
                 {
-                    if (!listRecordsInService.Any(x => x.Id == recordId))
-                    {
-                        throw new ArgumentException($"Record #{recordId} doesn't exists.");
-                    }
-                    else if (recordId == listRecordsInService[i].Id)
+                    if (recordId == listRecordsInService[i].Id)
                     {
                         fileCabinetService.RemoveRecord(recordId);
                         Console.WriteLine($"Record #{recordId} is removed");
+                        success = true;
                         break;
                     }
+                }
+
+                if (!success)
+                {
+                    throw new ArgumentException($"Record #{recordId} doesn't exists.");
                 }
             }
             catch (ArgumentException ex)

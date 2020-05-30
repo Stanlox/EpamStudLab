@@ -20,6 +20,7 @@ namespace FileCabinetApp
         private const int RecordSize = (IntSize * 4) + DecimalSize + (ShortSize * 2) + CharSize + (MaxStringLength * 2) - 1;
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private static short status = 0;
+        private static List<FileCabinetRecord> isDeletedlist = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
@@ -55,6 +56,7 @@ namespace FileCabinetApp
             {
                 using (var binaryReader = new BinaryReader(memoryStream))
                 {
+                    binaryReader.BaseStream.Position = 0;
                     while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
                     {
                         FileCabinetRecord record = new FileCabinetRecord();
@@ -73,7 +75,15 @@ namespace FileCabinetApp
                         record.Age = binaryReader.ReadInt16();
                         record.Salary = binaryReader.ReadDecimal();
                         record.Gender = binaryReader.ReadChar();
-                        if (status != 1)
+                        if (status == 1)
+                        {
+                            var findRecord = isDeletedlist.Find(item => item.Id == record.Id);
+                            if (!isDeletedlist.Contains(findRecord))
+                            {
+                                isDeletedlist.Add(record);
+                            }
+                        }
+                        else
                         {
                             recordList.Add(record);
                         }
@@ -404,7 +414,7 @@ namespace FileCabinetApp
         /// gets statistics by records.
         /// </summary>
         /// <returns>Count of records.</returns>
-        public int GetStat()
+        public Tuple<int, int> GetStat()
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
@@ -413,78 +423,57 @@ namespace FileCabinetApp
                 this.list = BytesToFileCabinetRecord(recordBuffer);
             }
 
-            return this.list.Count;
+            return Tuple.Create(this.list.Count, isDeletedlist.Count);
         }
 
-        public (int, int) PurgeRecord()
+        /// <summary>
+        /// clears records marked with the delete bits.
+        /// </summary>
+        /// <returns>tuple number deleted records from total number records.</returns>
+        public Tuple<int, int> PurgeRecord()
         {
-            List<FileCabinetRecord> purgeList = new List<FileCabinetRecord>();
-            List<FileCabinetRecord> notPurgeList = new List<FileCabinetRecord>();
-            using (var binaryReader = new BinaryReader(this.fileStream, Encoding.ASCII, true))
+            using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                binaryReader.BaseStream.Position = 0;
-                while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                {
-                     FileCabinetRecord record = new FileCabinetRecord();
-                     status = binaryReader.ReadInt16();
-                     record.Id = binaryReader.ReadInt32();
-                     var firstNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                     var lastNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                     var firstNameLength = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameBuffer.Length);
-                     var lastNameLength = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameBuffer.Length);
-                     record.FirstName = firstNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
-                     record.LastName = lastNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
-                     var yearOfBirth = binaryReader.ReadInt32();
-                     var monthOfBirth = binaryReader.ReadInt32();
-                     var dayOfBirth = binaryReader.ReadInt32();
-                     record.DateOfBirth = new DateTime(yearOfBirth, monthOfBirth, dayOfBirth);
-                     record.Age = binaryReader.ReadInt16();
-                     record.Salary = binaryReader.ReadDecimal();
-                     record.Gender = binaryReader.ReadChar();
-                     if (status == 1)
-                     {
-                        purgeList.Add(record);
-                     }
-                     else
-                     {
-                        notPurgeList.Add(record);
-                     }
-                }
-
-                this.fileStream.SetLength(0);
-
-                using (var writer = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
-                {
-                    for (int i = 0; i < notPurgeList.Count; i++)
-                    {
-                        status = 0;
-                        var firstNameBytes = Encoding.ASCII.GetBytes(notPurgeList[i].FirstName);
-                        var lastNameBytes = Encoding.ASCII.GetBytes(notPurgeList[i].LastName);
-                        var firstNameBuffer = new byte[MaxStringLength];
-                        var lastNameBuffer = new byte[MaxStringLength];
-
-                        var lastNameLength = lastNameBytes.Length;
-                        var firstNameLength = firstNameBytes.Length;
-                        Array.Copy(firstNameBytes, 0, firstNameBuffer, 0, firstNameLength);
-                        Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
-
-                        writer.Write(status);
-                        writer.Write(notPurgeList[i].Id);
-                        writer.Write(firstNameBuffer);
-                        writer.Write(lastNameBuffer);
-                        writer.Write(notPurgeList[i].DateOfBirth.Year);
-                        writer.Write(notPurgeList[i].DateOfBirth.Month);
-                        writer.Write(notPurgeList[i].DateOfBirth.Day);
-                        writer.Write(notPurgeList[i].Age);
-                        writer.Write(notPurgeList[i].Salary);
-                        writer.Write(notPurgeList[i].Gender);
-                        writer.Flush();
-                    }
-                }
-
-                var tupleNumberDeletedRecordsFromTotalNumber = (purgeList.Count, purgeList.Count + notPurgeList.Count);
-                return tupleNumberDeletedRecordsFromTotalNumber;
+                byte[] recordBuffer = new byte[file.Length];
+                file.Read(recordBuffer, 0, recordBuffer.Length);
+                this.list = BytesToFileCabinetRecord(recordBuffer);
             }
+
+            this.fileStream.SetLength(0);
+
+            using (var writer = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
+            {
+                for (int i = 0; i < this.list.Count; i++)
+                {
+                    status = 0;
+                    var firstNameBytes = Encoding.ASCII.GetBytes(this.list[i].FirstName);
+                    var lastNameBytes = Encoding.ASCII.GetBytes(this.list[i].LastName);
+                    var firstNameBuffer = new byte[MaxStringLength];
+                    var lastNameBuffer = new byte[MaxStringLength];
+
+                    var lastNameLength = lastNameBytes.Length;
+                    var firstNameLength = firstNameBytes.Length;
+                    Array.Copy(firstNameBytes, 0, firstNameBuffer, 0, firstNameLength);
+                    Array.Copy(lastNameBytes, 0, lastNameBuffer, 0, lastNameLength);
+
+                    writer.Write(status);
+                    writer.Write(this.list[i].Id);
+                    writer.Write(firstNameBuffer);
+                    writer.Write(lastNameBuffer);
+                    writer.Write(this.list[i].DateOfBirth.Year);
+                    writer.Write(this.list[i].DateOfBirth.Month);
+                    writer.Write(this.list[i].DateOfBirth.Day);
+                    writer.Write(this.list[i].Age);
+                    writer.Write(this.list[i].Salary);
+                    writer.Write(this.list[i].Gender);
+                    writer.Flush();
+                }
+            }
+
+            var countRecordisDeletedlist = isDeletedlist.Count;
+            isDeletedlist.Clear();
+
+            return Tuple.Create(countRecordisDeletedlist, this.list.Count + countRecordisDeletedlist);
         }
 
         /// <summary>

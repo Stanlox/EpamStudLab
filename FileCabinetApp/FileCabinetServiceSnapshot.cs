@@ -38,6 +38,7 @@ namespace FileCabinetApp
         /// initializes a record.
         /// </summary>
         /// <param name="fileCabinetRecord">Input record.</param>
+        #pragma warning disable SA1201
         public FileCabinetServiceSnapshot(FileCabinetRecord[] fileCabinetRecord)
         {
             this.records = fileCabinetRecord;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace FileCabinetApp
@@ -74,7 +75,7 @@ namespace FileCabinetApp
         /// contains method signature.
         /// </summary>
         /// <returns>Count of record.</returns>
-        int GetStat();
+        Tuple<int, int> GetStat();
 
         /// <summary>
         /// contains method signature.
@@ -123,6 +124,6 @@ namespace FileCabinetApp
         /// Deletes all records marked with the delete bits.
         /// </summary>
         /// <returns>tuple number deleted records from total number records.</returns>
-        (int, int) PurgeRecord();
+        Tuple<int, int> PurgeRecord();
     }
 }
