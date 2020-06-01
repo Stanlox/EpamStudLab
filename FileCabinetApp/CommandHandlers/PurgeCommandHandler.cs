@@ -9,6 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class PurgeCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PurgeCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public PurgeCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -24,7 +35,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "purge";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                Purge(request.Parameters);
+                this.Purge(request.Parameters);
                 return null;
             }
             else
@@ -33,11 +44,11 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Purge(string parameters)
+        private void Purge(string parameters)
         {
             try
             {
-                var tuple = Program.fileCabinetService.PurgeRecord();
+                var tuple = this.service.PurgeRecord();
                 Console.WriteLine($"Data file processing is completed: {tuple.Item1} of {tuple.Item2} records were purged.");
             }
             catch (NotImplementedException)

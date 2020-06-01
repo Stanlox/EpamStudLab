@@ -12,6 +12,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public FindCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -27,7 +38,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "find";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                Find(request.Parameters);
+                this.Find(request.Parameters);
                 return null;
             }
             else
@@ -57,7 +68,7 @@ namespace FileCabinetApp.CommandHandlers
             return builder.ToString();
         }
 
-        private static void Find(string parameters)
+        private void Find(string parameters)
         {
             try
             {
@@ -67,16 +78,16 @@ namespace FileCabinetApp.CommandHandlers
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
                     case "firstname":
-                        Program.listRecordsInService = Program.fileCabinetService.FindByFirstName(parameterValue);
-                        ListRecord(Program.listRecordsInService);
+                        Program.listRecordsInService = this.service.FindByFirstName(parameterValue);
+                        this.ListRecord(Program.listRecordsInService);
                         break;
                     case "lastname":
-                        Program.listRecordsInService = Program.fileCabinetService.FindByLastName(parameterValue);
-                        ListRecord(Program.listRecordsInService);
+                        Program.listRecordsInService = this.service.FindByLastName(parameterValue);
+                        this.ListRecord(Program.listRecordsInService);
                         break;
                     case "dateofbirth":
-                        Program.listRecordsInService = Program.fileCabinetService.FindByDateOfBirth(parameterValue);
-                        ListRecord(Program.listRecordsInService);
+                        Program.listRecordsInService = this.service.FindByDateOfBirth(parameterValue);
+                        this.ListRecord(Program.listRecordsInService);
                         break;
                 }
             }
@@ -93,7 +104,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <summary>
         /// string representation of the collection.
         /// </summary>
-        private static void ListRecord(ReadOnlyCollection<FileCabinetRecord> listRecordsInService)
+        private void ListRecord(ReadOnlyCollection<FileCabinetRecord> listRecordsInService)
         {
             for (int i = 0; i < listRecordsInService.Count; i++)
             {

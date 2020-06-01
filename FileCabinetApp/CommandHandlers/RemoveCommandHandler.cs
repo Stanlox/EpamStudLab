@@ -9,6 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class RemoveCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RemoveCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public RemoveCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -24,7 +35,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "remove";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                Remove(request.Parameters);
+                this.Remove(request.Parameters);
                 return null;
             }
             else
@@ -33,7 +44,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Remove(string parameters)
+        private void Remove(string parameters)
         {
             try
             {
@@ -44,12 +55,12 @@ namespace FileCabinetApp.CommandHandlers
                     Console.WriteLine("Conversion error.");
                 }
 
-                Program.listRecordsInService = Program.fileCabinetService.GetRecords();
+                Program.listRecordsInService = this.service.GetRecords();
                 for (int i = 0; i < Program.listRecordsInService.Count; i++)
                 {
                     if (recordId == Program.listRecordsInService[i].Id)
                     {
-                        Program.fileCabinetService.RemoveRecord(recordId);
+                        this.service.RemoveRecord(recordId);
                         Console.WriteLine($"Record #{recordId} is removed");
                         success = true;
                         break;

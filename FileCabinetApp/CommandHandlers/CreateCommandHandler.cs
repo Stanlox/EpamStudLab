@@ -9,6 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public CreateCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -24,53 +35,13 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "create";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-               Create(request.Parameters);
-               return null;
+                this.Create(request.Parameters);
+                return null;
             }
             else
             {
                 return base.Handle(request);
             }
-        }
-
-        private static void Create(string parameters)
-        {
-            string repeatIfDataIsNotCorrect = parameters;
-            try
-            {
-                UserData();
-                Console.WriteLine($"Record # {Program.fileCabinetService.CreateRecord(Program.fileCabinetServiceContext)} is created.");
-            }
-            catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
-            {
-                Console.WriteLine(ex.Message);
-                Program.isCorrect = false;
-            }
-            finally
-            {
-                if (!Program.isCorrect)
-                {
-                    Console.WriteLine("Your data is incorrect, please try again");
-                    Program.isCorrect = true;
-                    Create(repeatIfDataIsNotCorrect);
-                }
-            }
-        }
-
-        private static void UserData()
-        {
-            Console.Write("First name: ");
-            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
-            Console.Write("Last Name: ");
-            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
-            Console.Write("Date of birth: ");
-            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
-            Console.Write("Gender (M/W): ");
-            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
-            Console.Write("Age: ");
-            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
-            Console.Write("Salary: ");
-            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
         }
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
@@ -247,6 +218,46 @@ namespace FileCabinetApp.CommandHandlers
             {
                 return new Tuple<bool, string>(true, string.Empty);
             }
+        }
+
+        private void Create(string parameters)
+        {
+            string repeatIfDataIsNotCorrect = parameters;
+            try
+            {
+                this.UserData();
+                Console.WriteLine($"Record # {this.service.CreateRecord(Program.fileCabinetServiceContext)} is created.");
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
+            {
+                Console.WriteLine(ex.Message);
+                Program.isCorrect = false;
+            }
+            finally
+            {
+                if (!Program.isCorrect)
+                {
+                    Console.WriteLine("Your data is incorrect, please try again");
+                    Program.isCorrect = true;
+                    this.Create(repeatIfDataIsNotCorrect);
+                }
+            }
+        }
+
+        private void UserData()
+        {
+            Console.Write("First name: ");
+            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
+            Console.Write("Last Name: ");
+            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
+            Console.Write("Date of birth: ");
+            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
+            Console.Write("Gender (M/W): ");
+            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
+            Console.Write("Age: ");
+            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
+            Console.Write("Salary: ");
+            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
         }
     }
 }

@@ -12,6 +12,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ExportCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public ExportCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -27,70 +38,12 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "export";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                Export(request.Parameters);
+                this.Export(request.Parameters);
                 return null;
             }
             else
             {
                 return base.Handle(request);
-            }
-        }
-
-        private static void Export(string parameters)
-        {
-            bool rewrite = false;
-            var noRewrite = 'n';
-            const string xml = "xml";
-            const string csv = "csv";
-            try
-            {
-                Program.snapshot = Program.fileCabinetService.MakeSnapshot();
-                var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                var fullPath = parameterArray.Last();
-                var nameFile = Path.GetFileName(fullPath);
-                var typeFile = parameterArray.First();
-                if (File.Exists(nameFile))
-                {
-                    Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
-                    var rewriteOrNo = ReadInput(RewriteConverter, RewriteValidator);
-                    char.ToLower(rewriteOrNo, CultureInfo.InvariantCulture);
-                    if (char.Equals(rewriteOrNo, noRewrite))
-                    {
-                        rewrite = true;
-                    }
-                }
-
-                try
-                {
-                    if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
-                    {
-                        using (var sw = new StreamWriter(nameFile, rewrite))
-                        {
-                            Program.snapshot.SaveToCsv(sw);
-                            Console.WriteLine($"All records are exported to file {nameFile}");
-                        }
-                    }
-                    else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
-                    {
-                        using (var sw = new StreamWriter(nameFile, rewrite))
-                        {
-                            Program.snapshot.SaveToXml(sw);
-                            Console.WriteLine($"All records are exported to file {nameFile}");
-                        }
-                    }
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    Console.WriteLine($"Export failed: can't open file {fullPath}");
-                }
-                catch (ArgumentException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Console.WriteLine("Enter the file extension and his name or path");
             }
         }
 
@@ -150,6 +103,64 @@ namespace FileCabinetApp.CommandHandlers
             else
             {
                 return new Tuple<bool, string, char>(false, "The symbol is not of the char type", char.MinValue);
+            }
+        }
+
+        private void Export(string parameters)
+        {
+            bool rewrite = false;
+            var noRewrite = 'n';
+            const string xml = "xml";
+            const string csv = "csv";
+            try
+            {
+                Program.snapshot = this.service.MakeSnapshot();
+                var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var fullPath = parameterArray.Last();
+                var nameFile = Path.GetFileName(fullPath);
+                var typeFile = parameterArray.First();
+                if (File.Exists(nameFile))
+                {
+                    Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
+                    var rewriteOrNo = ReadInput(RewriteConverter, RewriteValidator);
+                    char.ToLower(rewriteOrNo, CultureInfo.InvariantCulture);
+                    if (char.Equals(rewriteOrNo, noRewrite))
+                    {
+                        rewrite = true;
+                    }
+                }
+
+                try
+                {
+                    if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        {
+                            Program.snapshot.SaveToCsv(sw);
+                            Console.WriteLine($"All records are exported to file {nameFile}");
+                        }
+                    }
+                    else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        {
+                            Program.snapshot.SaveToXml(sw);
+                            Console.WriteLine($"All records are exported to file {nameFile}");
+                        }
+                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Console.WriteLine($"Export failed: can't open file {fullPath}");
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Enter the file extension and his name or path");
             }
         }
     }

@@ -11,6 +11,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class EditCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public EditCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -26,60 +37,13 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "edit";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                Edit(request.Parameters);
+                this.Edit(request.Parameters);
                 return null;
             }
             else
             {
                 return base.Handle(request);
             }
-        }
-
-        private static void Edit(string parameters)
-        {
-            try
-            {
-                int getNumberEditRecord = int.Parse(parameters, CultureInfo.CurrentCulture);
-                Program.listRecordsInService = Program.fileCabinetService.GetRecords();
-                for (int i = 0; i < Program.listRecordsInService.Count; i++)
-                {
-                    if (!Program.listRecordsInService.Any(x => x.Id == getNumberEditRecord))
-                    {
-                        throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
-                    }
-                    else if (getNumberEditRecord == Program.listRecordsInService[i].Id)
-                    {
-                        UserData();
-                        Program.fileCabinetService.EditRecord(getNumberEditRecord, Program.fileCabinetServiceContext);
-                        Console.WriteLine($"Record #{getNumberEditRecord} is updated.");
-                        break;
-                    }
-                }
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (FormatException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        private static void UserData()
-        {
-            Console.Write("First name: ");
-            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
-            Console.Write("Last Name: ");
-            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
-            Console.Write("Date of birth: ");
-            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
-            Console.Write("Gender (M/W): ");
-            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
-            Console.Write("Age: ");
-            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
-            Console.Write("Salary: ");
-            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
         }
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
@@ -256,6 +220,53 @@ namespace FileCabinetApp.CommandHandlers
             {
                 return new Tuple<bool, string>(true, string.Empty);
             }
+        }
+
+        private void Edit(string parameters)
+        {
+            try
+            {
+                int getNumberEditRecord = int.Parse(parameters, CultureInfo.CurrentCulture);
+                Program.listRecordsInService = this.service.GetRecords();
+                for (int i = 0; i < Program.listRecordsInService.Count; i++)
+                {
+                    if (!Program.listRecordsInService.Any(x => x.Id == getNumberEditRecord))
+                    {
+                        throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
+                    }
+                    else if (getNumberEditRecord == Program.listRecordsInService[i].Id)
+                    {
+                        this.UserData();
+                        this.service.EditRecord(getNumberEditRecord, Program.fileCabinetServiceContext);
+                        Console.WriteLine($"Record #{getNumberEditRecord} is updated.");
+                        break;
+                    }
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void UserData()
+        {
+            Console.Write("First name: ");
+            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
+            Console.Write("Last Name: ");
+            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
+            Console.Write("Date of birth: ");
+            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
+            Console.Write("Gender (M/W): ");
+            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
+            Console.Write("Age: ");
+            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
+            Console.Write("Salary: ");
+            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
         }
     }
 }

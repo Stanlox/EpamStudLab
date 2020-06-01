@@ -11,6 +11,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ListCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public ListCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -26,7 +37,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "list";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                List(request.Parameters);
+                this.List(request.Parameters);
                 return null;
             }
             else
@@ -54,9 +65,9 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void List(string parameters)
+        private void List(string parameters)
         {
-            Program.listRecordsInService = Program.fileCabinetService.GetRecords();
+            Program.listRecordsInService = this.service.GetRecords();
             ListRecord(Program.listRecordsInService);
         }
     }

@@ -11,6 +11,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ImportCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Input service.</param>
+        public ImportCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -26,7 +37,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "import";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                Import(request.Parameters);
+                this.Import(request.Parameters);
                 return null;
             }
             else
@@ -35,7 +46,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Import(string parameters)
+        private void Import(string parameters)
         {
             const string xml = "xml";
             const string csv = "csv";
@@ -47,14 +58,14 @@ namespace FileCabinetApp.CommandHandlers
                 var typeFile = parameterArray.First();
                 if (File.Exists(nameFile))
                 {
-                    Program.snapshot = Program.fileCabinetService.MakeSnapshot();
+                    Program.snapshot = this.service.MakeSnapshot();
                     if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
                     {
                         using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
                             Program.snapshot.LoadFromCsv(fileStream);
                             Console.WriteLine($"{Program.snapshot.ListFromFile.Count} records were imported from {fullPath}");
-                            Program.fileCabinetService.Restore(Program.snapshot);
+                            this.service.Restore(Program.snapshot);
                         }
                     }
                     else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
@@ -63,7 +74,7 @@ namespace FileCabinetApp.CommandHandlers
                         {
                             Program.snapshot.LoadFromXml(fileStream);
                             Console.WriteLine($"{Program.snapshot.ListFromFile.Count} records were imported from {fullPath}");
-                            Program.fileCabinetService.Restore(Program.snapshot);
+                            this.service.Restore(Program.snapshot);
                         }
                     }
                 }

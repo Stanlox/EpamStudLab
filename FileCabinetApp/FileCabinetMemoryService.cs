@@ -67,7 +67,7 @@ namespace FileCabinetApp
 
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count + 1, /*!= 0 ? this.list.Count + 1 : 1*/
+                Id = this.list.Count + 1,
                 FirstName = objectParameter.FirstName,
                 LastName = objectParameter.LastName,
                 DateOfBirth = objectParameter.DateOfBirth,
