@@ -5,7 +5,7 @@ using System.Text;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// class, that contains a single method for checking user input.
+    /// interface, that contains a single method for checking user input.
     /// </summary>
     public interface IRecordValidator
     {

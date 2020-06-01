@@ -12,7 +12,7 @@ namespace FileCabinetApp
     /// <summary>
     /// A class that is intended for processing user data and further processing it.
     /// </summary>
-    public class Program : ICommandHandler
+    public static class Program
     {
         private const string DeveloperName = "Bandaruk Maxim";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
@@ -126,20 +126,32 @@ namespace FileCabinetApp
             while (isRunning);
         }
 
-        private static CommandHandler CreateCommandHandlers()
+        private static CommandHandlerBase CreateCommandHandlers()
         {
-            var commandHandler = new CommandHandler();
-            return commandHandler;
-        }
-
-        ICommandHandler ICommandHandler.SetNext(ICommandHandler handler)
-        {
-            throw new NotImplementedException();
-        }
-
-        object ICommandHandler.Handle(AppCommandRequest request)
-        {
-            throw new NotImplementedException();
+            var helpHandler = new HelpCommandHandler();
+            var createHandler = new CreateCommandHandler();
+            var editHandler = new EditCommandHandler();
+            var exitHandler = new ExitCommandHandler();
+            var exportHandler = new ExportCommandHandler();
+            var findHandler = new FindCommandHandler();
+            var importHandler = new ImportCommandHandler();
+            var purgeHandler = new PurgeCommandHandler();
+            var removeHandler = new RemoveCommandHandler();
+            var statHandler = new StatCommandHandler();
+            var listHandler = new ListCommandHandler();
+            var printMissedHandler = new PrintMissedCommandHandler();
+            helpHandler.SetNext(createHandler);
+            createHandler.SetNext(editHandler);
+            editHandler.SetNext(exitHandler);
+            exitHandler.SetNext(exportHandler);
+            exportHandler.SetNext(findHandler);
+            findHandler.SetNext(importHandler);
+            importHandler.SetNext(purgeHandler);
+            purgeHandler.SetNext(removeHandler);
+            removeHandler.SetNext(statHandler);
+            statHandler.SetNext(listHandler);
+            listHandler.SetNext(printMissedHandler);
+            return helpHandler;
         }
     }
 }

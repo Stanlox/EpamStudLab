@@ -4,11 +4,22 @@ using System.Text;
 
 namespace FileCabinetApp.CommandHandlers
 {
+    /// <summary>
+    /// interface implementation.
+    /// </summary>
     public abstract class CommandHandlerBase : ICommandHandler
     {
+        /// <summary>
+        /// fields for setting the following handle.
+        /// </summary>
         private ICommandHandler nextHandler;
 
-        public virtual object Handle(AppCommandRequest request)
+        /// <summary>
+        /// abstract method for executing the query.
+        /// </summary>
+        /// <param name="request">Input request.</param>
+        /// <returns>AppCommandRequest instance.</returns>
+        public virtual AppCommandRequest Handle(AppCommandRequest request)
         {
             if (this.nextHandler != null)
             {
@@ -20,6 +31,11 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
+        /// <summary>
+        /// set the next handler in the chain.
+        /// </summary>
+        /// <param name="handler">Input handler.</param>
+        /// <returns>Current handler.</returns>
         public ICommandHandler SetNext(ICommandHandler handler)
         {
             this.nextHandler = handler;
