@@ -12,13 +12,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
+        private IRecordPrinter printer;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Input service.</param>
-        public FindCommandHandler(IFileCabinetService service)
+        /// <param name="printer">Input printer.</param>
+        public FindCommandHandler(IFileCabinetService service, DefaultRecordPrinter printer)
             : base(service)
         {
+            this.printer = printer;
         }
 
         /// <summary>
@@ -45,27 +49,6 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        /// <summary>
-        /// override ToString().
-        /// </summary>
-        /// <returns>string representation of an object.</returns>
-        public override string ToString()
-        {
-            var builder = new StringBuilder();
-            for (int i = 0; i < Program.listRecordsInService.Count; i++)
-            {
-                builder.Append($"{Program.listRecordsInService[i].Id}, ");
-                builder.Append($"{Program.listRecordsInService[i].FirstName}, ");
-                builder.Append($"{Program.listRecordsInService[i].LastName}, ");
-                builder.Append($"{Program.listRecordsInService[i].DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
-                builder.Append($"{Program.listRecordsInService[i].Gender}, ");
-                builder.Append($"{Program.listRecordsInService[i].Age}, ");
-                builder.Append($"{Program.listRecordsInService[i].Salary}");
-            }
-
-            return builder.ToString();
-        }
-
         private void Find(string parameters)
         {
             try
@@ -77,15 +60,15 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     case "firstname":
                         Program.listRecordsInService = this.service.FindByFirstName(parameterValue);
-                        this.ListRecord(Program.listRecordsInService);
+                        this.printer.Print(Program.listRecordsInService);
                         break;
                     case "lastname":
                         Program.listRecordsInService = this.service.FindByLastName(parameterValue);
-                        this.ListRecord(Program.listRecordsInService);
+                        this.printer.Print(Program.listRecordsInService);
                         break;
                     case "dateofbirth":
                         Program.listRecordsInService = this.service.FindByDateOfBirth(parameterValue);
-                        this.ListRecord(Program.listRecordsInService);
+                        this.printer.Print(Program.listRecordsInService);
                         break;
                 }
             }
@@ -96,25 +79,6 @@ namespace FileCabinetApp.CommandHandlers
             catch (ArgumentException ex)
             {
                 Console.WriteLine(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// string representation of the collection.
-        /// </summary>
-        private void ListRecord(ReadOnlyCollection<FileCabinetRecord> listRecordsInService)
-        {
-            for (int i = 0; i < listRecordsInService.Count; i++)
-            {
-                var builder = new StringBuilder();
-                builder.Append($"{listRecordsInService[i].Id}, ");
-                builder.Append($"{listRecordsInService[i].FirstName}, ");
-                builder.Append($"{listRecordsInService[i].LastName}, ");
-                builder.Append($"{listRecordsInService[i].DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
-                builder.Append($"{listRecordsInService[i].Gender}, ");
-                builder.Append($"{listRecordsInService[i].Age}, ");
-                builder.Append($"{listRecordsInService[i].Salary}");
-                Console.WriteLine("#" + builder.ToString());
             }
         }
     }

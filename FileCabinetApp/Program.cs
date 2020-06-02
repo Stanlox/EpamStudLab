@@ -133,30 +133,31 @@ namespace FileCabinetApp
 
         private static CommandHandlerBase CreateCommandHandlers(IFileCabinetService service)
         {
-            var helpHandler = new HelpCommandHandler();
-            var createHandler = new CreateCommandHandler(service);
-            var editHandler = new EditCommandHandler(service);
-            var exitHandler = new ExitCommandHandler(ChangeRunning);
-            var exportHandler = new ExportCommandHandler(service);
-            var findHandler = new FindCommandHandler(service);
-            var importHandler = new ImportCommandHandler(service);
-            var purgeHandler = new PurgeCommandHandler(service);
-            var removeHandler = new RemoveCommandHandler(service);
-            var statHandler = new StatCommandHandler(service);
-            var listHandler = new ListCommandHandler(service);
-            var printMissedHandler = new PrintMissedCommandHandler();
-            helpHandler.SetNext(createHandler);
-            createHandler.SetNext(editHandler);
-            editHandler.SetNext(exitHandler);
-            exitHandler.SetNext(exportHandler);
-            exportHandler.SetNext(findHandler);
-            findHandler.SetNext(importHandler);
-            importHandler.SetNext(purgeHandler);
-            purgeHandler.SetNext(removeHandler);
-            removeHandler.SetNext(statHandler);
-            statHandler.SetNext(listHandler);
-            listHandler.SetNext(printMissedHandler);
-            return helpHandler;
+            var recordPrinter = new DefaultRecordPrinter();
+            var listCommandHandler = new ListCommandHandler(Program.fileCabinetService, recordPrinter);
+            var findCommandHandler = new FindCommandHandler(Program.fileCabinetService, recordPrinter);
+            var helpCommandHandler = new HelpCommandHandler();
+            var createCommandHandler = new CreateCommandHandler(service);
+            var editCommandHandler = new EditCommandHandler(service);
+            var exitCommandHandler = new ExitCommandHandler(ChangeRunning);
+            var exportCommandHandler = new ExportCommandHandler(service);
+            var importCommandHandler = new ImportCommandHandler(service);
+            var purgeCommandHandler = new PurgeCommandHandler(service);
+            var removeCommandHandler = new RemoveCommandHandler(service);
+            var statCommandHandler = new StatCommandHandler(service);
+            var printMissedCommandHandler = new PrintMissedCommandHandler();
+            helpCommandHandler.SetNext(createCommandHandler);
+            createCommandHandler.SetNext(editCommandHandler);
+            editCommandHandler.SetNext(exitCommandHandler);
+            exitCommandHandler.SetNext(exportCommandHandler);
+            exportCommandHandler.SetNext(findCommandHandler);
+            findCommandHandler.SetNext(importCommandHandler);
+            importCommandHandler.SetNext(purgeCommandHandler);
+            purgeCommandHandler.SetNext(removeCommandHandler);
+            removeCommandHandler.SetNext(statCommandHandler);
+            statCommandHandler.SetNext(listCommandHandler);
+            listCommandHandler.SetNext(printMissedCommandHandler);
+            return helpCommandHandler;
         }
     }
 }
