@@ -9,6 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ExitCommandHandler : CommandHandlerBase
     {
+        private Action<bool> isRunning;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExitCommandHandler"/> class.
+        /// </summary>
+        /// <param name="isRunning">Input action.</param>
+        public ExitCommandHandler(Action<bool> isRunning)
+        {
+            this.isRunning = isRunning;
+        }
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -24,7 +35,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "exit";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                Exit(request.Parameters);
+                this.Exit(request.Parameters);
                 return null;
             }
             else
@@ -33,7 +44,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void Exit(string parameters)
+        private void Exit(string parameters)
         {
             if (Program.fileStream != null)
             {
@@ -41,7 +52,7 @@ namespace FileCabinetApp.CommandHandlers
             }
 
             Console.WriteLine("Exiting an application...");
-            Program.isRunning = false;
+            this.isRunning(false);
         }
     }
 }

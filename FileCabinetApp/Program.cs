@@ -20,12 +20,12 @@ namespace FileCabinetApp
         public const int DescriptionHelpIndex = 1;
         public const int ExplanationHelpIndex = 2;
         public static bool isCorrect = true;
-        public static bool isRunning = true;
+        private static bool isRunning = true;
         public static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
         public static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
         public static FileStream fileStream;
-        public static FileCabinetServiceSnapshot snapshot;
+        public static FileCabinetServiceSnapshot snapshot; 
 
         public static string[][] helpMessages = new string[][]
         {
@@ -126,12 +126,17 @@ namespace FileCabinetApp
             while (isRunning);
         }
 
+        private static void ChangeRunning(bool isRun)
+        {
+            isRunning = isRun;
+        }
+
         private static CommandHandlerBase CreateCommandHandlers(IFileCabinetService service)
         {
             var helpHandler = new HelpCommandHandler();
             var createHandler = new CreateCommandHandler(service);
             var editHandler = new EditCommandHandler(service);
-            var exitHandler = new ExitCommandHandler();
+            var exitHandler = new ExitCommandHandler(ChangeRunning);
             var exportHandler = new ExportCommandHandler(service);
             var findHandler = new FindCommandHandler(service);
             var importHandler = new ImportCommandHandler(service);
