@@ -18,14 +18,14 @@ namespace FileCabinetApp
         /// implementation of the method for checking the correctness of user input.
         /// </summary>
         /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
+        public void ValidateParameters(FileCabinetServiceContext objectParameter)
         {
-            IsNullOrEmpty(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
-            CheckLength(objectParameter.FirstName, nameof(objectParameter.FirstName), objectParameter.LastName, nameof(objectParameter.LastName));
-            CheckDateRange(objectParameter.DateOfBirth, nameof(objectParameter.DateOfBirth));
-            CheckGender(objectParameter.Gender, nameof(objectParameter.Gender));
-            CheckSalarySign(objectParameter.Salary, nameof(objectParameter.Salary));
-            CheckAge(objectParameter.Age, nameof(objectParameter.Age));
+            ValidateFirstName(objectParameter.FirstName, nameof(objectParameter.FirstName));
+            ValidateLastName(objectParameter.LastName, nameof(objectParameter.LastName));
+            ValidateDateOfBirth(objectParameter.DateOfBirth, nameof(objectParameter.DateOfBirth));
+            ValidateGender(objectParameter.Gender, nameof(objectParameter.Gender));
+            ValidateSalary(objectParameter.Salary, nameof(objectParameter.Salary));
+            ValidateAge(objectParameter.Age, nameof(objectParameter.Age));
         }
 
         /// <summary>
@@ -33,42 +33,36 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstNameValue">variable value firstName.</param>
         /// <param name="firstName">variable name firstName.</param>
-        /// <param name="lastNameValue">variable value lastName.</param>
-        /// <param name="lastName">variable name lastName.</param>
-        /// <exception cref="ArgumentNullException">thrown when string is null or empty.</exception>
-        protected static void IsNullOrEmpty(string firstNameValue, string firstName, string lastNameValue, string lastName)
+        /// <exception cref="ArgumentException">Thrown when string is not corrct length.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when string is null or empty.</exception>
+        protected static void ValidateFirstName(string firstNameValue, string firstName)
         {
-            if (string.IsNullOrEmpty(firstNameValue))
+            if (firstNameValue.Length < 2 | firstNameValue.Length > 15)
+            {
+                throw new ArgumentException("Invalid length.", $"{nameof(firstName)}");
+            }
+            else if (string.IsNullOrEmpty(firstNameValue))
             {
                 throw new ArgumentNullException(nameof(firstName));
-            }
-            else if (string.IsNullOrEmpty(lastNameValue))
-            {
-                throw new ArgumentNullException(nameof(lastName));
             }
         }
 
         /// <summary>
         /// checks the string length.
         /// </summary>
-        /// <param name="firstNameValue">variable value firstName.</param>
-        /// <param name="firstName">variable name firstName.</param>
         /// <param name="lastNameValue">variable value lastName.</param>
         /// <param name="lastName">variable name lastName.</param>
+        /// <exception cref="ArgumentNullException">Thrown when string is null or empty.</exception>
         /// <exception cref="ArgumentException">Thrown when string is not corrct length.</exception>
-        protected static void CheckLength(string firstNameValue, string firstName, string lastNameValue, string lastName)
+        protected static void ValidateLastName(string lastNameValue, string lastName)
         {
-            #pragma warning disable CA1062 // Проверить аргументы или открытые методы
-            if (firstNameValue.Length < 2 | firstNameValue.Length > 15)
-            #pragma warning restore CA1062 // Проверить аргументы или открытые методы
-            {
-                throw new ArgumentException("Invalid length.", $"{nameof(firstName)}");
-            }
-            #pragma warning disable CA1062 // Проверить аргументы или открытые методы
-            else if (lastNameValue.Length < 2 | lastNameValue.Length > 15)
-            #pragma warning restore CA1062 // Проверить аргументы или открытые методы
+            if (lastNameValue.Length < 2 | lastNameValue.Length > 15)
             {
                 throw new ArgumentException("Invalid length.", $"{nameof(lastName)}");
+            }
+            else if (string.IsNullOrEmpty(lastNameValue))
+            {
+                throw new ArgumentNullException(nameof(lastName));
             }
         }
 
@@ -78,7 +72,7 @@ namespace FileCabinetApp
         /// <param name="dateOfBirthValue">variable value dateOfBirth.</param>
         /// <param name="dateOfBirth">variable name lastName.</param>
         /// <exception cref="ArgumentException">thrown when <paramref name="dateOfBirthValue"/> is the wrong range.</exception>
-        protected static void CheckDateRange(DateTime dateOfBirthValue, string dateOfBirth)
+        protected static void ValidateDateOfBirth(DateTime dateOfBirthValue, string dateOfBirth)
         {
             if (DateTime.Compare(DateTime.Today, dateOfBirthValue) < 0 || DateTime.Compare(MinDate, dateOfBirthValue) > 0)
             {
@@ -92,7 +86,7 @@ namespace FileCabinetApp
         /// <param name="ageValue">variable value age.</param>
         /// <param name="age">variable name age.</param>
         /// <exception cref="ArgumentException">thrown when <paramref name="ageValue"/> less than 0. </exception>
-        protected static void CheckAge(short ageValue, string age)
+        protected static void ValidateAge(short ageValue, string age)
         {
             if (ageValue < 0)
             {
@@ -106,7 +100,7 @@ namespace FileCabinetApp
         /// <param name="genderValue">variable value gender.</param>
         /// <param name="gender">variable name gender.</param>
         /// <exception cref="ArgumentException">thrown, when gender not defined.</exception>
-        protected static void CheckGender(char genderValue, string gender)
+        protected static void ValidateGender(char genderValue, string gender)
         {
             string stringGender = genderValue.ToString(CultureInfo.CurrentCulture);
             if (!(stringGender.Equals(CheckMenGender, StringComparison.InvariantCultureIgnoreCase) || stringGender.Equals(CheckWomenGender, StringComparison.InvariantCultureIgnoreCase)))
@@ -121,7 +115,7 @@ namespace FileCabinetApp
         /// <param name="salaryValue">variable value salary.</param>
         /// <param name="salary">variable name.</param>
         /// <exception cref="ArgumentException">thrown, when user entered a negative amount.</exception>
-        protected static void CheckSalarySign(decimal salaryValue, string salary)
+        protected static void ValidateSalary(decimal salaryValue, string salary)
         {
             if (salaryValue < 0)
             {

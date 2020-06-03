@@ -152,7 +152,7 @@ namespace FileCabinetApp
         /// <returns>id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
-            this.contextStrategy.CheckUsersDataEntry(objectParameter);
+            this.contextStrategy.ValidateParameters(objectParameter);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 if (file.Length <= 0)
@@ -266,7 +266,7 @@ namespace FileCabinetApp
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-            this.contextStrategy.CheckUsersDataEntry(objectParameter);
+            this.contextStrategy.ValidateParameters(objectParameter);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] recordBuffer = new byte[file.Length];
@@ -616,7 +616,7 @@ namespace FileCabinetApp
                     fileCabinetServiceContext.Age = recordFromFile[i].Age;
                     fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
                     fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
-                    this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
+                    this.contextStrategy.ValidateParameters(fileCabinetServiceContext);
                     for (int j = 0; j < record.Count; j++)
                     {
                         if (record[j].Id == recordFromFile[i].Id)

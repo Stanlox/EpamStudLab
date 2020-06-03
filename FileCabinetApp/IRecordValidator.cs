@@ -13,6 +13,6 @@ namespace FileCabinetApp
         /// method for checking user input.
         /// </summary>
         /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        void CheckUsersDataEntry(FileCabinetServiceContext objectParameter);
+        void ValidateParameters(FileCabinetServiceContext objectParameter);
     }
 }

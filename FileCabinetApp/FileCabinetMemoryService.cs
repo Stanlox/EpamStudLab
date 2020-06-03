@@ -63,7 +63,7 @@ namespace FileCabinetApp
         /// <returns>id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext objectParameter)
         {
-            this.contextStrategy.CheckUsersDataEntry(objectParameter);
+            this.contextStrategy.ValidateParameters(objectParameter);
 
             var record = new FileCabinetRecord
             {
@@ -108,7 +108,7 @@ namespace FileCabinetApp
         /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext objectParameter)
         {
-            this.contextStrategy.CheckUsersDataEntry(objectParameter);
+            this.contextStrategy.ValidateParameters(objectParameter);
 
             FileCabinetRecord oldrecord = this.list[id - 1];
             this.RemoveRecordInFirstNameDictionary(oldrecord);
@@ -316,7 +316,7 @@ namespace FileCabinetApp
         /// virtual method for checking the correctness of user input.
         /// </summary>
         /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        public void CheckUsersDataEntry(FileCabinetServiceContext objectParameter)
+        public void ValidateParameters(FileCabinetServiceContext objectParameter)
         {
         }
 
@@ -341,7 +341,7 @@ namespace FileCabinetApp
                         fileCabinetServiceContext.Age = recordFromFile[i].Age;
                         fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
                         fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
-                        this.contextStrategy.CheckUsersDataEntry(fileCabinetServiceContext);
+                        this.contextStrategy.ValidateParameters(fileCabinetServiceContext);
 
                         for (int j = 0; j < record.Count; j++)
                         {
