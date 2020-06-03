@@ -59,25 +59,25 @@ namespace FileCabinetApp
         /// <summary>
         /// creates a new records.
         /// </summary>
-        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         /// <returns>id of the new record.</returns>
-        public int CreateRecord(FileCabinetServiceContext objectParameter)
+        public int CreateRecord(FileCabinetServiceContext parameters)
         {
-            this.contextStrategy.ValidateParameters(objectParameter);
+            this.contextStrategy.ValidateParameters(parameters);
 
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
-                FirstName = objectParameter.FirstName,
-                LastName = objectParameter.LastName,
-                DateOfBirth = objectParameter.DateOfBirth,
-                Gender = objectParameter.Gender,
-                Age = objectParameter.Age,
-                Salary = objectParameter.Salary,
+                FirstName = parameters.FirstName,
+                LastName = parameters.LastName,
+                DateOfBirth = parameters.DateOfBirth,
+                Gender = parameters.Gender,
+                Age = parameters.Age,
+                Salary = parameters.Salary,
             };
-            this.AddInDictionaryFirstName(objectParameter.FirstName, record);
-            this.AddInDictionaryLastName(objectParameter.LastName, record);
-            this.AddInDictionaryDateOfBirth(objectParameter.DateOfBirth, record);
+            this.AddInDictionaryFirstName(parameters.FirstName, record);
+            this.AddInDictionaryLastName(parameters.LastName, record);
+            this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
             this.list.Add(record);
             return record.Id;
         }
@@ -105,10 +105,10 @@ namespace FileCabinetApp
         /// changing data in an existing record.
         /// </summary>
         /// <param name="id">id of the record to edit.</param>
-        /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        public void EditRecord(int id, FileCabinetServiceContext objectParameter)
+        /// <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
-            this.contextStrategy.ValidateParameters(objectParameter);
+            this.contextStrategy.ValidateParameters(parameters);
 
             FileCabinetRecord oldrecord = this.list[id - 1];
             this.RemoveRecordInFirstNameDictionary(oldrecord);
@@ -117,15 +117,15 @@ namespace FileCabinetApp
             foreach (var record in this.list.Where(x => x.Id == id))
             {
                 record.Id = record.Id;
-                record.FirstName = objectParameter.FirstName;
-                record.LastName = objectParameter.LastName;
-                record.DateOfBirth = objectParameter.DateOfBirth;
-                record.Gender = objectParameter.Gender;
-                record.Age = objectParameter.Age;
-                record.Salary = objectParameter.Salary;
-                this.AddInDictionaryFirstName(objectParameter.FirstName, record);
-                this.AddInDictionaryLastName(objectParameter.LastName, record);
-                this.AddInDictionaryDateOfBirth(objectParameter.DateOfBirth, record);
+                record.FirstName = parameters.FirstName;
+                record.LastName = parameters.LastName;
+                record.DateOfBirth = parameters.DateOfBirth;
+                record.Gender = parameters.Gender;
+                record.Age = parameters.Age;
+                record.Salary = parameters.Salary;
+                this.AddInDictionaryFirstName(parameters.FirstName, record);
+                this.AddInDictionaryLastName(parameters.LastName, record);
+                this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
             }
         }
 
@@ -315,8 +315,8 @@ namespace FileCabinetApp
         /// <summary>
         /// virtual method for checking the correctness of user input.
         /// </summary>
-        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        public void ValidateParameters(FileCabinetServiceContext objectParameter)
+        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        public void ValidateParameters(FileCabinetServiceContext parameters)
         {
         }
 

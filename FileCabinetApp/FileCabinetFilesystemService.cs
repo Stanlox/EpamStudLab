@@ -148,11 +148,11 @@ namespace FileCabinetApp
         /// <summary>
         /// creates a new records.
         /// </summary>
-        /// <param name="objectParameter">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         /// <returns>id of the new record.</returns>
-        public int CreateRecord(FileCabinetServiceContext objectParameter)
+        public int CreateRecord(FileCabinetServiceContext parameters)
         {
-            this.contextStrategy.ValidateParameters(objectParameter);
+            this.contextStrategy.ValidateParameters(parameters);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 if (file.Length <= 0)
@@ -173,12 +173,12 @@ namespace FileCabinetApp
                 var record = new FileCabinetRecord
                 {
                     Id = this.recordId,
-                    Age = objectParameter.Age,
-                    Salary = objectParameter.Salary,
-                    Gender = objectParameter.Gender,
-                    FirstName = objectParameter.FirstName,
-                    LastName = objectParameter.LastName,
-                    DateOfBirth = objectParameter.DateOfBirth,
+                    Age = parameters.Age,
+                    Salary = parameters.Salary,
+                    Gender = parameters.Gender,
+                    FirstName = parameters.FirstName,
+                    LastName = parameters.LastName,
+                    DateOfBirth = parameters.DateOfBirth,
                 };
 
                 this.FileCabinetRecordToBytes(record);
@@ -263,10 +263,10 @@ namespace FileCabinetApp
         /// changing data in an existing record.
         /// </summary>
         /// <param name="id">id of the record to edit.</param>
-        /// <param name="objectParameter">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        public void EditRecord(int id, FileCabinetServiceContext objectParameter)
+        /// <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
-            this.contextStrategy.ValidateParameters(objectParameter);
+            this.contextStrategy.ValidateParameters(parameters);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] recordBuffer = new byte[file.Length];
@@ -279,12 +279,12 @@ namespace FileCabinetApp
                 this.RemoveRecordInLastNameDictionary(oldrecord);
                 this.RemoveRecordInDateOfBirthDictionary(oldrecord);
                 updateRecord.Id = id;
-                updateRecord.Age = objectParameter.Age;
-                updateRecord.Salary = objectParameter.Salary;
-                updateRecord.Gender = objectParameter.Gender;
-                updateRecord.FirstName = objectParameter.FirstName;
-                updateRecord.LastName = objectParameter.LastName;
-                updateRecord.DateOfBirth = objectParameter.DateOfBirth;
+                updateRecord.Age = parameters.Age;
+                updateRecord.Salary = parameters.Salary;
+                updateRecord.Gender = parameters.Gender;
+                updateRecord.FirstName = parameters.FirstName;
+                updateRecord.LastName = parameters.LastName;
+                updateRecord.DateOfBirth = parameters.DateOfBirth;
                 this.FileCabinetRecordToBytes(updateRecord);
             }
         }
