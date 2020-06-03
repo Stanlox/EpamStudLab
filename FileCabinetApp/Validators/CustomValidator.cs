@@ -11,20 +11,18 @@ namespace FileCabinetApp
     /// </summary>
     public class CustomValidator : IRecordValidator
     {
-        private static readonly DateTime MinDate = new DateTime(1900, 1, 1);
-
         /// <summary>
         /// implementation of the method for checking the correctness of user input.
         /// </summary>
         /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
-            new CustomFirstNameValidator().ValidateParameters(parameters);
-            new CustomLastNameValidator().ValidateParameters(parameters);
-            new CustomGenderValidator().ValidateParameters(parameters);
-            new CustomDateOfBirthValidator().ValidateParameters(parameters);
-            new CustomSalaryValidator().ValidateParameters(parameters);
-            new CustomAgeValidator().ValidateParameters(parameters);
+            new FirstNameValidator(2, 15).ValidateParameters(parameters);
+            new LastNameValidator(2, 15).ValidateParameters(parameters);
+            new GenderValidator().ValidateParameters(parameters);
+            new DateOfBirthValidator(new DateTime(1900, 1, 1), DateTime.Today).ValidateParameters(parameters);
+            new SalaryValidator(int.MaxValue).ValidateParameters(parameters);
+            new AgeValidator(0, 100).ValidateParameters(parameters);
         }
     }
 }

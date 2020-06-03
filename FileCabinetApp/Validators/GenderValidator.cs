@@ -5,10 +5,10 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
-    public class CustomGenderValidator
+    public class GenderValidator
     {
-        private const string CheckMenGender = "M";
-        private const string CheckWomenGender = "W";
+        private const string MenGender = "M";
+        private const string WomenGender = "W";
 
         /// <summary>
         /// checks gender.
@@ -18,7 +18,7 @@ namespace FileCabinetApp.Validators
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
             string stringGender = parameters.Gender.ToString(CultureInfo.CurrentCulture);
-            if (!(stringGender.Equals(CheckMenGender, StringComparison.InvariantCultureIgnoreCase) || stringGender.Equals(CheckWomenGender, StringComparison.InvariantCultureIgnoreCase)))
+            if (!(stringGender.Equals(MenGender, StringComparison.InvariantCultureIgnoreCase) || stringGender.Equals(WomenGender, StringComparison.InvariantCultureIgnoreCase)))
             {
                 throw new ArgumentException("There is no such gender", $"{nameof(parameters.Gender)}");
             }

@@ -4,8 +4,17 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
-    public class DefaultFirstNameValidator
+    public class FirstNameValidator
     {
+        private int maxLength;
+        private int minLength;
+
+        public FirstNameValidator(int minLength, int maxLength)
+        {
+            this.maxLength = maxLength;
+            this.minLength = minLength;
+        }
+
         /// <summary>
         /// checks the string for null and empty.
         /// </summary>
@@ -13,7 +22,7 @@ namespace FileCabinetApp.Validators
         /// <exception cref="ArgumentException">Thrown when string is not correct length.</exception>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
-            if (parameters.FirstName.Length < 2 | parameters.FirstName.Length > 60)
+            if (parameters.FirstName.Length < this.minLength | parameters.FirstName.Length > this.maxLength)
             {
                 throw new ArgumentException("Invalid length.", $"{nameof(parameters.FirstName)}");
             }

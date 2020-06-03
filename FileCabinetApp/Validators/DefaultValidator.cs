@@ -18,12 +18,12 @@ namespace FileCabinetApp
         /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
-            new DefaultFirstNameValidator().ValidateParameters(parameters);
-            new DefaultLastNameValidator().ValidateParameters(parameters);
-            new DefaultGenderValidator().ValidateParameters(parameters);
-            new DefaultDateOfBirthValidator().ValidateParameters(parameters);
-            new DefaultSalaryValidator().ValidateParameters(parameters);
-            new DefaultAgeValidator().ValidateParameters(parameters);
+            new FirstNameValidator(2, 60).ValidateParameters(parameters);
+            new LastNameValidator(2, 60).ValidateParameters(parameters);
+            new GenderValidator().ValidateParameters(parameters);
+            new DateOfBirthValidator(new DateTime(1950, 1, 1), DateTime.Now).ValidateParameters(parameters);
+            new SalaryValidator(int.MaxValue).ValidateParameters(parameters);
+            new AgeValidator(0, 130).ValidateParameters(parameters);
         }
     }
 }
