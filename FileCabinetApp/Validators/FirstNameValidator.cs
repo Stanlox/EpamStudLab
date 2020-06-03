@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
-    public class FirstNameValidator
+    public class FirstNameValidator : IRecordValidator
     {
         private int maxLength;
         private int minLength;

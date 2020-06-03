@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
-    public class SalaryValidator
+    public class SalaryValidator : IRecordValidator
     {
         private int max;
 

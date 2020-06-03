@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
-    public class DateOfBirthValidator
+    public class DateOfBirthValidator : IRecordValidator
     {
         private DateTime from;
         private DateTime to;

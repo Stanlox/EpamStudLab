@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
-    public class AgeValidator
+    public class AgeValidator : IRecordValidator
     {
         private int min;
         private int max;

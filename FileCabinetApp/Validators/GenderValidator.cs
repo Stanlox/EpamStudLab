@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
-    public class GenderValidator
+    public class GenderValidator : IRecordValidator
     {
         private const string MenGender = "M";
         private const string WomenGender = "W";
