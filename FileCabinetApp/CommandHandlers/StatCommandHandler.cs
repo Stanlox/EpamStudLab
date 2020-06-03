@@ -44,7 +44,7 @@ namespace FileCabinetApp.CommandHandlers
 
         private void Stat(string parameters)
         {
-            var recordsCount = this.service.GetStat();
+            Tuple<int, int> recordsCount = this.service.GetStat();
             Console.WriteLine($"{recordsCount.Item1} record(s).");
             Console.WriteLine($"{recordsCount.Item2} deleted record(s).");
         }

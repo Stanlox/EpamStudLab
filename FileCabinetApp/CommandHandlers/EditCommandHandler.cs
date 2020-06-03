@@ -220,6 +220,22 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
+        private static void UserData()
+        {
+            Console.Write("First name: ");
+            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
+            Console.Write("Last Name: ");
+            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
+            Console.Write("Date of birth: ");
+            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
+            Console.Write("Gender (M/W): ");
+            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
+            Console.Write("Age: ");
+            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
+            Console.Write("Salary: ");
+            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
+        }
+
         private void Edit(string parameters)
         {
             try
@@ -234,7 +250,7 @@ namespace FileCabinetApp.CommandHandlers
                     }
                     else if (getNumberEditRecord == Program.listRecordsInService[i].Id)
                     {
-                        this.UserData();
+                        UserData();
                         this.service.EditRecord(getNumberEditRecord, Program.fileCabinetServiceContext);
                         Console.WriteLine($"Record #{getNumberEditRecord} is updated.");
                         break;
@@ -249,22 +265,6 @@ namespace FileCabinetApp.CommandHandlers
             {
                 Console.WriteLine(ex.Message);
             }
-        }
-
-        private void UserData()
-        {
-            Console.Write("First name: ");
-            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
-            Console.Write("Last Name: ");
-            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
-            Console.Write("Date of birth: ");
-            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
-            Console.Write("Gender (M/W): ");
-            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
-            Console.Write("Age: ");
-            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
-            Console.Write("Salary: ");
-            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
         }
     }
 }

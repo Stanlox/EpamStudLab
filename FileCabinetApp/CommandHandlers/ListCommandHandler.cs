@@ -11,17 +11,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ListCommandHandler : ServiceCommandHandlerBase
     {
-        private IRecordPrinter printer;
+        private Action<IEnumerable<FileCabinetRecord>> action;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Input service.</param>
-        /// <param name="printer">Input printer.</param>
-        public ListCommandHandler(IFileCabinetService service, DefaultRecordPrinter printer)
+        /// <param name="action">Input action.</param>
+        public ListCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> action)
             : base(service)
         {
-            this.printer = printer;
+            this.action = action;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "list";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                this.printer.Print(Program.listRecordsInService);
+                this.List(request.Parameters);
                 return null;
             }
             else
@@ -48,10 +48,10 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        //private void List(string parameters)
-        //{
-        //    Program.listRecordsInService = this.service.GetRecords();
-        //    this.printer.Print(Program.listRecordsInService);
-        //}
+        private void List(string parameters)
+        {
+            Program.listRecordsInService = this.service.GetRecords();
+            this.action(Program.listRecordsInService);
+        }
     }
 }

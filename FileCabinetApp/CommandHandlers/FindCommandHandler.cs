@@ -12,17 +12,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private IRecordPrinter printer;
+        private Action<IEnumerable<FileCabinetRecord>> action;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Input service.</param>
-        /// <param name="printer">Input printer.</param>
-        public FindCommandHandler(IFileCabinetService service, DefaultRecordPrinter printer)
+        /// <param name="action">Input action.</param>
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> action)
             : base(service)
         {
-            this.printer = printer;
+            this.action = action;
         }
 
         /// <summary>
@@ -60,15 +60,15 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     case "firstname":
                         Program.listRecordsInService = this.service.FindByFirstName(parameterValue);
-                        this.printer.Print(Program.listRecordsInService);
+                        this.action(Program.listRecordsInService);
                         break;
                     case "lastname":
                         Program.listRecordsInService = this.service.FindByLastName(parameterValue);
-                        this.printer.Print(Program.listRecordsInService);
+                        this.action(Program.listRecordsInService);
                         break;
                     case "dateofbirth":
                         Program.listRecordsInService = this.service.FindByDateOfBirth(parameterValue);
-                        this.printer.Print(Program.listRecordsInService);
+                        this.action(Program.listRecordsInService);
                         break;
                 }
             }
