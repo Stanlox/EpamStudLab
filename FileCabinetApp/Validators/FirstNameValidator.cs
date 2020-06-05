@@ -4,11 +4,19 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
+    /// <summary>
+    /// First name validator.
+    /// </summary>
     public class FirstNameValidator : IRecordValidator
     {
         private int maxLength;
         private int minLength;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FirstNameValidator"/> class.
+        /// </summary>
+        /// <param name="minLength">Minimal length of the first name.</param>
+        /// <param name="maxLength">Maximal length of the first name.</param>
         public FirstNameValidator(int minLength, int maxLength)
         {
             this.maxLength = maxLength;

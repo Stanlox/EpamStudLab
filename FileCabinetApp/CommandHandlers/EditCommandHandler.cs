@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,9 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class EditCommandHandler : ServiceCommandHandlerBase
     {
+        private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
+        private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
         /// </summary>
@@ -223,17 +227,17 @@ namespace FileCabinetApp.CommandHandlers
         private static void UserData()
         {
             Console.Write("First name: ");
-            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
+            fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
             Console.Write("Last Name: ");
-            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
+            fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
             Console.Write("Date of birth: ");
-            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
+            fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
             Console.Write("Gender (M/W): ");
-            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
+            fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
             Console.Write("Age: ");
-            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
+            fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
             Console.Write("Salary: ");
-            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
+            fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
         }
 
         private void Edit(string parameters)
@@ -241,17 +245,17 @@ namespace FileCabinetApp.CommandHandlers
             try
             {
                 int getNumberEditRecord = int.Parse(parameters, CultureInfo.CurrentCulture);
-                Program.listRecordsInService = this.service.GetRecords();
-                for (int i = 0; i < Program.listRecordsInService.Count; i++)
+                listRecordsInService = this.service.GetRecords();
+                for (int i = 0; i < listRecordsInService.Count; i++)
                 {
-                    if (!Program.listRecordsInService.Any(x => x.Id == getNumberEditRecord))
+                    if (!listRecordsInService.Any(x => x.Id == getNumberEditRecord))
                     {
                         throw new ArgumentException($"#{getNumberEditRecord} record in not found. ");
                     }
-                    else if (getNumberEditRecord == Program.listRecordsInService[i].Id)
+                    else if (getNumberEditRecord == listRecordsInService[i].Id)
                     {
                         UserData();
-                        this.service.EditRecord(getNumberEditRecord, Program.fileCabinetServiceContext);
+                        this.service.EditRecord(getNumberEditRecord, fileCabinetServiceContext);
                         Console.WriteLine($"Record #{getNumberEditRecord} is updated.");
                         break;
                     }

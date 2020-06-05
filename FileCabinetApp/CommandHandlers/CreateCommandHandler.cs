@@ -9,6 +9,8 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : ServiceCommandHandlerBase
     {
+        private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
         /// </summary>
@@ -220,23 +222,24 @@ namespace FileCabinetApp.CommandHandlers
 
         private void Create(string parameters)
         {
+            bool isCorrect = true;
             string repeatIfDataIsNotCorrect = parameters;
             try
             {
                 this.UserData();
-                Console.WriteLine($"Record # {this.service.CreateRecord(Program.fileCabinetServiceContext)} is created.");
+                Console.WriteLine($"Record # {this.service.CreateRecord(fileCabinetServiceContext)} is created.");
             }
             catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
             {
                 Console.WriteLine(ex.Message);
-                Program.isCorrect = false;
+                isCorrect = false;
             }
             finally
             {
-                if (!Program.isCorrect)
+                if (!isCorrect)
                 {
                     Console.WriteLine("Your data is incorrect, please try again");
-                    Program.isCorrect = true;
+                    isCorrect = true;
                     this.Create(repeatIfDataIsNotCorrect);
                 }
             }
@@ -245,17 +248,17 @@ namespace FileCabinetApp.CommandHandlers
         private void UserData()
         {
             Console.Write("First name: ");
-            Program.fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
+            fileCabinetServiceContext.FirstName = ReadInput(StringConverter, FirstNameValidator);
             Console.Write("Last Name: ");
-            Program.fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
+            fileCabinetServiceContext.LastName = ReadInput(StringConverter, LastNameValidator);
             Console.Write("Date of birth: ");
-            Program.fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
+            fileCabinetServiceContext.DateOfBirth = ReadInput(DateOfBirthConverter, DateOfBirthValidator);
             Console.Write("Gender (M/W): ");
-            Program.fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
+            fileCabinetServiceContext.Gender = ReadInput(GenderConverter, GenderValidator);
             Console.Write("Age: ");
-            Program.fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
+            fileCabinetServiceContext.Age = ReadInput(AgeConverter, AgeValidator);
             Console.Write("Salary: ");
-            Program.fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
+            fileCabinetServiceContext.Salary = ReadInput(SalaryConverter, SalaryValidator);
         }
     }
 }

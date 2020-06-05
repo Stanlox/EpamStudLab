@@ -11,6 +11,8 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ImportCommandHandler : ServiceCommandHandlerBase
     {
+        private static FileCabinetServiceSnapshot snapshot;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
         /// </summary>
@@ -54,25 +56,37 @@ namespace FileCabinetApp.CommandHandlers
                 var fullPath = parameterArray.Last();
                 var nameFile = Path.GetFileName(fullPath);
                 var typeFile = parameterArray.First();
+                if (!string.Equals(typeFile, xml, StringComparison.OrdinalIgnoreCase) || !string.Equals(typeFile, csv, StringComparison.OrdinalIgnoreCase))
+                {
+                    bool rezult = false;
+                    do
+                    {
+                        Console.Write("Input type of file: ");
+                        typeFile = Console.ReadLine();
+                        rezult = string.Equals(typeFile, xml, StringComparison.OrdinalIgnoreCase) || string.Equals(typeFile, csv, StringComparison.OrdinalIgnoreCase);
+                    }
+                    while (rezult == false);
+                }
+
                 if (File.Exists(nameFile))
                 {
-                    Program.snapshot = this.service.MakeSnapshot();
+                    snapshot = this.service.MakeSnapshot();
                     if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
                     {
                         using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
-                            Program.snapshot.LoadFromCsv(fileStream);
-                            Console.WriteLine($"{Program.snapshot.ListFromFile.Count} records were imported from {fullPath}");
-                            this.service.Restore(Program.snapshot);
+                            snapshot.LoadFromCsv(fileStream);
+                            Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
+                            this.service.Restore(snapshot);
                         }
                     }
                     else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
                     {
                         using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
-                            Program.snapshot.LoadFromXml(fileStream);
-                            Console.WriteLine($"{Program.snapshot.ListFromFile.Count} records were imported from {fullPath}");
-                            this.service.Restore(Program.snapshot);
+                            snapshot.LoadFromXml(fileStream);
+                            Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
+                            this.service.Restore(snapshot);
                         }
                     }
                 }

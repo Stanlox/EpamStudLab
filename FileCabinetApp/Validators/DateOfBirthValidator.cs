@@ -4,11 +4,19 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
+    /// <summary>
+    /// Date of birth validator.
+    /// </summary>
     public class DateOfBirthValidator : IRecordValidator
     {
         private DateTime from;
         private DateTime to;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DateOfBirthValidator"/> class.
+        /// </summary>
+        /// <param name="from">Minimal date of birth.</param>
+        /// <param name="to">Maximal date of birth.</param>
         public DateOfBirthValidator(DateTime from, DateTime to)
         {
             this.from = from;

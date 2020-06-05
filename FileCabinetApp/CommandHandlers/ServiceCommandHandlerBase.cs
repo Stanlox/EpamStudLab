@@ -10,7 +10,7 @@ namespace FileCabinetApp.CommandHandlers
     public class ServiceCommandHandlerBase : CommandHandlerBase
     {
         /// <summary>
-        /// defines the type of service.
+        /// Defines the type of service.
         /// </summary>
         protected readonly IFileCabinetService service;
 

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -329,7 +330,7 @@ namespace FileCabinetApp
             var record = snapshot.Records;
             var recordFromFile = snapshot.ListFromFile;
             bool isFind = false;
-            if (this.contextStrategy is CustomValidator)
+            if (this.contextStrategy is ValidatorBuilder)
             {
                 for (int i = 0; i < recordFromFile.Count; i++)
                 {

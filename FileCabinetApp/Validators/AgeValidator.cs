@@ -4,11 +4,19 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
+    /// <summary>
+    /// Age validator.
+    /// </summary>
     public class AgeValidator : IRecordValidator
     {
         private int min;
         private int max;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AgeValidator"/> class.
+        /// </summary>
+        /// <param name="min">Input min age.</param>
+        /// <param name="max">Input max age.</param>
         public AgeValidator(int min, int max)
         {
             this.min = min;
@@ -16,7 +24,7 @@ namespace FileCabinetApp.Validators
         }
 
         /// <summary>
-        /// checks age for a negative value.
+        /// Checks age for a negative value.
         /// </summary>
         /// <param name="parameters">Input parameters.</param>
         /// <exception cref="ArgumentException">thrown when <paramref name="parameters.Age"/> less than 0. </exception>

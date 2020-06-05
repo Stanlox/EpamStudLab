@@ -4,11 +4,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
     /// <summary>
-    /// contains file services for adding, editing, and modifying records.
+    /// contains file services for adding, editing, and modifying records using filestream.
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
@@ -24,7 +25,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
-        private readonly IRecordValidator contextStrategy = new DefaultValidator();
+        private readonly IRecordValidator contextStrategy = new ValidatorBuilder().CreateDefault();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
         private int recordId = 0;

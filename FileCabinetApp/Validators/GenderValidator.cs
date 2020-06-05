@@ -1,14 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp.Validators
 {
+    /// <summary>
+    /// Gender validator.
+    /// </summary>
     public class GenderValidator : IRecordValidator
     {
-        private const string MenGender = "M";
-        private const string WomenGender = "W";
+        private char[] gender;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GenderValidator"/> class.
+        /// </summary>
+        /// <param name="gender">Input array of the gender.</param>
+        public GenderValidator(char[] gender)
+        {
+            this.gender = gender;
+        }
 
         /// <summary>
         /// checks gender.
@@ -17,8 +29,7 @@ namespace FileCabinetApp.Validators
         /// <exception cref="ArgumentException">Thrown, when gender not defined.</exception>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
-            string stringGender = parameters.Gender.ToString(CultureInfo.CurrentCulture);
-            if (!(stringGender.Equals(MenGender, StringComparison.InvariantCultureIgnoreCase) || stringGender.Equals(WomenGender, StringComparison.InvariantCultureIgnoreCase)))
+            if (!this.gender.Contains(parameters.Gender))
             {
                 throw new ArgumentException("There is no such gender", $"{nameof(parameters.Gender)}");
             }

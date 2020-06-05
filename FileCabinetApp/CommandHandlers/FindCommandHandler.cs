@@ -12,6 +12,7 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
+        private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
         private Action<IEnumerable<FileCabinetRecord>> action;
 
         /// <summary>
@@ -59,16 +60,16 @@ namespace FileCabinetApp.CommandHandlers
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
                     case "firstname":
-                        Program.listRecordsInService = this.service.FindByFirstName(parameterValue);
-                        this.action(Program.listRecordsInService);
+                        listRecordsInService = this.service.FindByFirstName(parameterValue);
+                        this.action(listRecordsInService);
                         break;
                     case "lastname":
-                        Program.listRecordsInService = this.service.FindByLastName(parameterValue);
-                        this.action(Program.listRecordsInService);
+                        listRecordsInService = this.service.FindByLastName(parameterValue);
+                        this.action(listRecordsInService);
                         break;
                     case "dateofbirth":
-                        Program.listRecordsInService = this.service.FindByDateOfBirth(parameterValue);
-                        this.action(Program.listRecordsInService);
+                        listRecordsInService = this.service.FindByDateOfBirth(parameterValue);
+                        this.action(listRecordsInService);
                         break;
                 }
             }

@@ -11,6 +11,7 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ListCommandHandler : ServiceCommandHandlerBase
     {
+        private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
         private Action<IEnumerable<FileCabinetRecord>> action;
 
         /// <summary>
@@ -50,8 +51,8 @@ namespace FileCabinetApp.CommandHandlers
 
         private void List(string parameters)
         {
-            Program.listRecordsInService = this.service.GetRecords();
-            this.action(Program.listRecordsInService);
+            listRecordsInService = this.service.GetRecords();
+            this.action(listRecordsInService);
         }
     }
 }

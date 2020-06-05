@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace FileCabinetApp.CommandHandlers
@@ -10,13 +11,16 @@ namespace FileCabinetApp.CommandHandlers
     public class ExitCommandHandler : CommandHandlerBase
     {
         private Action<bool> isRunning;
+        private FileStream filestream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExitCommandHandler"/> class.
         /// </summary>
         /// <param name="isRunning">Input action.</param>
-        public ExitCommandHandler(Action<bool> isRunning)
+        /// <param name="stream">Input FileStream.</param>
+        public ExitCommandHandler(Action<bool> isRunning, FileStream stream)
         {
+            this.filestream = stream;
             this.isRunning = isRunning;
         }
 
@@ -46,9 +50,9 @@ namespace FileCabinetApp.CommandHandlers
 
         private void Exit(string parameters)
         {
-            if (Program.fileStream != null)
+            if (this.filestream != null)
             {
-                Program.fileStream.Close();
+                this.filestream.Dispose();
             }
 
             Console.WriteLine("Exiting an application...");

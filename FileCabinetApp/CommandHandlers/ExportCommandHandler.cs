@@ -12,6 +12,8 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class ExportCommandHandler : ServiceCommandHandlerBase
     {
+        private static FileCabinetServiceSnapshot snapshot;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
         /// </summary>
@@ -112,7 +114,7 @@ namespace FileCabinetApp.CommandHandlers
             const string csv = "csv";
             try
             {
-                Program.snapshot = this.service.MakeSnapshot();
+                snapshot = this.service.MakeSnapshot();
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 var fullPath = parameterArray.Last();
                 var nameFile = Path.GetFileName(fullPath);
@@ -134,7 +136,7 @@ namespace FileCabinetApp.CommandHandlers
                     {
                         using (var sw = new StreamWriter(nameFile, rewrite))
                         {
-                            Program.snapshot.SaveToCsv(sw);
+                            snapshot.SaveToCsv(sw);
                             Console.WriteLine($"All records are exported to file {nameFile}");
                         }
                     }
@@ -142,7 +144,7 @@ namespace FileCabinetApp.CommandHandlers
                     {
                         using (var sw = new StreamWriter(nameFile, rewrite))
                         {
-                            Program.snapshot.SaveToXml(sw);
+                            snapshot.SaveToXml(sw);
                             Console.WriteLine($"All records are exported to file {nameFile}");
                         }
                     }

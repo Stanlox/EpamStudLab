@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -16,31 +17,9 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Bandaruk Maxim";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
-        public const int CommandHelpIndex = 0;
-        public const int DescriptionHelpIndex = 1;
-        public const int ExplanationHelpIndex = 2;
-        public static bool isCorrect = true;
         private static bool isRunning = true;
-        public static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-        public static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
-        public static FileStream fileStream;
-        public static FileCabinetServiceSnapshot snapshot; 
-
-        public static string[][] helpMessages = new string[][]
-        {
-            new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
-            new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
-            new string[] { "stat", "view the number of records." },
-            new string[] { "create", "create new user." },
-            new string[] { "list", "view a list of records added to the service." },
-            new string[] { "edit", "edit record." },
-            new string[] { "find", "find record by a known value." },
-            new string[] { "export ", "export data to a file in format csv or xml." },
-            new string[] { "import", "import data from a file." },
-            new string[] { "remove", "remove record by id." },
-            new string[] { "purge", "deleting \"voids\" in the data file.", },
-        };
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault());
+        private static FileStream fileStream;
 
         /// <summary>
         /// Point of entry.
@@ -66,7 +45,7 @@ namespace FileCabinetApp
                         var parameter = "custom";
                         if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
                         {
-                            fileCabinetService = new FileCabinetMemoryService(new CustomValidator());
+                            fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
                             Console.WriteLine("Using custom validation rules.");
                         }
                         else
@@ -154,7 +133,7 @@ namespace FileCabinetApp
             var helpCommandHandler = new HelpCommandHandler();
             var createCommandHandler = new CreateCommandHandler(service);
             var editCommandHandler = new EditCommandHandler(service);
-            var exitCommandHandler = new ExitCommandHandler(ChangeRunning);
+            var exitCommandHandler = new ExitCommandHandler(ChangeRunning, fileStream);
             var exportCommandHandler = new ExportCommandHandler(service);
             var importCommandHandler = new ImportCommandHandler(service);
             var purgeCommandHandler = new PurgeCommandHandler(service);

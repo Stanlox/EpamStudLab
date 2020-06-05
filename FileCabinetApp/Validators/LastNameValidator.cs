@@ -4,11 +4,19 @@ using System.Text;
 
 namespace FileCabinetApp.Validators
 {
+    /// <summary>
+    /// Last name validator.
+    /// </summary>
     public class LastNameValidator : IRecordValidator
     {
         private int maxLength;
         private int minLength;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LastNameValidator"/> class.
+        /// </summary>
+        /// <param name="minLength">Minimal length of the last name.</param>
+        /// <param name="maxLength">Maximal length of the last name.</param>
         public LastNameValidator(int minLength, int maxLength)
         {
             this.maxLength = maxLength;
@@ -16,7 +24,7 @@ namespace FileCabinetApp.Validators
         }
 
         /// <summary>
-        /// checks the string length.
+        /// Checks the string length.
         /// </summary>
         /// <param name="parameters">Input parameters.</param>
         /// <exception cref="ArgumentException">Thrown when string is not corrct length.</exception>

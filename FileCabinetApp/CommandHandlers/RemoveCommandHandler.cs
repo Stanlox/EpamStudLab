@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FileCabinetApp.CommandHandlers
@@ -9,6 +10,8 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class RemoveCommandHandler : ServiceCommandHandlerBase
     {
+        private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveCommandHandler"/> class.
         /// </summary>
@@ -53,10 +56,10 @@ namespace FileCabinetApp.CommandHandlers
                     Console.WriteLine("Conversion error.");
                 }
 
-                Program.listRecordsInService = this.service.GetRecords();
-                for (int i = 0; i < Program.listRecordsInService.Count; i++)
+                listRecordsInService = this.service.GetRecords();
+                for (int i = 0; i < listRecordsInService.Count; i++)
                 {
-                    if (recordId == Program.listRecordsInService[i].Id)
+                    if (recordId == listRecordsInService[i].Id)
                     {
                         this.service.RemoveRecord(recordId);
                         Console.WriteLine($"Record #{recordId} is removed");
