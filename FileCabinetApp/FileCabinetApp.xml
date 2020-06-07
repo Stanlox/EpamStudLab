@@ -289,6 +289,54 @@
             <param name="request">Input request.</param>
             <returns>AppCommandRequest instance.</returns>
         </member>
+        <member name="T:FileCabinetApp.ConfigurationReader">
+            <summary>
+            Reads data from a json validation file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ConfigurationReader"/> class.
+            build congiguration json file.
+            </summary>
+            <param name="validType">Input type of validation.</param>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadFirstNameCriterions">
+            <summary>
+            Read first name criterions from json file.
+            </summary>
+            <returns>tuple of the minLength and maxLength of the first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadLastNameCriterions">
+            <summary>
+            Read last name criterions from json file.
+            </summary>
+            <returns>tuple of the minLength and maxLength of the last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadDateOfBirthCriterions">
+            <summary>
+            Read date of birth criterions from json file.
+            </summary>
+            <returns>tuple of the minDate and maxDate of the date of birth.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadAgeCriterions">
+            <summary>
+            Read age criterions from json file.
+            </summary>
+            <returns>tuple of the minAge and maxAge of the Age.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadSalaryCriterions">
+            <summary>
+            Read salary criterions from json file.
+            </summary>
+            <returns>max salary.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadGenderCriterions">
+            <summary>
+            Read gender criterions from json file.
+            </summary>
+            <returns>array of acceptable values.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
             contains file services for adding, editing, and modifying records using filestream.
@@ -568,7 +616,7 @@
             <param name="snapshot">Input object to retrieve a list of records.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.PurgeRecord">
-            <summary>
+            <summary>S
             Unrealized method.
             </summary>
             <returns>tuple number deleted records from total number records.</returns>

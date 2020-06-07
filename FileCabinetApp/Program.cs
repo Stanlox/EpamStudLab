@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,7 +17,8 @@ namespace FileCabinetApp
         private const string DeveloperName = "Bandaruk Maxim";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
         private static bool isRunning = true;
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault());
+        private static IRecordValidator defaultValidator = new ValidatorBuilder().CreateDefault();
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(defaultValidator);
         private static FileStream fileStream;
 
         /// <summary>

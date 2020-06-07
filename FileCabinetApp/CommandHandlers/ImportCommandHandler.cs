@@ -56,7 +56,7 @@ namespace FileCabinetApp.CommandHandlers
                 var fullPath = parameterArray.Last();
                 var nameFile = Path.GetFileName(fullPath);
                 var typeFile = parameterArray.First();
-                if (!string.Equals(typeFile, xml, StringComparison.OrdinalIgnoreCase) || !string.Equals(typeFile, csv, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(typeFile, xml, StringComparison.OrdinalIgnoreCase) && string.Equals(typeFile, csv, StringComparison.OrdinalIgnoreCase))
                 {
                     bool rezult = false;
                     do
