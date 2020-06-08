@@ -35,9 +35,10 @@ namespace FileCabinetApp
                 var shortDescriptionValidationsRules = "-v";
                 var longDescriptionUseTypeService = "--storage";
                 var shortDescriptionUseTypeService = "-s";
-                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService };
+                var useStopWatch = "-use-stopwatch";
+                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService, useStopWatch };
                 var arrayMatchingElements = validationsRules.Where(x => arrayCommandLine.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase))).ToArray();
-
+                var isSrtingContainsStopWatchParameter = arrayMatchingElements.Contains(useStopWatch);
                 for (int i = 0; i < arrayMatchingElements.Length; i++)
                 {
                     if (string.Compare(arrayMatchingElements[i], longDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0)
@@ -68,6 +69,11 @@ namespace FileCabinetApp
                 if (!(arrayMatchingElements.Contains(longDescriptionValidationsRules) || arrayMatchingElements.Contains(shortDescriptionValidationsRules)) || arrayMatchingElements.Length == 0)
                 {
                     Console.WriteLine("Using default validation rules.");
+                }
+
+                if (isSrtingContainsStopWatchParameter)
+                {
+                    fileCabinetService = new ServiceMeter(fileCabinetService);
                 }
             }
             else
