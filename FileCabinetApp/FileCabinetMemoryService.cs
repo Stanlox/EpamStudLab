@@ -68,7 +68,7 @@ namespace FileCabinetApp
 
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count + 1,
+                Id = this.list.Count == 0 ? 1 : this.list.Max(maxId => maxId.Id) + 1,
                 FirstName = parameters.FirstName,
                 LastName = parameters.LastName,
                 DateOfBirth = parameters.DateOfBirth,
@@ -330,49 +330,20 @@ namespace FileCabinetApp
             var record = snapshot.Records;
             var recordFromFile = snapshot.ListFromFile;
             bool isFind = false;
-            if (this.contextStrategy is ValidatorBuilder)
+            for (int i = 0; i < recordFromFile.Count; i++)
             {
-                for (int i = 0; i < recordFromFile.Count; i++)
+                try
                 {
-                    try
-                    {
-                        fileCabinetServiceContext.FirstName = recordFromFile[i].FirstName;
-                        fileCabinetServiceContext.LastName = recordFromFile[i].LastName;
-                        fileCabinetServiceContext.DateOfBirth = recordFromFile[i].DateOfBirth;
-                        fileCabinetServiceContext.Age = recordFromFile[i].Age;
-                        fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
-                        fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
-                        this.contextStrategy.ValidateParameters(fileCabinetServiceContext);
+                   fileCabinetServiceContext.FirstName = recordFromFile[i].FirstName;
+                   fileCabinetServiceContext.LastName = recordFromFile[i].LastName;
+                   fileCabinetServiceContext.DateOfBirth = recordFromFile[i].DateOfBirth;
+                   fileCabinetServiceContext.Age = recordFromFile[i].Age;
+                   fileCabinetServiceContext.Gender = recordFromFile[i].Gender;
+                   fileCabinetServiceContext.Salary = recordFromFile[i].Salary;
+                   this.contextStrategy.ValidateParameters(fileCabinetServiceContext);
 
-                        for (int j = 0; j < record.Count; j++)
-                        {
-                            if (record[j].Id == recordFromFile[i].Id)
-                            {
-                                this.list[i] = recordFromFile[j];
-                                isFind = true;
-                                break;
-                            }
-                        }
-
-                        if (!isFind)
-                        {
-                            this.list.Add(recordFromFile[i]);
-                        }
-
-                        isFind = false;
-                    }
-                    catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
-                    {
-                        Console.WriteLine($"{recordFromFile[i].Id} : {ex.Message}");
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < recordFromFile.Count; i++)
-                {
-                    for (int j = 0; j < record.Count; j++)
-                    {
+                   for (int j = 0; j < record.Count; j++)
+                   {
                         if (record[j].Id == recordFromFile[i].Id)
                         {
                             this.list[i] = recordFromFile[j];
@@ -381,17 +352,21 @@ namespace FileCabinetApp
                         }
                     }
 
-                    if (!isFind)
-                    {
-                        this.list.Add(recordFromFile[i]);
-                    }
+                   if (!isFind)
+                   {
+                       this.list.Add(recordFromFile[i]);
+                   }
 
-                    isFind = false;
+                   isFind = false;
+                }
+                catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException || ex is ArgumentNullException)
+                {
+                     Console.WriteLine($"{recordFromFile[i].Id}: {ex.Message}");
                 }
             }
         }
 
-        /// <summary>
+        /// <summary>S
         /// Unrealized method.
         /// </summary>
         /// <returns>tuple number deleted records from total number records.</returns>

@@ -1,0 +1,50 @@
+{
+    "default": {
+        "firstName": {
+            "min": 2,
+            "max": 60
+        },
+        "lastName": {
+            "min": 2,
+            "max": 60
+        },
+        "dateOfBirth": {
+            "from": "1/1/1950",
+            "to": "10/8/2019"
+        },
+        "salary": {
+            "max": 2147483647
+        },
+        "age": {
+            "max": 130,
+            "min": 0
+        },
+        "gender": {
+            "gender": [ "m", "w", "M", "W" ]
+        }
+    },
+    "custom": {
+        "age": {
+            "min": 0,
+            "max": 100
+        },
+        "dateOfBirth": {
+            "from": "1/1/1900",
+            "to": "6/22/2020"
+        },
+        "firstName": {
+            "min": 2,
+            "max": 15
+        },
+        "gender": {
+            "gender": [ "m", "w", "M", "W" ]
+        },
+        "lastName": {
+            "min": 2,
+            "max": 15
+        },
+        "salary": {
+            "max": 2147483647
+        }
+    }
+}

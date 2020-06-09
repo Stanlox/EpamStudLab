@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,7 +17,8 @@ namespace FileCabinetApp
         private const string DeveloperName = "Bandaruk Maxim";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
         private static bool isRunning = true;
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateDefault());
+        private static IRecordValidator defaultValidator = new ValidatorBuilder().CreateDefault();
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(defaultValidator);
         private static FileStream fileStream;
 
         /// <summary>
@@ -35,39 +35,53 @@ namespace FileCabinetApp
                 var shortDescriptionValidationsRules = "-v";
                 var longDescriptionUseTypeService = "--storage";
                 var shortDescriptionUseTypeService = "-s";
-                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService };
+                var useStopWatch = "-use-stopwatch";
+                var useLogger = "-use-logger";
+                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService, useStopWatch, useLogger };
                 var arrayMatchingElements = validationsRules.Where(x => arrayCommandLine.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+                var isSrtingContainsStopWatchParameter = arrayMatchingElements.Contains(useStopWatch);
+                var isStringContainsLoggerParameter = arrayMatchingElements.Contains(useLogger);
 
                 for (int i = 0; i < arrayMatchingElements.Length; i++)
                 {
-                    if (string.Compare(arrayMatchingElements[i], longDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0)
+                    switch (arrayMatchingElements[i])
                     {
-                        var parameter = "custom";
-                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
-                        {
-                            fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
-                            Console.WriteLine("Using custom validation rules.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Using default validation rules.");
-                        }
-                    }
+                        case "--validation-rules":
+                        case "-v":
+                            var parameterValidation = "custom";
+                            if (string.Equals(validationsRules[(2 * i) + 1], parameterValidation, StringComparison.OrdinalIgnoreCase))
+                            {
+                                fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
+                                Console.WriteLine("Using custom validation rules.");
+                            }
 
-                    if (string.Compare(arrayMatchingElements[i], longDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        var parameter = "file";
-                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
-                        {
-                            fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
-                            fileCabinetService = new FileCabinetFilesystemService(fileStream);
-                        }
+                            break;
+                        case "--storage":
+                        case "-s":
+                            var parameterService = "file";
+                            if (string.Equals(validationsRules[(2 * i) + 1], parameterService, StringComparison.OrdinalIgnoreCase))
+                            {
+                                fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream);
+                            }
+
+                            break;
+                        default:
+                            Console.WriteLine("Using default validation rules.");
+                            break;
                     }
                 }
 
-                if (!(arrayMatchingElements.Contains(longDescriptionValidationsRules) || arrayMatchingElements.Contains(shortDescriptionValidationsRules)) || arrayMatchingElements.Length == 0)
+                if (isSrtingContainsStopWatchParameter || isStringContainsLoggerParameter)
                 {
-                    Console.WriteLine("Using default validation rules.");
+                    if (isStringContainsLoggerParameter)
+                    {
+                        fileCabinetService = new ServiceLogger(fileCabinetService);
+                    }
+                    else
+                    {
+                        fileCabinetService = new ServiceMeter(fileCabinetService);
+                    }
                 }
             }
             else
