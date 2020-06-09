@@ -269,7 +269,7 @@
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.ServiceCommandHandlerBase"/> class.
             </summary>
-            <param name="service">Input service</param>
+            <param name="service">Input service.</param>
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.StatCommandHandler">
             <summary>
@@ -981,6 +981,274 @@
             Gets collection for serialize.
             </summary>
             <value>The Records property gets/sets the value.</value>
+        </member>
+        <member name="T:FileCabinetApp.ServiceLogger">
+            <summary>
+            Writes information about method calls to a file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ServiceLogger"/> class.
+            initializes the service type.
+            </summary>
+            <param name="service">Input type of service.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            Creates a new records and writes the execution result to the log.
+            </summary>
+            <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <returns>id of the new record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            Сhanging data in an existing record and writes the execution result to the log.
+            </summary>
+            <param name="id">id of the record to edit.</param>
+            <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FindByDateOfBirth(System.String)">
+            <summary>
+            find record in dictionary by dateOfBirth and writes the execution result to the log.
+            </summary>
+            <param name="dateOfBirth">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FindByFirstName(System.String)">
+            <summary>
+            find record in dictionary by FirstName and writes the execution result to the log.
+            </summary>
+            <param name="firstName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FindByLastName(System.String)">
+            <summary>
+            find record in dictionary by LastName and writes the execution result to the log.
+            </summary>
+            <param name="lastName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.GetRecords">
+            <summary>
+            Gets records and writes the execution result to the log.
+            </summary>
+            <returns>ReadOnlyCollection of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.GetStat">
+            <summary>
+            Gets statistics by records and writes the execution result to the log.
+            </summary>
+            <returns>Count of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.PurgeRecord">
+            <summary>
+            Clears records marked with the delete bits and writes the execution result to the log.
+            </summary>
+            <returns>tuple number deleted records from total number records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.RemoveRecord(System.Int32)">
+            <summary>
+            Remove record by id and writes the execution result to the log.
+            </summary>
+            <param name="id">Input id record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <summary>
+            Restore data and writes the execution result to the log.
+            </summary>
+            <param name="snapshot">Input object to retrieve a list of records.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.MakeSnapshot">
+            <summary>
+            Makes a snapshot of an list and writes the execution result to the log.
+            </summary>
+            <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.DeepCopy(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Makes a deep copy of the object.
+            </summary>
+            <param name="record">Input record.</param>
+            <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FileCabinetApp#IFileCabinetService#AddInDictionaryDateOfBirth(System.DateTime,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="dateofbirth">Input date of birth.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FileCabinetApp#IFileCabinetService#AddInDictionaryFirstName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="firstName">Input first name.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FileCabinetApp#IFileCabinetService#AddInDictionaryLastName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="lastName">Input last name.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FileCabinetApp#IFileCabinetService#RemoveRecordInDateOfBirthDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="oldRecord">Input old record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FileCabinetApp#IFileCabinetService#RemoveRecordInFirstNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="oldRecord">Input old record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.FileCabinetApp#IFileCabinetService#RemoveRecordInLastNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="oldRecord">Input old record.</param>
+        </member>
+        <member name="T:FileCabinetApp.ServiceMeter">
+            <summary>
+            Defines the execution time of the service methods.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ServiceMeter"/> class.
+            initializes the service type.
+            </summary>
+            <param name="service">Input type of service.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            Creates a new records.
+            Displays the run time of the method.
+            </summary>
+            <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <returns>id of the new record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.DeepCopy(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Makes a deep copy of the object.
+            </summary>
+            <param name="record">Input record.</param>
+            <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            Сhanging data in an existing record.
+            Displays the run time of the method.
+            </summary>
+            <param name="id">id of the record to edit.</param>
+            <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FindByDateOfBirth(System.String)">
+            <summary>
+            find record in dictionary by dateOfBirth.
+            Displays the run time of the method.
+            </summary>
+            <param name="dateOfBirth">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FindByFirstName(System.String)">
+            <summary>
+            find record in dictionary by FirstName.
+            Displays the run time of the method.
+            </summary>
+            <param name="firstName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FindByLastName(System.String)">
+            <summary>
+            find record in dictionary by LastName.
+            Displays the run time of the method.
+            </summary>
+            <param name="lastName">the key for search.</param>
+            <returns>found a list of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.GetRecords">
+            <summary>
+            Gets records.
+            Displays the run time of the method.
+            </summary>
+            <returns>ReadOnlyCollection of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.GetStat">
+            <summary>
+            gets statistics by records.
+            Displays the run time of the method.
+            </summary>
+            <returns>Count of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.PurgeRecord">
+            <summary>
+            clears records marked with the delete bits.
+            Displays the run time of the method.
+            </summary>
+            <returns>tuple number deleted records from total number records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.RemoveRecord(System.Int32)">
+            <summary>
+            Remove record by id.
+            Displays the run time of the method.
+            </summary>
+            <param name="id">Input id record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <summary>
+            Restore data.
+            Displays the run time of the method.
+            </summary>
+            <param name="snapshot">Input object to retrieve a list of records.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.MakeSnapshot">
+            <summary>
+            Makes a snapshot of an list.
+            </summary>
+            <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FileCabinetApp#IFileCabinetService#AddInDictionaryDateOfBirth(System.DateTime,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="dateofbirth">Input date of birth.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FileCabinetApp#IFileCabinetService#AddInDictionaryFirstName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="firstName">Input first name.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FileCabinetApp#IFileCabinetService#AddInDictionaryLastName(System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="lastName">Input last name.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FileCabinetApp#IFileCabinetService#RemoveRecordInDateOfBirthDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="oldRecord">Input old record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FileCabinetApp#IFileCabinetService#RemoveRecordInFirstNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="oldRecord">Input old record.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FileCabinetApp#IFileCabinetService#RemoveRecordInLastNameDictionary(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Unrealized method.
+            </summary>
+            <param name="oldRecord">Input old record.</param>
         </member>
         <member name="T:FileCabinetApp.Validators.AgeValidator">
             <summary>

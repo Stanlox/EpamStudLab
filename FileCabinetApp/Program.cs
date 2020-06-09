@@ -36,44 +36,52 @@ namespace FileCabinetApp
                 var longDescriptionUseTypeService = "--storage";
                 var shortDescriptionUseTypeService = "-s";
                 var useStopWatch = "-use-stopwatch";
-                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService, useStopWatch };
+                var useLogger = "-use-logger";
+                string[] arrayCommandLine = { longDescriptionValidationsRules, shortDescriptionValidationsRules, longDescriptionUseTypeService, shortDescriptionUseTypeService, useStopWatch, useLogger };
                 var arrayMatchingElements = validationsRules.Where(x => arrayCommandLine.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase))).ToArray();
                 var isSrtingContainsStopWatchParameter = arrayMatchingElements.Contains(useStopWatch);
+                var isStringContainsLoggerParameter = arrayMatchingElements.Contains(useLogger);
+
                 for (int i = 0; i < arrayMatchingElements.Length; i++)
                 {
-                    if (string.Compare(arrayMatchingElements[i], longDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionValidationsRules, StringComparison.OrdinalIgnoreCase) == 0)
+                    switch (arrayMatchingElements[i])
                     {
-                        var parameter = "custom";
-                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
-                        {
-                            fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
-                            Console.WriteLine("Using custom validation rules.");
-                        }
-                        else
-                        {
+                        case "--validation-rules":
+                        case "-v":
+                            var parameterValidation = "custom";
+                            if (string.Equals(validationsRules[(2 * i) + 1], parameterValidation, StringComparison.OrdinalIgnoreCase))
+                            {
+                                fileCabinetService = new FileCabinetMemoryService(new ValidatorBuilder().CreateCustom());
+                                Console.WriteLine("Using custom validation rules.");
+                            }
+
+                            break;
+                        case "--storage":
+                        case "-s":
+                            var parameterService = "file";
+                            if (string.Equals(validationsRules[(2 * i) + 1], parameterService, StringComparison.OrdinalIgnoreCase))
+                            {
+                                fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
+                                fileCabinetService = new FileCabinetFilesystemService(fileStream);
+                            }
+
+                            break;
+                        default:
                             Console.WriteLine("Using default validation rules.");
-                        }
+                            break;
                     }
+                }
 
-                    if (string.Compare(arrayMatchingElements[i], longDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(arrayMatchingElements[i], shortDescriptionUseTypeService, StringComparison.OrdinalIgnoreCase) == 0)
+                if (isSrtingContainsStopWatchParameter || isStringContainsLoggerParameter)
+                {
+                    if (isStringContainsLoggerParameter)
                     {
-                        var parameter = "file";
-                        if (string.Equals(validationsRules[(2 * i) + 1], parameter, StringComparison.OrdinalIgnoreCase))
-                        {
-                            fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
-                            fileCabinetService = new FileCabinetFilesystemService(fileStream);
-                        }
+                        fileCabinetService = new ServiceLogger(fileCabinetService);
                     }
-                }
-
-                if (!(arrayMatchingElements.Contains(longDescriptionValidationsRules) || arrayMatchingElements.Contains(shortDescriptionValidationsRules)) || arrayMatchingElements.Length == 0)
-                {
-                    Console.WriteLine("Using default validation rules.");
-                }
-
-                if (isSrtingContainsStopWatchParameter)
-                {
-                    fileCabinetService = new ServiceMeter(fileCabinetService);
+                    else
+                    {
+                        fileCabinetService = new ServiceMeter(fileCabinetService);
+                    }
                 }
             }
             else
