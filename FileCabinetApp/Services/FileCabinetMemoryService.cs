@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using FileCabinetApp.Services;
-using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -187,11 +183,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            return this.lastNameDictionary.TryGetValue(firstName, out List<FileCabinetRecord> rezult) ?
-                   new MemoryIterator(rezult) :
-                   new MemoryIterator(new List<FileCabinetRecord>());
+            return this.lastNameDictionary.TryGetValue(firstName, out List<FileCabinetRecord> result) ?
+                   result :
+                   new List<FileCabinetRecord>();
         }
 
         /// <summary>
@@ -199,11 +195,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            return this.firstNameDictionary.TryGetValue(lastName, out List<FileCabinetRecord> rezult) ?
-                 new MemoryIterator(rezult) :
-                 new MemoryIterator(new List<FileCabinetRecord>());
+            return this.firstNameDictionary.TryGetValue(lastName, out List<FileCabinetRecord> result) ?
+                 result :
+                 new List<FileCabinetRecord>();
         }
 
         /// <summary>
@@ -212,7 +208,7 @@ namespace FileCabinetApp
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
         /// <exception cref="ArgumentException">throw when date is not correct.</exception>
-        public IRecordIterator FindByDateOfBirth(string dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             DateTime dateValue;
             bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
@@ -221,9 +217,9 @@ namespace FileCabinetApp
                 throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
             }
 
-            return this.dateofbirthDictionary.TryGetValue(dateValue, out List<FileCabinetRecord> rezult) ?
-                new MemoryIterator(rezult) :
-                new MemoryIterator(new List<FileCabinetRecord>());
+            return this.dateofbirthDictionary.TryGetValue(dateValue, out List<FileCabinetRecord> result) ?
+                result :
+                new List<FileCabinetRecord>();
         }
 
         /// <summary>

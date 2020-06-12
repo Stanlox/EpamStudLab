@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
-using FileCabinetApp.Services;
 
 namespace FileCabinetApp
 {
@@ -66,13 +66,13 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public IRecordIterator FindByDateOfBirth(string dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByDateOfBirth)}() with DateOfBith = '{dateOfBirth}' ");
                 var records = this.service.FindByDateOfBirth(dateOfBirth);
-                if (records.GetCount() != 0)
+                if (records.Any())
                 {
                     writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByDateOfBirth)}() found record(s) by DateOfBith = '{dateOfBirth}' ");
                 }
@@ -90,13 +90,13 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByFirstName)}() with FirstName = '{firstName}' ");
                 var records = this.service.FindByFirstName(firstName);
-                if (records.GetCount() != 0)
+                if (records.Any())
                 {
                     writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByFirstName)}() found record(s) by FirstName = '{firstName}' ");
                 }
@@ -114,13 +114,13 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByLastName)}() with LastName = '{lastName}' ");
                 var records = this.service.FindByLastName(lastName);
-                if (records.GetCount() != 0)
+                if (records.Any())
                 {
                     writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByLastName)}() found record(s) by LastName = '{lastName}' ");
                 }

@@ -33,7 +33,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "stat";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                this.Stat(request.Parameters);
+                this.Stat();
                 return null;
             }
             else
@@ -42,7 +42,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private void Stat(string parameters)
+        private void Stat()
         {
             Tuple<int, int> recordsCount = this.service.GetStat();
             Console.WriteLine($"{recordsCount.Item1} record(s).");

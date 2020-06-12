@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using FileCabinetApp.Services;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -14,14 +13,14 @@ namespace FileCabinetApp.CommandHandlers
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
         private const string WrongParameter = "Wrong search field";
-        private Action<IRecordIterator> print;
+        private Action<IEnumerable<FileCabinetRecord>> print;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Input service.</param>
         /// <param name="print">Print method.</param>
-        public FindCommandHandler(IFileCabinetService service, Action<IRecordIterator> print)
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> print)
             : base(service)
         {
             this.print = print ?? throw new ArgumentNullException(nameof(print));
@@ -58,7 +57,7 @@ namespace FileCabinetApp.CommandHandlers
                 var parameterValue = parameters.Split(' ').Last().Trim('"');
                 var parameterArray = parameters.Split(' ');
                 var parameterName = parameterArray[parameterArray.Length - 2];
-                IRecordIterator findRecord;
+                IEnumerable<FileCabinetRecord> findRecord;
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
                     case "firstname":
@@ -79,9 +78,9 @@ namespace FileCabinetApp.CommandHandlers
                         break;
                 }
             }
-            catch (IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Please, input enter the search field and value");
             }
             catch (ArgumentException ex)
             {

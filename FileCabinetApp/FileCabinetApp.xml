@@ -130,7 +130,7 @@
             concrete handler for find a record.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{FileCabinetApp.Services.IRecordIterator})">
+        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord}})">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.FindCommandHandler"/> class.
             </summary>
@@ -885,66 +885,6 @@
             Load data from xml file.
             </summary>
             <param name="filestream">Input filestream.</param>
-        </member>
-        <member name="T:FileCabinetApp.Services.FilesystemIterator">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Services.FilesystemIterator.#ctor(FileCabinetApp.FileCabinetFilesystemService,System.Collections.Generic.IEnumerable{System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.Services.FilesystemIterator"/> class.
-            </summary>
-            <param name="service">Service.</param>
-            <param name="positions">Collection with positions.</param>
-        </member>
-        <member name="M:FileCabinetApp.Services.FilesystemIterator.GetCount">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Services.FilesystemIterator.GetNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Services.FilesystemIterator.HasMore">
-            <inheritdoc/>
-        </member>
-        <member name="T:FileCabinetApp.Services.IRecordIterator">
-            <summary>
-            Records iterator.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Services.IRecordIterator.GetNext">
-            <summary>
-            Gets the next element of collection.
-            </summary>
-            <returns>The next element of the collection.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Services.IRecordIterator.HasMore">
-            <summary>
-            Returns if collection has more elements.
-            </summary>
-            <returns>If collection has more elements.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Services.IRecordIterator.GetCount">
-            <summary>
-            Gets count of element.
-            </summary>
-            <returns>Count of element.</returns>
-        </member>
-        <member name="T:FileCabinetApp.Services.MemoryIterator">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Services.MemoryIterator.#ctor(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.Services.MemoryIterator"/> class.
-            </summary>
-            <param name="records">Records.</param>
-        </member>
-        <member name="M:FileCabinetApp.Services.MemoryIterator.GetNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Services.MemoryIterator.HasMore">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Services.MemoryIterator.GetCount">
-            <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
