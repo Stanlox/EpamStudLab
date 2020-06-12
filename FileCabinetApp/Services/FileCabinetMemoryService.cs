@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.Services;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -186,19 +187,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
-            if (this.firstNameDictionary.ContainsKey(firstName))
-            {
-                List<FileCabinetRecord> listOfRecords = this.firstNameDictionary[firstName].ToList();
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-                return readOnlyCollection;
-            }
-            else
-            {
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return readOnlyCollection;
-            }
+            return this.lastNameDictionary.TryGetValue(firstName, out List<FileCabinetRecord> rezult) ?
+                   new MemoryIterator(rezult) :
+                   new MemoryIterator(new List<FileCabinetRecord>());
         }
 
         /// <summary>
@@ -206,19 +199,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
-            if (this.lastNameDictionary.ContainsKey(lastName))
-            {
-                List<FileCabinetRecord> listOfRecords = this.lastNameDictionary[lastName].ToList();
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-                return readOnlyCollection;
-            }
-            else
-            {
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return readOnlyCollection;
-            }
+            return this.firstNameDictionary.TryGetValue(lastName, out List<FileCabinetRecord> rezult) ?
+                 new MemoryIterator(rezult) :
+                 new MemoryIterator(new List<FileCabinetRecord>());
         }
 
         /// <summary>
@@ -227,7 +212,7 @@ namespace FileCabinetApp
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
         /// <exception cref="ArgumentException">throw when date is not correct.</exception>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        public IRecordIterator FindByDateOfBirth(string dateOfBirth)
         {
             DateTime dateValue;
             bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
@@ -236,17 +221,9 @@ namespace FileCabinetApp
                 throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
             }
 
-            if (this.dateofbirthDictionary.ContainsKey(dateValue))
-            {
-                List<FileCabinetRecord> listOfRecords = this.dateofbirthDictionary[dateValue].ToList();
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-                return readOnlyCollection;
-            }
-            else
-            {
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return readOnlyCollection;
-            }
+            return this.dateofbirthDictionary.TryGetValue(dateValue, out List<FileCabinetRecord> rezult) ?
+                new MemoryIterator(rezult) :
+                new MemoryIterator(new List<FileCabinetRecord>());
         }
 
         /// <summary>

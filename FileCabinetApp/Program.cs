@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Services;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -123,6 +124,23 @@ namespace FileCabinetApp
         private static void ChangeRunning(bool isRun)
         {
             isRunning = isRun;
+        }
+
+        private static void DefaultRecordPrint(IRecordIterator recordIterator)
+        {
+            while (recordIterator.HasMore())
+            {
+                var record = recordIterator.GetNext();
+                var builder = new StringBuilder();
+                builder.Append($"{record.Id}, ");
+                builder.Append($"{record.FirstName}, ");
+                builder.Append($"{record.LastName}, ");
+                builder.Append($"{record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
+                builder.Append($"{record.Gender}, ");
+                builder.Append($"{record.Age}, ");
+                builder.Append($"{record.Salary}");
+                Console.WriteLine("#" + builder.ToString());
+            }
         }
 
         private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)

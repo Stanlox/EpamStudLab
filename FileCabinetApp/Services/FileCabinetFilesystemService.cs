@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.Services;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -361,7 +362,7 @@ namespace FileCabinetApp
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
         /// <exception cref="ArgumentException">throw when date is not correct.</exception>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        public IRecordIterator FindByDateOfBirth(string dateOfBirth)
         {
             DateTime dateValue;
             bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
@@ -374,19 +375,10 @@ namespace FileCabinetApp
 
             if (!isFinded)
             {
-                ReadOnlyCollection<FileCabinetRecord> emptyReadOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return emptyReadOnlyCollection;
+                return new FilesystemIterator(this, new List<int>());
             }
 
-            List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
-            foreach (var position in positionList)
-            {
-                var record = this.ReadByPosition(position);
-                listOfRecords.Add(record);
-            }
-
-            ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-            return readOnlyCollection;
+            return new FilesystemIterator(this, positionList);
         }
 
         /// <summary>
@@ -394,25 +386,16 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
             var isFinded = this.firstNameDictionary.TryGetValue(firstName, out List<int> positionList);
 
             if (!isFinded)
             {
-                ReadOnlyCollection<FileCabinetRecord> emptyReadOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return emptyReadOnlyCollection;
+                return new FilesystemIterator(this, new List<int>());
             }
 
-            List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
-            foreach (var position in positionList)
-            {
-                var record = this.ReadByPosition(position);
-                listOfRecords.Add(record);
-            }
-
-            ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-            return readOnlyCollection;
+            return new FilesystemIterator(this, positionList);
         }
 
         /// <summary>
@@ -420,25 +403,16 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
             var isFinded = this.lastNameDictionary.TryGetValue(lastName, out List<int> positionList);
 
             if (!isFinded)
             {
-                ReadOnlyCollection<FileCabinetRecord> emptyReadOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return emptyReadOnlyCollection;
+                return new FilesystemIterator(this, new List<int>());
             }
 
-            List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
-            foreach (var position in positionList)
-            {
-                var record = this.ReadByPosition(position);
-                listOfRecords.Add(record);
-            }
-
-            ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-            return readOnlyCollection;
+            return new FilesystemIterator(this, positionList);
         }
 
         /// <summary>

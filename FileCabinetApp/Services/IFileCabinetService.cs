@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using FileCabinetApp.Services;
 
 namespace FileCabinetApp
 {
@@ -28,21 +29,21 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateOfBirth">Input dateOfBirth.</param>
         /// <returns>found a list of records.</returns>
-        ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth);
+        IRecordIterator FindByDateOfBirth(string dateOfBirth);
 
         /// <summary>
         /// contains method signature.
         /// </summary>
         /// <param name="firstName">Input firstName.</param>
         /// <returns>found a list of records.</returns>
-        ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+        IRecordIterator FindByFirstName(string firstName);
 
         /// <summary>
         /// contains method signature.
         /// </summary>
         /// <param name="lastName">Input lastName.</param>
         /// <returns>found a list of records.</returns>
-        ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+        IRecordIterator FindByLastName(string lastName);
 
         /// <summary>
         /// contains method signature.
