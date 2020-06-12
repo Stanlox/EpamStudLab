@@ -112,19 +112,17 @@ namespace FileCabinetApp
             this.RemoveRecordInFirstNameDictionary(oldrecord);
             this.RemoveRecordInLastNameDictionary(oldrecord);
             this.RemoveRecordInDateOfBirthDictionary(oldrecord);
-            foreach (var record in this.list.Where(x => x.Id == id))
-            {
-                record.Id = record.Id;
-                record.FirstName = parameters.FirstName;
-                record.LastName = parameters.LastName;
-                record.DateOfBirth = parameters.DateOfBirth;
-                record.Gender = parameters.Gender;
-                record.Age = parameters.Age;
-                record.Salary = parameters.Salary;
-                this.AddInDictionaryFirstName(parameters.FirstName, record);
-                this.AddInDictionaryLastName(parameters.LastName, record);
-                this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
-            }
+            var record = this.list.Find(x => x.Id == id);
+            record.Id = record.Id;
+            record.FirstName = parameters.FirstName;
+            record.LastName = parameters.LastName;
+            record.DateOfBirth = parameters.DateOfBirth;
+            record.Gender = parameters.Gender;
+            record.Age = parameters.Age;
+            record.Salary = parameters.Salary;
+            this.AddInDictionaryFirstName(parameters.FirstName, record);
+            this.AddInDictionaryLastName(parameters.LastName, record);
+            this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
         }
 
         /// <summary>

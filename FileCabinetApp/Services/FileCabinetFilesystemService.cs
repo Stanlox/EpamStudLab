@@ -374,18 +374,15 @@ namespace FileCabinetApp
 
             if (!isFinded)
             {
-                return new List<FileCabinetRecord>();
+                yield break;
             }
 
             List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
             foreach (var position in positionList)
             {
                 var record = this.ReadByPosition(position);
-                listOfRecords.Add(record);
+                yield return record;
             }
-
-            ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-            return readOnlyCollection;
         }
 
         /// <summary>
@@ -399,18 +396,15 @@ namespace FileCabinetApp
 
             if (!isFinded)
             {
-                return new List<FileCabinetRecord>();
+                yield break;
             }
 
             List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
             foreach (var position in positionList)
             {
                 var record = this.ReadByPosition(position);
-                listOfRecords.Add(record);
+                yield return record;
             }
-
-            ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-            return readOnlyCollection;
         }
 
         /// <summary>
@@ -424,18 +418,15 @@ namespace FileCabinetApp
 
             if (!isFinded)
             {
-                return new List<FileCabinetRecord>();
+                yield break;
             }
 
             List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
             foreach (var position in positionList)
             {
                 var record = this.ReadByPosition(position);
-                listOfRecords.Add(record);
+                yield return record;
             }
-
-            ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-            return readOnlyCollection;
         }
 
         /// <summary>
