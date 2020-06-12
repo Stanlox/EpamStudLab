@@ -63,6 +63,7 @@ namespace FileCabinetApp
                             {
                                 fileStream = new FileStream("cabinet-records.db", FileMode.OpenOrCreate);
                                 fileCabinetService = new FileCabinetFilesystemService(fileStream);
+                                Console.WriteLine("Using default validation rules.");
                             }
 
                             break;

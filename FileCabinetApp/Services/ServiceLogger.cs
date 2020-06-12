@@ -232,44 +232,5 @@ namespace FileCabinetApp
             FileCabinetRecord cabinetRecord = this.service.DeepCopy(record);
             return cabinetRecord;
         }
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="dateofbirth">Input date of birth.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryDateOfBirth(DateTime dateofbirth, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="firstName">Input first name.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryFirstName(string firstName, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="lastName">Input last name.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryLastName(string lastName, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInDateOfBirthDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInFirstNameDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
     }
 }
