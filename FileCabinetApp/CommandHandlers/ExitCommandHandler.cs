@@ -39,7 +39,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "exit";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                this.Exit(request.Parameters);
+                this.Exit();
                 return null;
             }
             else
@@ -48,7 +48,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private void Exit(string parameters)
+        private void Exit()
         {
             if (this.filestream != null)
             {

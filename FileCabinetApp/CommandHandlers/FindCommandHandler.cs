@@ -12,18 +12,18 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private static ReadOnlyCollection<FileCabinetRecord> listRecordsInService;
-        private Action<IEnumerable<FileCabinetRecord>> action;
+        private const string WrongParameter = "Wrong search field";
+        private Action<IEnumerable<FileCabinetRecord>> print;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Input service.</param>
-        /// <param name="action">Input action.</param>
-        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> action)
+        /// <param name="print">Print method.</param>
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> print)
             : base(service)
         {
-            this.action = action;
+            this.print = print ?? throw new ArgumentNullException(nameof(print));
         }
 
         /// <summary>
@@ -57,25 +57,30 @@ namespace FileCabinetApp.CommandHandlers
                 var parameterValue = parameters.Split(' ').Last().Trim('"');
                 var parameterArray = parameters.Split(' ');
                 var parameterName = parameterArray[parameterArray.Length - 2];
+                IEnumerable<FileCabinetRecord> findRecord;
                 switch (parameterName.ToLower(CultureInfo.CurrentCulture))
                 {
                     case "firstname":
-                        listRecordsInService = this.service.FindByFirstName(parameterValue);
-                        this.action(listRecordsInService);
+                        findRecord = this.service.FindByFirstName(parameterValue);
+                        this.print(findRecord);
                         break;
                     case "lastname":
-                        listRecordsInService = this.service.FindByLastName(parameterValue);
-                        this.action(listRecordsInService);
+                        findRecord = this.service.FindByLastName(parameterValue);
+                        this.print(findRecord);
                         break;
                     case "dateofbirth":
-                        listRecordsInService = this.service.FindByDateOfBirth(parameterValue);
-                        this.action(listRecordsInService);
+                        findRecord = this.service.FindByDateOfBirth(parameterValue);
+                        this.print(findRecord);
+                        break;
+
+                    default:
+                        Console.WriteLine(WrongParameter);
                         break;
                 }
             }
-            catch (IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Please, input enter the search field and value");
             }
             catch (ArgumentException ex)
             {

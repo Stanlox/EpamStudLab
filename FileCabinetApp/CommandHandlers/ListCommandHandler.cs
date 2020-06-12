@@ -40,7 +40,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "list";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                this.List(request.Parameters);
+                this.List();
                 return null;
             }
             else
@@ -49,7 +49,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private void List(string parameters)
+        private void List()
         {
             listRecordsInService = this.service.GetRecords();
             this.action(listRecordsInService);

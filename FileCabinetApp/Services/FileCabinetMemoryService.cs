@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -115,19 +112,17 @@ namespace FileCabinetApp
             this.RemoveRecordInFirstNameDictionary(oldrecord);
             this.RemoveRecordInLastNameDictionary(oldrecord);
             this.RemoveRecordInDateOfBirthDictionary(oldrecord);
-            foreach (var record in this.list.Where(x => x.Id == id))
-            {
-                record.Id = record.Id;
-                record.FirstName = parameters.FirstName;
-                record.LastName = parameters.LastName;
-                record.DateOfBirth = parameters.DateOfBirth;
-                record.Gender = parameters.Gender;
-                record.Age = parameters.Age;
-                record.Salary = parameters.Salary;
-                this.AddInDictionaryFirstName(parameters.FirstName, record);
-                this.AddInDictionaryLastName(parameters.LastName, record);
-                this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
-            }
+            var record = this.list.Find(x => x.Id == id);
+            record.Id = record.Id;
+            record.FirstName = parameters.FirstName;
+            record.LastName = parameters.LastName;
+            record.DateOfBirth = parameters.DateOfBirth;
+            record.Gender = parameters.Gender;
+            record.Age = parameters.Age;
+            record.Salary = parameters.Salary;
+            this.AddInDictionaryFirstName(parameters.FirstName, record);
+            this.AddInDictionaryLastName(parameters.LastName, record);
+            this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
         }
 
         /// <summary>
@@ -186,19 +181,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            if (this.firstNameDictionary.ContainsKey(firstName))
-            {
-                List<FileCabinetRecord> listOfRecords = this.firstNameDictionary[firstName].ToList();
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-                return readOnlyCollection;
-            }
-            else
-            {
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return readOnlyCollection;
-            }
+            return this.lastNameDictionary.TryGetValue(firstName, out List<FileCabinetRecord> result) ?
+                   result :
+                   new List<FileCabinetRecord>();
         }
 
         /// <summary>
@@ -206,19 +193,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            if (this.lastNameDictionary.ContainsKey(lastName))
-            {
-                List<FileCabinetRecord> listOfRecords = this.lastNameDictionary[lastName].ToList();
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-                return readOnlyCollection;
-            }
-            else
-            {
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return readOnlyCollection;
-            }
+            return this.firstNameDictionary.TryGetValue(lastName, out List<FileCabinetRecord> result) ?
+                 result :
+                 new List<FileCabinetRecord>();
         }
 
         /// <summary>
@@ -227,7 +206,7 @@ namespace FileCabinetApp
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
         /// <exception cref="ArgumentException">throw when date is not correct.</exception>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             DateTime dateValue;
             bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
@@ -236,17 +215,9 @@ namespace FileCabinetApp
                 throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
             }
 
-            if (this.dateofbirthDictionary.ContainsKey(dateValue))
-            {
-                List<FileCabinetRecord> listOfRecords = this.dateofbirthDictionary[dateValue].ToList();
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(listOfRecords);
-                return readOnlyCollection;
-            }
-            else
-            {
-                ReadOnlyCollection<FileCabinetRecord> readOnlyCollection = new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-                return readOnlyCollection;
-            }
+            return this.dateofbirthDictionary.TryGetValue(dateValue, out List<FileCabinetRecord> result) ?
+                result :
+                new List<FileCabinetRecord>();
         }
 
         /// <summary>

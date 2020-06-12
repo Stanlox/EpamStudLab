@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp
@@ -65,13 +66,13 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByDateOfBirth)}() with DateOfBith = '{dateOfBirth}' ");
                 var records = this.service.FindByDateOfBirth(dateOfBirth);
-                if (records.Count != 0)
+                if (records.Any())
                 {
                     writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByDateOfBirth)}() found record(s) by DateOfBith = '{dateOfBirth}' ");
                 }
@@ -89,13 +90,13 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByFirstName)}() with FirstName = '{firstName}' ");
                 var records = this.service.FindByFirstName(firstName);
-                if (records.Count != 0)
+                if (records.Any())
                 {
                     writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByFirstName)}() found record(s) by FirstName = '{firstName}' ");
                 }
@@ -113,13 +114,13 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByLastName)}() with LastName = '{lastName}' ");
                 var records = this.service.FindByLastName(lastName);
-                if (records.Count != 0)
+                if (records.Any())
                 {
                     writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByLastName)}() found record(s) by LastName = '{lastName}' ");
                 }
@@ -232,44 +233,5 @@ namespace FileCabinetApp
             FileCabinetRecord cabinetRecord = this.service.DeepCopy(record);
             return cabinetRecord;
         }
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="dateofbirth">Input date of birth.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryDateOfBirth(DateTime dateofbirth, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="firstName">Input first name.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryFirstName(string firstName, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="lastName">Input last name.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryLastName(string lastName, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInDateOfBirthDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInFirstNameDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
     }
 }

@@ -33,7 +33,7 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "purge";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
-                this.Purge(request.Parameters);
+                this.Purge();
                 return null;
             }
             else
@@ -42,7 +42,7 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private void Purge(string parameters)
+        private void Purge()
         {
             try
             {

@@ -72,7 +72,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateOfBirth">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
         {
             this.stopwatch.Reset();
             this.stopwatch.Start();
@@ -88,7 +88,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.stopwatch.Reset();
             this.stopwatch.Start();
@@ -104,7 +104,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">the key for search.</param>
         /// <returns>found a list of records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             this.stopwatch.Reset();
             this.stopwatch.Start();
@@ -196,44 +196,5 @@ namespace FileCabinetApp
             FileCabinetServiceSnapshot snapshot = this.service.MakeSnapshot();
             return snapshot;
         }
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="dateofbirth">Input date of birth.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryDateOfBirth(DateTime dateofbirth, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="firstName">Input first name.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryFirstName(string firstName, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="lastName">Input last name.</param>
-        /// <param name="record">Input record.</param>
-        void IFileCabinetService.AddInDictionaryLastName(string lastName, FileCabinetRecord record) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInDateOfBirthDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInFirstNameDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Unrealized method.
-        /// </summary>
-        /// <param name="oldRecord">Input old record.</param>
-        void IFileCabinetService.RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord) => throw new NotImplementedException();
     }
 }
