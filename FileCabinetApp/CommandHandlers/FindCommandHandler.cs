@@ -12,7 +12,6 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
-        private const string WrongParameter = "Wrong search field";
         private Action<IEnumerable<FileCabinetRecord>> print;
 
         /// <summary>
@@ -74,7 +73,7 @@ namespace FileCabinetApp.CommandHandlers
                         break;
 
                     default:
-                        Console.WriteLine(WrongParameter);
+                        Console.WriteLine("Wrong search field");
                         break;
                 }
             }

@@ -86,5 +86,12 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>tuple number deleted records from total number records.</returns>
         Tuple<int, int> PurgeRecord();
+
+        /// <summary>
+        /// Find record by id position or id.
+        /// </summary>
+        /// <param name="position">Input position.</param>
+        /// <returns>found record.</returns>
+        FileCabinetRecord ReadByPosition(int position);
     }
 }

@@ -233,5 +233,16 @@ namespace FileCabinetApp
             FileCabinetRecord cabinetRecord = this.service.DeepCopy(record);
             return cabinetRecord;
         }
+
+        /// <summary>
+        /// Find record by id.
+        /// </summary>
+        /// <param name="id">Input id.</param>
+        /// <returns>Found record.</returns>
+        public FileCabinetRecord ReadByPosition(int id)
+        {
+            FileCabinetRecord cabinetRecord = this.service.ReadByPosition(id);
+            return cabinetRecord;
+        }
     }
 }

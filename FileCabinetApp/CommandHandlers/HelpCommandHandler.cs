@@ -18,7 +18,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
-            new string[] { "stat", "view the number of records." },
+            new string[] { "stat", "view the number of records.", "The 'stat' command prints statistics." },
             new string[] { "create", "create new user." },
             new string[] { "list", "view a list of records added to the service." },
             new string[] { "edit", "edit record." },
@@ -26,7 +26,8 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "export ", "export data to a file in format csv or xml." },
             new string[] { "import", "import data from a file." },
             new string[] { "remove", "remove record by id." },
-            new string[] { "purge", "deleting \"voids\" in the data file.", },
+            new string[] { "purge", "deleting \"voids\" in the data file." },
+            new string[] { "insert", "inserts a record with the specified parameters." },
         };
 
         /// <summary>

@@ -196,5 +196,16 @@ namespace FileCabinetApp
             FileCabinetServiceSnapshot snapshot = this.service.MakeSnapshot();
             return snapshot;
         }
+
+        /// <summary>
+        /// Find record by id.
+        /// </summary>
+        /// <param name="id">Input id.</param>
+        /// <returns>Found record.</returns>
+        public FileCabinetRecord ReadByPosition(int id)
+        {
+            FileCabinetRecord cabinetRecord = this.service.ReadByPosition(id);
+            return cabinetRecord;
+        }
     }
 }

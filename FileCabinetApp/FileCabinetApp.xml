@@ -193,6 +193,72 @@
             <param name="request">Input request.</param>
             <returns>AppCommandRequest instance.</returns>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.InsertCommandHandler">
+            <summary>
+            concrete handler insers record.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.InsertCommandHandler"/> class.
+            </summary>
+            <param name="service">Input service.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.GetFirstName(FileCabinetApp.FileCabinetServiceContext,System.String)">
+            <summary>
+            Get first name from string.
+            </summary>
+            <param name="record">Input FileCabinetServiceContext object.</param>
+            <param name="parameters">Input firstname parameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.GetLastName(FileCabinetApp.FileCabinetServiceContext,System.String)">
+            <summary>
+            Get last name from string.
+            </summary>
+            <param name="record">Input FileCabinetServiceContext object.</param>
+            <param name="parameters">Input last name parameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.GetDateOfBirth(FileCabinetApp.FileCabinetServiceContext,System.String)">
+            <summary>
+            Get date of birth from string.
+            </summary>
+            <param name="record">Input FileCabinetServiceContext object.</param>
+            <param name="parameters">Input date of birth parameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.GetAge(FileCabinetApp.FileCabinetServiceContext,System.String)">
+            <summary>
+            Get age from string.
+            </summary>
+            <param name="record">Input FileCabinetServiceContext object.</param>
+            <param name="parameters">Input age parameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.GetSalary(FileCabinetApp.FileCabinetServiceContext,System.String)">
+            <summary>
+            Get salary from string.
+            </summary>
+            <param name="record">Input FileCabinetServiceContext object.</param>
+            <param name="parameters">Input salary parameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.GetGender(FileCabinetApp.FileCabinetServiceContext,System.String)">
+            <summary>
+            Get gender from string.
+            </summary>
+            <param name="record">Input FileCabinetServiceContext object.</param>
+            <param name="parameters">Input gender parameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            handles the specified request.
+            </summary>
+            <param name="request">Input record.</param>
+            <returns>AppCommandRequest instance.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.GetId(System.String)">
+            <summary>
+            Get id from string.
+            </summary>
+            <param name="parameters">Input id parameter.</param>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
             <summary>
             concrete handler command list.
@@ -838,6 +904,13 @@
             </summary>
             <returns>tuple number deleted records from total number records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.ReadByPosition(System.Int32)">
+            <summary>
+            Find record by id.
+            </summary>
+            <param name="id">Input id.</param>
+            <returns>Found record.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
             <summary>
             contains a method for writing data type of <see cref="T:FileCabinetApp.FileCabinetRecord"/> in the format csv.
@@ -969,6 +1042,13 @@
             </summary>
             <returns>tuple number deleted records from total number records.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.ReadByPosition(System.Int32)">
+            <summary>
+            Find record by id position or id.
+            </summary>
+            <param name="position">Input position.</param>
+            <returns>found record.</returns>
+        </member>
         <member name="T:FileCabinetApp.ServiceLogger">
             <summary>
             Writes information about method calls to a file.
@@ -1058,6 +1138,13 @@
             </summary>
             <param name="record">Input record.</param>
             <returns>new new cloned object <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.ReadByPosition(System.Int32)">
+            <summary>
+            Find record by id.
+            </summary>
+            <param name="id">Input id.</param>
+            <returns>Found record.</returns>
         </member>
         <member name="T:FileCabinetApp.ServiceMeter">
             <summary>
@@ -1158,6 +1245,13 @@
             Makes a snapshot of an list.
             </summary>
             <returns>new cloned object type of <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> as an array.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.ReadByPosition(System.Int32)">
+            <summary>
+            Find record by id.
+            </summary>
+            <param name="id">Input id.</param>
+            <returns>Found record.</returns>
         </member>
         <member name="T:FileCabinetApp.Validators.AgeValidator">
             <summary>

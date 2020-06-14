@@ -183,9 +183,7 @@ namespace FileCabinetApp
         /// <returns>found a list of records.</returns>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            return this.lastNameDictionary.TryGetValue(firstName, out List<FileCabinetRecord> result) ?
-                   result :
-                   new List<FileCabinetRecord>();
+            return this.firstNameDictionary.TryGetValue(firstName, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
         }
 
         /// <summary>
@@ -195,9 +193,7 @@ namespace FileCabinetApp
         /// <returns>found a list of records.</returns>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            return this.firstNameDictionary.TryGetValue(lastName, out List<FileCabinetRecord> result) ?
-                 result :
-                 new List<FileCabinetRecord>();
+            return this.lastNameDictionary.TryGetValue(lastName, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
         }
 
         /// <summary>
@@ -215,9 +211,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
             }
 
-            return this.dateofbirthDictionary.TryGetValue(dateValue, out List<FileCabinetRecord> result) ?
-                result :
-                new List<FileCabinetRecord>();
+            return this.dateofbirthDictionary.TryGetValue(dateValue, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
         }
 
         /// <summary>
@@ -342,5 +336,16 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>tuple number deleted records from total number records.</returns>
         public Tuple<int, int> PurgeRecord() => throw new NotImplementedException();
+
+        /// <summary>
+        /// Find record by id.
+        /// </summary>
+        /// <param name="id">Input id.</param>
+        /// <returns>Found record.</returns>
+        public FileCabinetRecord ReadByPosition(int id)
+        {
+            var record = this.list.Find(x => x.Id == id);
+            return record;
+        }
     }
 }
