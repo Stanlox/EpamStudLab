@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.Services.Comparer;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -22,9 +23,13 @@ namespace FileCabinetApp
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private static short status = 0;
         private static List<FileCabinetRecord> isDeletedlist = new List<FileCabinetRecord>();
+        private readonly SortedDictionary<int, int> idrecordDictionary = new SortedDictionary<int, int>();
         private readonly SortedDictionary<string, List<int>> firstNameDictionary = new SortedDictionary<string, List<int>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly SortedDictionary<string, List<int>> lastNameDictionary = new SortedDictionary<string, List<int>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly SortedDictionary<DateTime, List<int>> dateofbirthDictionary = new SortedDictionary<DateTime, List<int>>();
+        private readonly SortedDictionary<decimal, List<int>> salaryDictionary = new SortedDictionary<decimal, List<int>>();
+        private readonly SortedDictionary<short, List<int>> ageDictionary = new SortedDictionary<short, List<int>>();
+        private readonly SortedDictionary<char, List<int>> genderDictionary = new SortedDictionary<char, List<int>>(new CharComparer());
         private readonly IRecordValidator contextStrategy = new ValidatorBuilder().CreateDefault();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
@@ -46,9 +51,7 @@ namespace FileCabinetApp
                 var index = 1;
                 for (int i = 0; i < listRecord.Count; i++)
                 {
-                    this.AddInDictionaryFirstName(listRecord[i].FirstName, index);
-                    this.AddInDictionaryLastName(listRecord[i].LastName, index);
-                    this.AddInDictionaryDateOfBirth(listRecord[i].DateOfBirth, index);
+                    this.AddRecordInAllDictionary(listRecord[i], index);
                     index++;
                 }
             }
@@ -166,6 +169,67 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Adds a dictionary record by key <paramref name="salary"/>.
+        /// </summary>
+        /// <param name="salary">Input key.</param>
+        /// <param name="offsetFromBeginFile">Position in file.</param>
+        public void AddInDictionarySalary(decimal salary, int offsetFromBeginFile)
+        {
+            if (this.salaryDictionary.ContainsKey(salary))
+            {
+                this.salaryDictionary[salary].Add(offsetFromBeginFile);
+            }
+            else
+            {
+                this.salaryDictionary.Add(salary, new List<int> { offsetFromBeginFile });
+            }
+        }
+
+        /// <summary>
+        /// Adds a dictionary record by key <paramref name="age"/>.
+        /// </summary>
+        /// <param name="age">Input key.</param>
+        /// <param name="offsetFromBeginFile">Position in file.</param>
+        public void AddInDictionaryAge(short age, int offsetFromBeginFile)
+        {
+            if (this.ageDictionary.ContainsKey(age))
+            {
+                this.ageDictionary[age].Add(offsetFromBeginFile);
+            }
+            else
+            {
+                this.ageDictionary.Add(age, new List<int> { offsetFromBeginFile });
+            }
+        }
+
+        /// <summary>
+        /// Adds a dictionary record by key <paramref name="gender"/>.
+        /// </summary>
+        /// <param name="gender">Input key.</param>
+        /// <param name="offsetFromBeginFile">Position in file.</param>
+        public void AddInDictionaryGender(char gender, int offsetFromBeginFile)
+        {
+            if (this.genderDictionary.ContainsKey(gender))
+            {
+                this.genderDictionary[gender].Add(offsetFromBeginFile);
+            }
+            else
+            {
+                this.genderDictionary.Add(gender, new List<int> { offsetFromBeginFile });
+            }
+        }
+
+        /// <summary>
+        /// Adds a dictionary record by key <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">Input key.</param>
+        /// <param name="offsetFromBeginFile">Position in file.</param>
+        public void AddInDictionaryIdRecord(int id, int offsetFromBeginFile)
+        {
+            this.idrecordDictionary[id] = offsetFromBeginFile;
+        }
+
+        /// <summary>
         /// Adds a dictionary record by key <paramref name="firstName"/>.
         /// </summary>
         /// <param name="firstName">Input key.</param>
@@ -200,10 +264,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// creates a new records.
+        /// Creates a new records.
         /// </summary>
         /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        /// <returns>id of the new record.</returns>
+        /// <returns>Id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext parameters)
         {
             this.contextStrategy.ValidateParameters(parameters);
@@ -234,20 +298,17 @@ namespace FileCabinetApp
                     LastName = parameters.LastName,
                     DateOfBirth = parameters.DateOfBirth,
                 };
-
-                this.AddInDictionaryFirstName(record.FirstName, ((int)this.fileStream.Length / RecordSize) + 1);
-                this.AddInDictionaryLastName(record.LastName, ((int)this.fileStream.Length / RecordSize) + 1);
-                this.AddInDictionaryDateOfBirth(record.DateOfBirth, ((int)this.fileStream.Length / RecordSize) + 1);
+                this.AddRecordInAllDictionary(record, ((int)this.fileStream.Length / RecordSize) + 1);
                 this.FileCabinetRecordToBytes(record);
                 return this.recordId;
             }
         }
 
         /// <summary>
-        /// converts an input record to bytes.
+        /// Converts an input record to bytes.
         /// </summary>
         /// <param name="record">Input record.</param>
-        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
         public void FileCabinetRecordToBytes(FileCabinetRecord record)
         {
             var bytes = new byte[RecordSize];
@@ -317,9 +378,9 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// changing data in an existing record.
+        /// Changing data in an existing record.
         /// </summary>
-        /// <param name="id">id of the record to edit.</param>
+        /// <param name="id">Id of the record to edit.</param>
         /// <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
@@ -338,12 +399,7 @@ namespace FileCabinetApp
                 var updateRecord = this.list.Find(record => record.Id == id);
                 FileCabinetRecord oldrecord = updateRecord;
                 var positionInFile = this.GetPositionInFileById(oldrecord.Id);
-                this.RemoveRecordInFirstNameDictionary(oldrecord.FirstName, positionInFile);
-                this.RemoveRecordInLastNameDictionary(oldrecord.LastName, positionInFile);
-                this.RemoveRecordInDateOfBirthDictionary(oldrecord.DateOfBirth, positionInFile);
-                this.AddInDictionaryFirstName(parameters.FirstName, positionInFile);
-                this.AddInDictionaryLastName(parameters.LastName, positionInFile);
-                this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, positionInFile);
+                this.RemoveRecordInAllDictionary(oldrecord, positionInFile);
                 updateRecord.Id = id;
                 updateRecord.Age = parameters.Age;
                 updateRecord.Salary = parameters.Salary;
@@ -351,26 +407,51 @@ namespace FileCabinetApp
                 updateRecord.FirstName = parameters.FirstName;
                 updateRecord.LastName = parameters.LastName;
                 updateRecord.DateOfBirth = parameters.DateOfBirth;
+                this.AddRecordInAllDictionary(updateRecord, positionInFile);
                 this.FileCabinetRecordToBytes(updateRecord);
             }
         }
 
-        /// <summary>
-        /// find record in dictionary by DateOfBirth.
-        /// </summary>
-        /// <param name="dateOfBirth">the key for search.</param>
-        /// <returns>found a list of records.</returns>
-        /// <exception cref="ArgumentException">throw when date is not correct.</exception>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
-            DateTime dateValue;
-            bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
-            if (!birthDate)
+            var isFinded = this.dateofbirthDictionary.TryGetValue(dateOfBirth, out List<int> positionList);
+
+            if (!isFinded)
             {
-                throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
+                yield break;
             }
 
-            var isFinded = this.dateofbirthDictionary.TryGetValue(dateValue, out List<int> positionList);
+            List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
+            foreach (var position in positionList)
+            {
+                var record = this.ReadByPosition(position);
+                yield return record;
+            }
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindBySalary(decimal salary)
+        {
+            var isFinded = this.salaryDictionary.TryGetValue(salary, out List<int> positionList);
+
+            if (!isFinded)
+            {
+                yield break;
+            }
+
+            List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
+            foreach (var position in positionList)
+            {
+                var record = this.ReadByPosition(position);
+                yield return record;
+            }
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindByAge(short age)
+        {
+            var isFinded = this.ageDictionary.TryGetValue(age, out List<int> positionList);
 
             if (!isFinded)
             {
@@ -386,10 +467,34 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// find record in dictionary by FirstName.
+        /// Finds records by the specified id.
         /// </summary>
-        /// <param name="firstName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <param name="id">Input id.</param>
+        /// <returns>Found record.</returns>
+        public FileCabinetRecord FindById(int id)
+        {
+            return this.idrecordDictionary.TryGetValue(id, out int recordPosition) ? this.ReadByPosition(recordPosition) : null;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindByGender(char gender)
+        {
+            var isFinded = this.genderDictionary.TryGetValue(gender, out List<int> positionList);
+
+            if (!isFinded)
+            {
+                yield break;
+            }
+
+            List<FileCabinetRecord> listOfRecords = new List<FileCabinetRecord>();
+            foreach (var position in positionList)
+            {
+                var record = this.ReadByPosition(position);
+                yield return record;
+            }
+        }
+
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             var isFinded = this.firstNameDictionary.TryGetValue(firstName, out List<int> positionList);
@@ -407,11 +512,7 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// find record in dictionary by LastName.
-        /// </summary>
-        /// <param name="lastName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             var isFinded = this.lastNameDictionary.TryGetValue(lastName, out List<int> positionList);
@@ -429,10 +530,7 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// Gets records.
-        /// </summary>
-        /// <returns>ReadOnlyCollection of records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -445,10 +543,7 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// Gets statistics by records.
-        /// </summary>
-        /// <returns>Count of records.</returns>
+        /// <inheritdoc/>
         public Tuple<int, int> GetStat()
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -460,10 +555,7 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// Clears records marked with the delete bits.
-        /// </summary>
-        /// <returns>tuple number deleted records from total number records.</returns>
+        /// <inheritdoc/>
         public Tuple<int, int> PurgeRecord()
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -477,8 +569,17 @@ namespace FileCabinetApp
 
             using (var writer = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
             {
+                this.idrecordDictionary.Clear();
+                this.firstNameDictionary.Clear();
+                this.lastNameDictionary.Clear();
+                this.dateofbirthDictionary.Clear();
+                this.salaryDictionary.Clear();
+                this.ageDictionary.Clear();
+                this.genderDictionary.Clear();
                 for (int i = 0; i < this.list.Count; i++)
                 {
+                    var position = i + 1;
+                    this.AddRecordInAllDictionary(this.list[i], position);
                     status = 0;
                     var firstNameBytes = Encoding.ASCII.GetBytes(this.list[i].FirstName);
                     var lastNameBytes = Encoding.ASCII.GetBytes(this.list[i].LastName);
@@ -511,7 +612,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// remove record in <see cref="dateofbirthDictionary"/>.
+        /// Remove record in <see cref="dateofbirthDictionary"/>.
         /// </summary>
         /// <param name="dateOfBirth">Input key dateOfBirth.</param>
         /// <param name="positionInFile">Input position in file.</param>
@@ -524,7 +625,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// remove record in <see cref="firstNameDictionary"/>.
+        /// Remove record in <see cref="firstNameDictionary"/>.
         /// </summary>
         /// <param name="firstname">Input key firstname.</param>
         /// <param name="positionInFile">Input position in file.</param>
@@ -533,6 +634,58 @@ namespace FileCabinetApp
             if (this.firstNameDictionary.ContainsKey(firstname))
             {
                 this.firstNameDictionary[firstname].Remove(positionInFile);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in <see cref="salaryDictionary"/>.
+        /// </summary>
+        /// <param name="salary">Input key salary.</param>
+        /// <param name="positionInFile">Input position in file.</param>
+        public void RemoveRecordInSalaryDictionary(decimal salary, int positionInFile)
+        {
+            if (this.salaryDictionary.ContainsKey(salary))
+            {
+                this.salaryDictionary[salary].Remove(positionInFile);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in <see cref="idrecordDictionary"/>.
+        /// </summary>
+        /// <param name="id">Input key salary.</param>
+        /// <param name="positionInFile">Input position in file.</param>
+        public void RemoveRecordInIdRecordDictionary(int id, int positionInFile)
+        {
+            if (this.idrecordDictionary.ContainsKey(id))
+            {
+                this.idrecordDictionary.Remove(positionInFile);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in <see cref="ageDictionary"/>.
+        /// </summary>
+        /// <param name="age">Input key age.</param>
+        /// <param name="positionInFile">Input position in file.</param>
+        public void RemoveRecordInAgeDictionary(short age, int positionInFile)
+        {
+            if (this.ageDictionary.ContainsKey(age))
+            {
+                this.ageDictionary[age].Remove(positionInFile);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in <see cref="genderDictionary"/>.
+        /// </summary>
+        /// <param name="gender">Input key gender.</param>
+        /// <param name="positionInFile">Input position in file.</param>
+        public void RemoveRecordInGenderDictionary(char gender, int positionInFile)
+        {
+            if (this.genderDictionary.ContainsKey(gender))
+            {
+                this.genderDictionary[gender].Remove(positionInFile);
             }
         }
 
@@ -550,10 +703,50 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// makes a deep copy of the object.
+        /// Remove record in all the dictionaries.
         /// </summary>
-        /// <param name="record">Input record.</param>
-        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
+        /// <param name="record">The record that is being modified.</param>
+        /// <param name="index">Position in file.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInAllDictionary(FileCabinetRecord record, int index)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
+            this.RemoveRecordInIdRecordDictionary(record.Id, index);
+            this.RemoveRecordInFirstNameDictionary(record.FirstName, index);
+            this.RemoveRecordInLastNameDictionary(record.LastName, index);
+            this.RemoveRecordInDateOfBirthDictionary(record.DateOfBirth, index);
+            this.RemoveRecordInSalaryDictionary(record.Salary, index);
+            this.RemoveRecordInGenderDictionary(record.Gender, index);
+            this.RemoveRecordInAgeDictionary(record.Age, index);
+        }
+
+        /// <summary>
+        /// Add record in all the dictionaries.
+        /// </summary>
+        /// <param name="record">The record that is being modified.</param>
+        /// <param name="index">Position in file.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void AddRecordInAllDictionary(FileCabinetRecord record, int index)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
+            this.AddInDictionaryIdRecord(record.Id, index);
+            this.AddInDictionaryFirstName(record.FirstName, index);
+            this.AddInDictionaryLastName(record.LastName, index);
+            this.AddInDictionaryDateOfBirth(record.DateOfBirth, index);
+            this.AddInDictionaryGender(record.Gender, index);
+            this.AddInDictionarySalary(record.Salary, index);
+            this.AddInDictionaryAge(record.Age, index);
+        }
+
+        /// <inheritdoc/>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             return new FileCabinetRecord()
@@ -568,10 +761,7 @@ namespace FileCabinetApp
             };
         }
 
-        /// <summary>
-        /// Makes a snapshot of an list.
-        /// </summary>
-        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
+        /// <inheritdoc/>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -583,15 +773,11 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// Remove record by id.
-        /// </summary>
-        /// <param name="id">Input id record.</param>
+        /// <inheritdoc/>
         public void RemoveRecord(int id)
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                status = 1;
                 int findIdRecord = 0;
                 int offset = 0;
                 byte[] recordBuffer = new byte[RecordSize];
@@ -606,11 +792,10 @@ namespace FileCabinetApp
                     findIdRecord = BitConverter.ToInt32(recordBuffer, bufferStatus.Length);
                 }
                 while (findIdRecord != id);
-                var record = this.list.Find(findRecord => findRecord.Id == findIdRecord);
+                var record = this.ReadByPosition(findIdRecord);
                 var positionInFile = this.GetPositionInFileById(record.Id);
-                this.RemoveRecordInFirstNameDictionary(record.FirstName, positionInFile);
-                this.RemoveRecordInLastNameDictionary(record.LastName, positionInFile);
-                this.RemoveRecordInDateOfBirthDictionary(record.DateOfBirth, positionInFile);
+                this.RemoveRecordInAllDictionary(record, positionInFile);
+                status = 1;
                 var bytes = BitConverter.GetBytes(status);
                 Array.Copy(bytes, 0, recordBuffer, 0, 2);
 
@@ -623,10 +808,7 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// Restore data.
-        /// </summary>
-        /// <param name="snapshot">Input object to retrieve a list of records.</param>
+        /// <inheritdoc/>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
             var record = snapshot.Records;
@@ -647,7 +829,7 @@ namespace FileCabinetApp
                     {
                         if (record[j].Id == recordFromFile[i].Id)
                         {
-                            this.EditRecord(this.list[i].Id, fileCabinetServiceContext);
+                            this.EditRecord(recordFromFile[i].Id, fileCabinetServiceContext);
                             isFind = true;
                             break;
                         }
@@ -666,9 +848,7 @@ namespace FileCabinetApp
                             LastName = fileCabinetServiceContext.LastName,
                             DateOfBirth = fileCabinetServiceContext.DateOfBirth,
                         };
-                        this.AddInDictionaryFirstName(fileCabinetRecord.FirstName, ((int)this.fileStream.Length / RecordSize) + 1);
-                        this.AddInDictionaryLastName(fileCabinetRecord.LastName, ((int)this.fileStream.Length / RecordSize) + 1);
-                        this.AddInDictionaryDateOfBirth(fileCabinetRecord.DateOfBirth, ((int)this.fileStream.Length / RecordSize) + 1);
+                        this.AddRecordInAllDictionary(fileCabinetRecord, ((int)this.fileStream.Length / RecordSize) + 1);
                         this.FileCabinetRecordToBytes(fileCabinetRecord);
                     }
 
@@ -717,10 +897,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Read record by position in file.
+        /// Read record from file by position.
         /// </summary>
-        /// <param name="position">Input position record in file.</param>
-        /// <returns>Record.</returns>
+        /// <param name="position">Position in file.</param>
+        /// <returns>Found record.</returns>
         public FileCabinetRecord ReadByPosition(int position)
         {
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))

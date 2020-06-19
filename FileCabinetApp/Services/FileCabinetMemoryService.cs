@@ -12,9 +12,13 @@ namespace FileCabinetApp
     {
         private static FileCabinetServiceContext fileCabinetServiceContext = new FileCabinetServiceContext();
         private readonly IRecordValidator contextStrategy;
+        private readonly Dictionary<decimal, List<FileCabinetRecord>> salaryDictionary = new Dictionary<decimal, List<FileCabinetRecord>>();
+        private readonly Dictionary<short, List<FileCabinetRecord>> ageDictionary = new Dictionary<short, List<FileCabinetRecord>>();
+        private readonly Dictionary<char, List<FileCabinetRecord>> genderDictionary = new Dictionary<char, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+        private readonly Dictionary<int, FileCabinetRecord> idrecordDictionary = new Dictionary<int, FileCabinetRecord>();
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         /// <summary>
@@ -26,11 +30,7 @@ namespace FileCabinetApp
             this.contextStrategy = strategy;
         }
 
-        /// <summary>
-        /// makes a deep copy of the object.
-        /// </summary>
-        /// <param name="record">Input record.</param>
-        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
+        /// <inheritdoc/>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             return new FileCabinetRecord()
@@ -45,20 +45,13 @@ namespace FileCabinetApp
             };
         }
 
-        /// <summary>
-        /// makes a snapshot of an list.
-        /// </summary>
-        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
+        /// <inheritdoc/>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
         }
 
-        /// <summary>
-        /// creates a new records.
-        /// </summary>
-        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        /// <returns>id of the new record.</returns>
+        /// <inheritdoc/>
         public int CreateRecord(FileCabinetServiceContext parameters)
         {
             this.contextStrategy.ValidateParameters(parameters);
@@ -73,45 +66,30 @@ namespace FileCabinetApp
                 Age = parameters.Age,
                 Salary = parameters.Salary,
             };
-            this.AddInDictionaryFirstName(parameters.FirstName, record);
-            this.AddInDictionaryLastName(parameters.LastName, record);
-            this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
+            this.AddRecordInAllDictionary(record);
             this.list.Add(record);
             return record.Id;
         }
 
-        /// <summary>
-        /// Gets records.
-        /// </summary>
-        /// <returns>ReadOnlyCollection of records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
-            return records;
+            return this.list.AsReadOnly();
         }
 
-        /// <summary>
-        /// gets statistics by records.
-        /// </summary>
-        /// <returns>Count of records.</returns>
+        /// <inheritdoc/>
         public Tuple<int, int> GetStat()
         {
             return Tuple.Create(this.list.Count, 0);
         }
 
-        /// <summary>
-        /// changing data in an existing record.
-        /// </summary>
-        /// <param name="id">id of the record to edit.</param>
-        /// <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        /// <inheritdoc/>
         public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
             this.contextStrategy.ValidateParameters(parameters);
 
             FileCabinetRecord oldrecord = this.list[id - 1];
-            this.RemoveRecordInFirstNameDictionary(oldrecord);
-            this.RemoveRecordInLastNameDictionary(oldrecord);
-            this.RemoveRecordInDateOfBirthDictionary(oldrecord);
+            this.RemoveRecordInAllDictionary(oldrecord);
             var record = this.list.Find(x => x.Id == id);
             record.Id = record.Id;
             record.FirstName = parameters.FirstName;
@@ -120,102 +98,213 @@ namespace FileCabinetApp
             record.Gender = parameters.Gender;
             record.Age = parameters.Age;
             record.Salary = parameters.Salary;
-            this.AddInDictionaryFirstName(parameters.FirstName, record);
-            this.AddInDictionaryLastName(parameters.LastName, record);
-            this.AddInDictionaryDateOfBirth(parameters.DateOfBirth, record);
+            this.AddRecordInAllDictionary(record);
         }
 
         /// <summary>
-        /// remove record in <see cref="firstNameDictionary"/>.
+        /// Remove record in <see cref="firstNameDictionary"/>.
         /// </summary>
-        /// <param name="oldRecord">the record that is being modified.</param>
-        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
-        public void RemoveRecordInFirstNameDictionary(FileCabinetRecord oldRecord)
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInFirstNameDictionary(FileCabinetRecord record)
         {
-            if (oldRecord is null)
+            if (record is null)
             {
-                throw new ArgumentNullException(nameof(oldRecord));
+                throw new ArgumentNullException(nameof(record));
             }
-            else if (this.firstNameDictionary.ContainsKey(oldRecord.FirstName))
+            else if (this.firstNameDictionary.ContainsKey(record.FirstName))
             {
-                this.firstNameDictionary[oldRecord.FirstName].Remove(oldRecord);
+                this.firstNameDictionary[record.FirstName].Remove(record);
             }
         }
 
         /// <summary>
-        /// remove record in <see cref="lastNameDictionary"/>.
+        /// Remove record in <see cref="lastNameDictionary"/>.
         /// </summary>
-        /// <param name="oldRecord">the record that is being modified.</param>
-        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
-        public void RemoveRecordInLastNameDictionary(FileCabinetRecord oldRecord)
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInLastNameDictionary(FileCabinetRecord record)
         {
-            if (oldRecord is null)
+            if (record is null)
             {
-                throw new ArgumentNullException(nameof(oldRecord));
+                throw new ArgumentNullException(nameof(record));
             }
-            else if (this.lastNameDictionary.ContainsKey(oldRecord.LastName))
+            else if (this.lastNameDictionary.ContainsKey(record.LastName))
             {
-                this.lastNameDictionary[oldRecord.LastName].Remove(oldRecord);
+                this.lastNameDictionary[record.LastName].Remove(record);
             }
         }
 
         /// <summary>
-        /// remove record in <see cref="dateofbirthDictionary"/>.
+        /// Remove record in <see cref="dateofbirthDictionary"/>.
         /// </summary>
-        /// <param name="oldRecord">the record that is being modified.</param>
-        /// <exception cref="ArgumentNullException">thrown when record is null.</exception>
-        public void RemoveRecordInDateOfBirthDictionary(FileCabinetRecord oldRecord)
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInDateOfBirthDictionary(FileCabinetRecord record)
         {
-            if (oldRecord is null)
+            if (record is null)
             {
-                throw new ArgumentNullException(nameof(oldRecord));
+                throw new ArgumentNullException(nameof(record));
             }
-            else if (this.dateofbirthDictionary.ContainsKey(oldRecord.DateOfBirth))
+            else if (this.dateofbirthDictionary.ContainsKey(record.DateOfBirth))
             {
-                this.dateofbirthDictionary[oldRecord.DateOfBirth].Remove(oldRecord);
+                this.dateofbirthDictionary[record.DateOfBirth].Remove(record);
             }
         }
 
         /// <summary>
-        /// find record in dictionary by FirstName.
+        /// Remove record in <see cref="salaryDictionary"/>.
         /// </summary>
-        /// <param name="firstName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInSalaryDictionary(FileCabinetRecord record)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+            else if (this.salaryDictionary.ContainsKey(record.Salary))
+            {
+                this.salaryDictionary[record.Salary].Remove(record);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in <see cref="ageDictionary"/>.
+        /// </summary>
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInAgeDictionary(FileCabinetRecord record)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+            else if (this.ageDictionary.ContainsKey(record.Age))
+            {
+                this.ageDictionary[record.Age].Remove(record);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in <see cref="idrecordDictionary"/>.
+        /// </summary>
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInIdRecordDictionary(FileCabinetRecord record)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+            else if (this.idrecordDictionary.ContainsKey(record.Id))
+            {
+                this.idrecordDictionary.Remove(record.Id);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in <see cref="genderDictionary"/>.
+        /// </summary>
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInGenderDictionary(FileCabinetRecord record)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+            else if (this.genderDictionary.ContainsKey(record.Gender))
+            {
+                this.genderDictionary[record.Gender].Remove(record);
+            }
+        }
+
+        /// <summary>
+        /// Remove record in all the dictionaries.
+        /// </summary>
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void RemoveRecordInAllDictionary(FileCabinetRecord record)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
+            this.RemoveRecordInFirstNameDictionary(record);
+            this.RemoveRecordInLastNameDictionary(record);
+            this.RemoveRecordInDateOfBirthDictionary(record);
+            this.RemoveRecordInSalaryDictionary(record);
+            this.RemoveRecordInGenderDictionary(record);
+            this.RemoveRecordInAgeDictionary(record);
+        }
+
+        /// <summary>
+        /// Add record in all the dictionaries.
+        /// </summary>
+        /// <param name="record">The record that is being modified.</param>
+        /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
+        public void AddRecordInAllDictionary(FileCabinetRecord record)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
+            this.AddInDictionaryId(record.Id, record);
+            this.AddInDictionaryFirstName(record.FirstName, record);
+            this.AddInDictionaryLastName(record.LastName, record);
+            this.AddInDictionaryDateOfBirth(record.DateOfBirth, record);
+            this.AddInDictionaryGender(record.Gender, record);
+            this.AddInDictionarySalary(record.Salary, record);
+            this.AddInDictionaryAge(record.Age, record);
+        }
+
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             return this.firstNameDictionary.TryGetValue(firstName, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
         }
 
-        /// <summary>
-        /// find record in dictionary by LastName.
-        /// </summary>
-        /// <param name="lastName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             return this.lastNameDictionary.TryGetValue(lastName, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
         }
 
-        /// <summary>
-        /// find record in dictionary by DateOfBirth.
-        /// </summary>
-        /// <param name="dateOfBirth">the key for search.</param>
-        /// <returns>found a list of records.</returns>
-        /// <exception cref="ArgumentException">throw when date is not correct.</exception>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
-            DateTime dateValue;
-            bool birthDate = DateTime.TryParse(dateOfBirth, out dateValue);
-            if (!birthDate)
-            {
-                throw new ArgumentException("Invalid Date", $"{nameof(dateOfBirth)}");
-            }
+            return this.dateofbirthDictionary.TryGetValue(dateOfBirth, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
+        }
 
-            return this.dateofbirthDictionary.TryGetValue(dateValue, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindByGender(char gender)
+        {
+            return this.genderDictionary.TryGetValue(gender, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
+        }
+
+        /// <inheritdoc/>
+        public FileCabinetRecord FindById(int id)
+        {
+            return this.idrecordDictionary.TryGetValue(id, out FileCabinetRecord result) ? result : null;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindBySalary(decimal salary)
+        {
+            return this.salaryDictionary.TryGetValue(salary, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindByAge(short age)
+        {
+            return this.ageDictionary.TryGetValue(age, out List<FileCabinetRecord> result) ? result : new List<FileCabinetRecord>();
         }
 
         /// <summary>
-        /// adds a dictionary record by key <paramref name="firstName"/>.
+        /// Adds a record to the dictionary by key <paramref name="firstName"/>.
         /// </summary>
         /// <param name="firstName">Input key.</param>
         /// <param name="record">Input record.</param>
@@ -232,7 +321,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// adds a dictionary record by key <paramref name="lastName"/>.
+        /// Adds a record to the dictionary by key <paramref name="lastName"/>.
         /// </summary>
         /// <param name="lastName">Input key.</param>
         /// <param name="record">Input record.</param>
@@ -249,7 +338,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// adds a dictionary record by key <paramref name="dateofbirth"/>.
+        /// Adds a record to the dictionary by key <paramref name="dateofbirth"/>.
         /// </summary>
         /// <param name="dateofbirth">Input key.</param>
         /// <param name="record">Input record.</param>
@@ -266,16 +355,75 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Remove record by id.
+        /// Adds a record to the dictionary by key <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">Input id record.</param>
+        /// <param name="id">Input key.</param>
+        /// <param name="record">Input record.</param>
+        public void AddInDictionaryId(int id, FileCabinetRecord record)
+        {
+            if (!this.idrecordDictionary.ContainsKey(id))
+            {
+                this.idrecordDictionary[id] = record;
+            }
+        }
+
+        /// <summary>
+        /// Adds a record to the dictionary by key <paramref name="salary"/>.
+        /// </summary>
+        /// <param name="salary">Input key.</param>
+        /// <param name="record">Input record.</param>
+        public void AddInDictionarySalary(decimal salary, FileCabinetRecord record)
+        {
+            if (this.salaryDictionary.ContainsKey(salary))
+            {
+                this.salaryDictionary[salary].Add(record);
+            }
+            else
+            {
+                this.salaryDictionary.Add(salary, new List<FileCabinetRecord> { record });
+            }
+        }
+
+        /// <summary>
+        /// Adds a record to the dictionary by key <paramref name="age"/>.
+        /// </summary>
+        /// <param name="age">Input key.</param>
+        /// <param name="record">Input record.</param>
+        public void AddInDictionaryAge(short age, FileCabinetRecord record)
+        {
+            if (this.ageDictionary.ContainsKey(age))
+            {
+                this.ageDictionary[age].Add(record);
+            }
+            else
+            {
+                this.ageDictionary.Add(age, new List<FileCabinetRecord> { record });
+            }
+        }
+
+        /// <summary>
+        /// Adds a record to the dictionary by key <paramref name="gender"/>.
+        /// </summary>
+        /// <param name="gender">Input key.</param>
+        /// <param name="record">Input record.</param>
+        public void AddInDictionaryGender(char gender, FileCabinetRecord record)
+        {
+            if (this.genderDictionary.ContainsKey(gender))
+            {
+                this.genderDictionary[gender].Add(record);
+            }
+            else
+            {
+                this.genderDictionary.Add(gender, new List<FileCabinetRecord> { record });
+            }
+        }
+
+        /// <inheritdoc/>
         public void RemoveRecord(int id)
         {
             var removeRecord = this.list.Find(record => record.Id == id);
             this.list.Remove(removeRecord);
-            this.RemoveRecordInDateOfBirthDictionary(removeRecord);
-            this.RemoveRecordInFirstNameDictionary(removeRecord);
-            this.RemoveRecordInLastNameDictionary(removeRecord);
+            this.RemoveRecordInAllDictionary(removeRecord);
         }
 
         /// <summary>
@@ -286,10 +434,7 @@ namespace FileCabinetApp
         {
         }
 
-        /// <summary>
-        /// Restore data.
-        /// </summary>
-        /// <param name="snapshot">Input object to retrieve a list of records.</param>
+        /// <inheritdoc/>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
             var record = snapshot.Records;
@@ -311,7 +456,9 @@ namespace FileCabinetApp
                    {
                         if (record[j].Id == recordFromFile[i].Id)
                         {
+                            this.RemoveRecordInAllDictionary(this.list[i]);
                             this.list[i] = recordFromFile[j];
+                            this.AddRecordInAllDictionary(this.list[i]);
                             isFind = true;
                             break;
                         }
@@ -320,6 +467,7 @@ namespace FileCabinetApp
                    if (!isFind)
                    {
                        this.list.Add(recordFromFile[i]);
+                       this.AddRecordInAllDictionary(recordFromFile[i]);
                    }
 
                    isFind = false;
@@ -331,21 +479,7 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>S
-        /// Unrealized method.
-        /// </summary>
-        /// <returns>tuple number deleted records from total number records.</returns>
+        /// <inheritdoc/>
         public Tuple<int, int> PurgeRecord() => throw new NotImplementedException();
-
-        /// <summary>
-        /// Find record by id.
-        /// </summary>
-        /// <param name="id">Input id.</param>
-        /// <returns>Found record.</returns>
-        public FileCabinetRecord ReadByPosition(int id)
-        {
-            var record = this.list.Find(x => x.Id == id);
-            return record;
-        }
     }
 }

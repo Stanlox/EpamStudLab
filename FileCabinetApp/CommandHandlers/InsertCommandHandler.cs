@@ -170,7 +170,7 @@ namespace FileCabinetApp.CommandHandlers
                 throw new FormatException("Invalid command format of 'insert' command.");
             }
 
-            var record = this.service.ReadByPosition(id);
+            var record = this.service.FindById(id);
 
             if (record != null)
             {

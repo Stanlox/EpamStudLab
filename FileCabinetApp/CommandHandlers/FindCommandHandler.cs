@@ -53,6 +53,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             try
             {
+                bool isConverted;
                 var parameterValue = parameters.Split(' ').Last().Trim('"');
                 var parameterArray = parameters.Split(' ');
                 var parameterName = parameterArray[parameterArray.Length - 2];
@@ -68,10 +69,16 @@ namespace FileCabinetApp.CommandHandlers
                         this.print(findRecord);
                         break;
                     case "dateofbirth":
-                        findRecord = this.service.FindByDateOfBirth(parameterValue);
+                        isConverted = DateTime.TryParse(parameterValue, out DateTime date);
+
+                        if (!isConverted)
+                        {
+                            throw new FormatException("Incorrect syntax Date of birth");
+                        }
+
+                        findRecord = this.service.FindByDateOfBirth(date);
                         this.print(findRecord);
                         break;
-
                     default:
                         Console.WriteLine("Wrong search field");
                         break;
@@ -82,6 +89,10 @@ namespace FileCabinetApp.CommandHandlers
                 Console.WriteLine("Please, input enter the search field and value");
             }
             catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (FormatException ex)
             {
                 Console.WriteLine(ex.Message);
             }

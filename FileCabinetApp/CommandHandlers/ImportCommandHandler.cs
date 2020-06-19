@@ -55,6 +55,7 @@ namespace FileCabinetApp.CommandHandlers
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 var fullPath = parameterArray.Last();
                 var nameFile = Path.GetFileName(fullPath);
+                var extensionOfFile = Path.GetExtension(nameFile).Trim('.');
                 var typeFile = parameterArray.First();
                 if (!string.Equals(typeFile, xml, StringComparison.OrdinalIgnoreCase) && !string.Equals(typeFile, csv, StringComparison.OrdinalIgnoreCase))
                 {
@@ -66,6 +67,11 @@ namespace FileCabinetApp.CommandHandlers
                         rezult = string.Equals(typeFile, xml, StringComparison.OrdinalIgnoreCase) || string.Equals(typeFile, csv, StringComparison.OrdinalIgnoreCase);
                     }
                     while (rezult == false);
+                }
+
+                if (typeFile != extensionOfFile)
+                {
+                    throw new ArgumentException($"You want to import data from a {nameFile}, but you specified the type {typeFile}");
                 }
 
                 if (File.Exists(nameFile))
@@ -98,6 +104,10 @@ namespace FileCabinetApp.CommandHandlers
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine("Enter the file extension and his name or path");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }

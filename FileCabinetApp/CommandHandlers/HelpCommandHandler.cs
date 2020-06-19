@@ -28,6 +28,7 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "remove", "remove record by id." },
             new string[] { "purge", "deleting \"voids\" in the data file." },
             new string[] { "insert", "inserts a record with the specified parameters." },
+            new string[] { "delete", "deletes records by conditions. " },
         };
 
         /// <summary>

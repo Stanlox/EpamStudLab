@@ -50,10 +50,15 @@ namespace FileCabinetApp.CommandHandlers
             try
             {
                 int recordId;
+                if (parameters.Length == 0)
+                {
+                    throw new ArgumentException("Input the entery id");
+                }
+
                 bool success = int.TryParse(parameters, out recordId);
                 if (!success)
                 {
-                    Console.WriteLine("Conversion error.");
+                    throw new ArgumentException("Input the entery id");
                 }
 
                 listRecordsInService = this.service.GetRecords();
