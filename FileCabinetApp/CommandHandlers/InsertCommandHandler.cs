@@ -68,7 +68,7 @@ namespace FileCabinetApp.CommandHandlers
             var isConverted = DateTime.TryParse(parameters, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
             if (!isConverted)
             {
-                throw new FormatException("Invalid command format of 'insert' command.");
+                throw new FormatException("Wrong Date of Birth format.");
             }
 
             record.DateOfBirth = dateOfBirth;
@@ -84,7 +84,7 @@ namespace FileCabinetApp.CommandHandlers
             var isConverted = short.TryParse(parameters, out short age);
             if (!isConverted)
             {
-                throw new FormatException("Invalid command format of 'insert' command.");
+                throw new FormatException("Wrong Age format.");
             }
 
             record.Age = age;
@@ -100,7 +100,7 @@ namespace FileCabinetApp.CommandHandlers
             var isConverted = decimal.TryParse(parameters, out decimal salary);
             if (!isConverted)
             {
-                throw new FormatException("Invalid command format of 'insert' command.");
+                throw new FormatException("Wrong Salary format.");
             }
 
             record.Salary = salary;
@@ -116,7 +116,7 @@ namespace FileCabinetApp.CommandHandlers
             var isConverted = char.TryParse(parameters, out char gender);
             if (!isConverted)
             {
-                throw new FormatException("Invalid command format of 'insert' command.");
+                throw new FormatException("Wrong Gender format.");
             }
 
             record.Gender = gender;
@@ -167,7 +167,7 @@ namespace FileCabinetApp.CommandHandlers
             var isConverted = int.TryParse(parameters, out int id);
             if (!isConverted)
             {
-                throw new FormatException("Invalid command format of 'insert' command.");
+                throw new FormatException("Wrong id format.");
             }
 
             var record = this.service.FindById(id);

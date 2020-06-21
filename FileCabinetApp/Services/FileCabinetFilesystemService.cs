@@ -569,13 +569,6 @@ namespace FileCabinetApp
 
             using (var writer = new BinaryWriter(this.fileStream, Encoding.ASCII, true))
             {
-                this.idrecordDictionary.Clear();
-                this.firstNameDictionary.Clear();
-                this.lastNameDictionary.Clear();
-                this.dateofbirthDictionary.Clear();
-                this.salaryDictionary.Clear();
-                this.ageDictionary.Clear();
-                this.genderDictionary.Clear();
                 for (int i = 0; i < this.list.Count; i++)
                 {
                     var position = i + 1;
@@ -609,6 +602,20 @@ namespace FileCabinetApp
             isDeletedlist.Clear();
 
             return Tuple.Create(countRecordisDeletedlist, this.list.Count + countRecordisDeletedlist);
+        }
+
+        /// <summary>
+        /// Сlearing all dictionaries.
+        /// </summary>
+        public void СlearingAllDictionaries()
+        {
+            this.idrecordDictionary.Clear();
+            this.firstNameDictionary.Clear();
+            this.lastNameDictionary.Clear();
+            this.dateofbirthDictionary.Clear();
+            this.salaryDictionary.Clear();
+            this.ageDictionary.Clear();
+            this.genderDictionary.Clear();
         }
 
         /// <summary>
