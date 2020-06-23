@@ -5,7 +5,7 @@ using System.Text;
 namespace FileCabinetApp.CommandHandlers
 {
     /// <summary>
-    /// concrete handler for getting statistics.
+    /// Concrete handler for getting statistics.
     /// </summary>
     public class StatCommandHandler : ServiceCommandHandlerBase
     {

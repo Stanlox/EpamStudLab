@@ -119,6 +119,12 @@ namespace FileCabinetApp.CommandHandlers
                 var fullPath = parameterArray.Last();
                 var nameFile = Path.GetFileName(fullPath);
                 var typeFile = parameterArray.First();
+                var extensionOfFile = Path.GetExtension(nameFile).Trim('.');
+                if (typeFile != extensionOfFile)
+                {
+                    throw new ArgumentException($"You want to import data from a {nameFile}, but you specified the type {typeFile}");
+                }
+
                 if (File.Exists(nameFile))
                 {
                     Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
@@ -161,6 +167,10 @@ namespace FileCabinetApp.CommandHandlers
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine("Enter the file extension and his name or path");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }

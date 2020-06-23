@@ -29,7 +29,7 @@ namespace FileCabinetApp
         /// Displays the run time of the method.
         /// </summary>
         /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        /// <returns>id of the new record.</returns>
+        /// <returns>Id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext parameters)
         {
             this.stopwatch.Reset();
@@ -44,7 +44,7 @@ namespace FileCabinetApp
         /// Makes a deep copy of the object.
         /// </summary>
         /// <param name="record">Input record.</param>
-        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
+        /// <returns>New cloned object <see cref="FileCabinetRecord"/>.</returns>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             FileCabinetRecord cabinetRecord = this.service.DeepCopy(record);
@@ -55,7 +55,7 @@ namespace FileCabinetApp
         /// Сhanging data in an existing record.
         /// Displays the run time of the method.
         /// </summary>
-        /// <param name="id">id of the record to edit.</param>
+        /// <param name="id">Id of the record to edit.</param>
         /// <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
@@ -67,12 +67,12 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// find record in dictionary by dateOfBirth.
+        /// Find record in dictionary by dateOfBirth.
         /// Displays the run time of the method.
         /// </summary>
-        /// <param name="dateOfBirth">the key for search.</param>
-        /// <returns>found a list of records.</returns>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        /// <param name="dateOfBirth">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
             this.stopwatch.Reset();
             this.stopwatch.Start();
@@ -83,11 +83,27 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// find record in dictionary by FirstName.
+        /// Find record in dictionary by id.
         /// Displays the run time of the method.
         /// </summary>
-        /// <param name="firstName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <param name="id">t\The key for search.</param>
+        /// <returns>Found record.</returns>
+        public FileCabinetRecord FindById(int id)
+        {
+            this.stopwatch.Reset();
+            this.stopwatch.Start();
+            var records = this.service.FindById(id);
+            this.stopwatch.Stop();
+            Console.WriteLine($"{nameof(this.service.FindById)} method execution duration is {this.stopwatch.ElapsedTicks} ticks.");
+            return records;
+        }
+
+        /// <summary>
+        /// Find record in dictionary by FirstName.
+        /// Displays the run time of the method.
+        /// </summary>
+        /// <param name="firstName">The key for search.</param>
+        /// <returns>Found record.</returns>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.stopwatch.Reset();
@@ -99,11 +115,59 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// find record in dictionary by LastName.
+        /// Find record in dictionary by Salary.
+        /// Displays the run time of the method.
+        /// </summary>
+        /// <param name="salary">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindBySalary(decimal salary)
+        {
+            this.stopwatch.Reset();
+            this.stopwatch.Start();
+            var records = this.service.FindBySalary(salary);
+            this.stopwatch.Stop();
+            Console.WriteLine($"{nameof(this.service.FindBySalary)} method execution duration is {this.stopwatch.ElapsedTicks} ticks.");
+            return records;
+        }
+
+        /// <summary>
+        /// Find record in dictionary by Age.
+        /// Displays the run time of the method.
+        /// </summary>
+        /// <param name="age">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindByAge(short age)
+        {
+            this.stopwatch.Reset();
+            this.stopwatch.Start();
+            var records = this.service.FindByAge(age);
+            this.stopwatch.Stop();
+            Console.WriteLine($"{nameof(this.service.FindByAge)} method execution duration is {this.stopwatch.ElapsedTicks} ticks.");
+            return records;
+        }
+
+        /// <summary>
+        /// Find record in dictionary by Gender.
+        /// Displays the run time of the method.
+        /// </summary>
+        /// <param name="gender">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindByGender(char gender)
+        {
+            this.stopwatch.Reset();
+            this.stopwatch.Start();
+            var records = this.service.FindByGender(gender);
+            this.stopwatch.Stop();
+            Console.WriteLine($"{nameof(this.service.FindByGender)} method execution duration is {this.stopwatch.ElapsedTicks} ticks.");
+            return records;
+        }
+
+        /// <summary>
+        /// Find record in dictionary by LastName.
         /// Displays the run time of the method.
         /// </summary>
         /// <param name="lastName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <returns>Found record.</returns>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             this.stopwatch.Reset();
@@ -145,10 +209,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// clears records marked with the delete bits.
+        /// Clears records marked with the delete bits.
         /// Displays the run time of the method.
         /// </summary>
-        /// <returns>tuple number deleted records from total number records.</returns>
+        /// <returns>Tuple number deleted records from total number records.</returns>
         public Tuple<int, int> PurgeRecord()
         {
             this.stopwatch.Reset();
@@ -190,7 +254,7 @@ namespace FileCabinetApp
         /// <summary>
         /// Makes a snapshot of an list.
         /// </summary>
-        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
+        /// <returns>New cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             FileCabinetServiceSnapshot snapshot = this.service.MakeSnapshot();

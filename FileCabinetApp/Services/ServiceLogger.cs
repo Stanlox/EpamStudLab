@@ -30,7 +30,7 @@ namespace FileCabinetApp
         /// Creates a new records and writes the execution result to the log.
         /// </summary>
         /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        /// <returns>id of the new record.</returns>
+        /// <returns>Id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext parameters)
         {
             using (TextWriter writer = File.AppendText(this.path))
@@ -47,7 +47,7 @@ namespace FileCabinetApp
         /// <summary>
         /// Сhanging data in an existing record and writes the execution result to the log.
         /// </summary>
-        /// <param name="id">id of the record to edit.</param>
+        /// <param name="id">Id of the record to edit.</param>
         /// <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
@@ -62,11 +62,11 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// find record in dictionary by dateOfBirth and writes the execution result to the log.
+        /// Find record in dictionary by dateOfBirth and writes the execution result to the log.
         /// </summary>
-        /// <param name="dateOfBirth">the key for search.</param>
-        /// <returns>found a list of records.</returns>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth)
+        /// <param name="dateOfBirth">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
@@ -78,7 +78,7 @@ namespace FileCabinetApp
                 }
                 else
                 {
-                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByDateOfBirth)}() did not find  record(s) by DateOfBith = '{dateOfBirth}' ");
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByDateOfBirth)}() did not find record(s) by DateOfBith = '{dateOfBirth}' ");
                 }
 
                 return records;
@@ -86,10 +86,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// find record in dictionary by FirstName and writes the execution result to the log.
+        /// Find record in dictionary by FirstName and writes the execution result to the log.
         /// </summary>
-        /// <param name="firstName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <param name="firstName">The key for search.</param>
+        /// <returns>Found record.</returns>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             using (TextWriter writer = File.AppendText(this.path))
@@ -102,7 +102,7 @@ namespace FileCabinetApp
                 }
                 else
                 {
-                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByFirstName)}() did not find  record(s) by FirstName = '{firstName}' ");
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByFirstName)}() did not find record(s) by FirstName = '{firstName}' ");
                 }
 
                 return records;
@@ -110,10 +110,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// find record in dictionary by LastName and writes the execution result to the log.
+        /// Find record in dictionary by LastName and writes the execution result to the log.
         /// </summary>
-        /// <param name="lastName">the key for search.</param>
-        /// <returns>found a list of records.</returns>
+        /// <param name="lastName">The key for search.</param>
+        /// <returns>Found record.</returns>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             using (TextWriter writer = File.AppendText(this.path))
@@ -126,7 +126,103 @@ namespace FileCabinetApp
                 }
                 else
                 {
-                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByLastName)}() did not find  record(s) by LastName = '{lastName}' ");
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByLastName)}() did not find record(s) by LastName = '{lastName}' ");
+                }
+
+                return records;
+            }
+        }
+
+        /// <summary>
+        /// Find record in dictionary by Id and writes the execution result to the log.
+        /// </summary>
+        /// <param name="id">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public FileCabinetRecord FindById(int id)
+        {
+            using (TextWriter writer = File.AppendText(this.path))
+            {
+                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindById)}() with Ide = '{id}' ");
+                var record = this.service.FindById(id);
+                if (record != null)
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindById)}() found record(s) by Id = '{id}' ");
+                }
+                else
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindById)}() did not find record(s) by Id = '{id}' ");
+                }
+
+                return record;
+            }
+        }
+
+        /// <summary>
+        /// Find record in dictionary by salary and writes the execution result to the log.
+        /// </summary>
+        /// <param name="salary">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindBySalary(decimal salary)
+        {
+            using (TextWriter writer = File.AppendText(this.path))
+            {
+                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindBySalary)}() with Salary = '{salary}' ");
+                var records = this.service.FindBySalary(salary);
+                if (records.Any())
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindBySalary)}() found record(s) by Salary = '{salary}' ");
+                }
+                else
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindBySalary)}() did not find record(s) by Salary = '{salary}' ");
+                }
+
+                return records;
+            }
+        }
+
+        /// <summary>
+        /// Find record in dictionary by salary and writes the execution result to the log.
+        /// </summary>
+        /// <param name="age">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindByAge(short age)
+        {
+            using (TextWriter writer = File.AppendText(this.path))
+            {
+                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByAge)}() with Age = '{age}' ");
+                var records = this.service.FindByAge(age);
+                if (records.Any())
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByAge)}() found record(s) by Age = '{age}' ");
+                }
+                else
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByAge)}() did not find record(s) by Age = '{age}' ");
+                }
+
+                return records;
+            }
+        }
+
+        /// <summary>
+        /// Find record in dictionary by salary and writes the execution result to the log.
+        /// </summary>
+        /// <param name="gender">The key for search.</param>
+        /// <returns>Found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindByGender(char gender)
+        {
+            using (TextWriter writer = File.AppendText(this.path))
+            {
+                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindByGender)}() with Gender = '{gender}' ");
+                var records = this.service.FindByGender(gender);
+                if (records.Any())
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByGender)}() found record(s) by Gender = '{gender}' ");
+                }
+                else
+                {
+                    writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.FindByGender)}() did not find record(s) by Gender = '{gender}' ");
                 }
 
                 return records;
@@ -167,7 +263,7 @@ namespace FileCabinetApp
         /// <summary>
         /// Clears records marked with the delete bits and writes the execution result to the log.
         /// </summary>
-        /// <returns>tuple number deleted records from total number records.</returns>
+        /// <returns>Tuple number deleted records from total number records.</returns>
         public Tuple<int, int> PurgeRecord()
         {
             using (TextWriter writer = File.AppendText(this.path))
@@ -211,7 +307,7 @@ namespace FileCabinetApp
         /// <summary>
         /// Makes a snapshot of an list and writes the execution result to the log.
         /// </summary>
-        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
+        /// <returns>New cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             using (TextWriter writer = File.AppendText(this.path))
@@ -227,7 +323,7 @@ namespace FileCabinetApp
         /// Makes a deep copy of the object.
         /// </summary>
         /// <param name="record">Input record.</param>
-        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
+        /// <returns>New cloned object <see cref="FileCabinetRecord"/>.</returns>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
             FileCabinetRecord cabinetRecord = this.service.DeepCopy(record);

@@ -1,14 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp.CommandHandlers
 {
     /// <summary>
-    /// concrete handler print missed command.
+    /// Concrete handler print missed command.
     /// </summary>
     public class PrintMissedCommandHandler : CommandHandlerBase
     {
+        private static List<string> commands = new List<string>()
+        {
+            "help",
+            "exit",
+            "stat",
+            "crate",
+            "list",
+            "find",
+            "export",
+            "import",
+            "purge",
+            "insert",
+            "delete",
+            "update",
+        };
+
         /// <summary>
         /// handles the specified request.
         /// </summary>
@@ -21,14 +38,47 @@ namespace FileCabinetApp.CommandHandlers
                 throw new ArgumentException($"The {nameof(request)} is null");
             }
 
-            PrintMissedCommandInfo(request.Command);
+            PrintMissedCommandInfo(request);
             return null;
         }
 
-        private static void PrintMissedCommandInfo(string command)
+        private static void PrintMissedCommandInfo(AppCommandRequest request)
         {
-            Console.WriteLine($"There is no '{command}' command.");
+            Console.WriteLine($"There is no '{request.Command}' command.");
+            var simalarCommands = GetMostSimilarCommands(request);
+            PrintMostSimilarCommands(simalarCommands);
             Console.WriteLine();
+        }
+
+        private static void PrintMostSimilarCommands(IEnumerable<string> commands)
+        {
+            if (commands.Count() == 1)
+            {
+                Console.WriteLine("The most similar command is:");
+                Console.WriteLine("\t{0}", commands.ToArray());
+            }
+            else if (commands.Count() > 1)
+            {
+                Console.WriteLine("The most similar commands are:");
+                foreach (var command in commands)
+                {
+                    Console.WriteLine("\t{0}", command);
+                }
+            }
+        }
+
+        private static IEnumerable<string> GetMostSimilarCommands(AppCommandRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            var requestCommandSymbols = request.Command.ToUpperInvariant();
+            var commandsIntersactions = commands.Select(command => (command, command.ToUpperInvariant()))
+                .Select(commandTuple => (commandTuple.command, commandTuple.Item2.Intersect(requestCommandSymbols).Count()));
+            var max = commandsIntersactions.Max(tuple => tuple.Item2);
+            return max > 2 ? commandsIntersactions.Where(tuple => tuple.Item2.Equals(max)).Select(tuple => tuple.command) : Enumerable.Empty<string>();
         }
     }
 }

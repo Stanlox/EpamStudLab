@@ -10,63 +10,63 @@ namespace FileCabinetApp
     public interface IFileCabinetService
     {
         /// <summary>
-        /// contains method signature.
+        /// Create record.
         /// </summary>
         /// <param name="objectParameter">Input objectParameter.</param>
         /// <returns>New record.</returns>
         int CreateRecord(FileCabinetServiceContext objectParameter);
 
         /// <summary>
-        /// contains method signature.
+        /// Edit record.
         /// </summary>
         /// <param name="id">id of the record to edit.</param>
         /// <param name="objectParameter">Input objectParameter.</param>
         void EditRecord(int id, FileCabinetServiceContext objectParameter);
 
         /// <summary>
-        /// contains method signature.
+        /// Finds records by the specified date of birth.
         /// </summary>
-        /// <param name="dateOfBirth">Input dateOfBirth.</param>
-        /// <returns>found a list of records.</returns>
-        IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirth);
+        /// <param name="dateOfBirth">Date of birth to search.</param>
+        /// <returns>Found records.</returns>
+        IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth);
 
         /// <summary>
-        /// contains method signature.
+        /// Finds records by the specified first name.
         /// </summary>
-        /// <param name="firstName">Input firstName.</param>
-        /// <returns>found a list of records.</returns>
+        /// <param name="firstName">First name to search.</param>
+        /// <returns>Found records.</returns>
         IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
 
         /// <summary>
-        /// contains method signature.
+        /// Finds records by the specified last name.
         /// </summary>
-        /// <param name="lastName">Input lastName.</param>
-        /// <returns>found a list of records.</returns>
+        /// <param name="lastName">Last name to search.</param>
+        /// <returns>Found records.</returns>
         IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
 
         /// <summary>
-        /// contains method signature.
+        /// Get all records.
         /// </summary>
         /// <returns>list of record.</returns>
         ReadOnlyCollection<FileCabinetRecord> GetRecords();
 
         /// <summary>
-        /// contains method signature.
+        /// Get count of existing and deleted records.
         /// </summary>
         /// <returns>Count of record.</returns>
         Tuple<int, int> GetStat();
 
         /// <summary>
-        /// makes a deep copy of the object.
+        /// Makes a deep copy of the object.
         /// </summary>
         /// <param name="record">Input record.</param>
-        /// <returns>new new cloned object <see cref="FileCabinetRecord"/>.</returns>
+        /// <returns>New cloned object <see cref="FileCabinetRecord"/>.</returns>
         FileCabinetRecord DeepCopy(FileCabinetRecord record);
 
         /// <summary>
-        /// makes a snapshot of an list.
+        /// Makes a snapshot of an list.
         /// </summary>
-        /// <returns>new cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
+        /// <returns>New cloned object type of <see cref="FileCabinetServiceSnapshot"/> as an array.</returns>
         FileCabinetServiceSnapshot MakeSnapshot();
 
         /// <summary>
@@ -86,5 +86,33 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>tuple number deleted records from total number records.</returns>
         Tuple<int, int> PurgeRecord();
+
+        /// <summary>
+        /// Finds records by the specified Id.
+        /// </summary>
+        /// <param name="position">Input position.</param>
+        /// <returns>Found record.</returns>
+        FileCabinetRecord FindById(int position);
+
+        /// <summary>
+        /// Finds records by the specified gender.
+        /// </summary>
+        /// <param name="gender">Gender to search.</param>
+        /// <returns>Found records.</returns>
+        IEnumerable<FileCabinetRecord> FindByGender(char gender);
+
+        /// <summary>
+        /// Finds records by the specified salary.
+        /// </summary>
+        /// <param name="salary">Salary to search.</param>
+        /// <returns>Found records.</returns>
+        IEnumerable<FileCabinetRecord> FindBySalary(decimal salary);
+
+        /// <summary>
+        /// Finds records by the specified age.
+        /// </summary>
+        /// <param name="age">Age to search.</param>
+        /// <returns>Found records.</returns>
+        IEnumerable<FileCabinetRecord> FindByAge(short age);
     }
 }
