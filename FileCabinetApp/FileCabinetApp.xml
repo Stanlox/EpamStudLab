@@ -88,24 +88,6 @@
             <param name="request">Input request.</param>
             <returns>AppCommandRequest instance.</returns>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.EditCommandHandler">
-            <summary>
-            concrete handler for edit record.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.EditCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.EditCommandHandler"/> class.
-            </summary>
-            <param name="service">Input service.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.EditCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <summary>
-            handles the specified request.
-            </summary>
-            <param name="request">Input request.</param>
-            <returns>AppCommandRequest instance.</returns>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ExitCommandHandler">
             <summary>
             concrete handler for exit from application.
@@ -298,7 +280,7 @@
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.PrintMissedCommandHandler">
             <summary>
-            concrete handler print missed command.
+            Concrete handler print missed command.
             </summary>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.PrintMissedCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
@@ -326,24 +308,6 @@
             <param name="request">Input handle.</param>
             <returns>AppCommandRequest instance.</returns>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.RemoveCommandHandler">
-            <summary>
-            concrete handler for deleting a record.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.RemoveCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.RemoveCommandHandler"/> class.
-            </summary>
-            <param name="service">Input service.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.RemoveCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <summary>
-            handles the specified request.
-            </summary>
-            <param name="request">Input request.</param>
-            <returns>AppCommandRequest instance.</returns>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ServiceCommandHandlerBase">
             <summary>
              defines the service type.
@@ -362,7 +326,7 @@
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.StatCommandHandler">
             <summary>
-            concrete handler for getting statistics.
+            Concrete handler for getting statistics.
             </summary>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.StatCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
@@ -374,6 +338,24 @@
         <member name="M:FileCabinetApp.CommandHandlers.StatCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <summary>
             handles the specified request.
+            </summary>
+            <param name="request">Input request.</param>
+            <returns>AppCommandRequest instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.UpdateCommandHandler">
+            <summary>
+            Concrete handler for updating records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.UpdateCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.UpdateCommandHandler"/> class.
+            </summary>
+            <param name="service">Input service.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.UpdateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles the specified request.
             </summary>
             <param name="request">Input request.</param>
             <returns>AppCommandRequest instance.</returns>
@@ -758,6 +740,11 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.PurgeRecord">
             <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.СlearingAllDictionaries">
+            <summary>
+            Сlearing all dictionaries.
+            </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecordInDateOfBirthDictionary(System.DateTime,System.Int32)">
             <summary>

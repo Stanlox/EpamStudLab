@@ -13,7 +13,7 @@ namespace FileCabinetApp.CommandHandlers
     public class DeleteCommandHandler : ServiceCommandHandlerBase
     {
         private const string Separator = "where";
-        private const string ParametersTemplate = @".([a-zA-Z0-9_]{1,10}\s?\=\s?\'[a-zA-Z0-9_]{1,10}\'\,?\s?(\bor\b)?(\band\b)?\s?){1,10}";
+        private const string ParametersTemplate = @"(\bwhere\b)\s([a-zA-Z0-9_]{1,10}\s?\=\s?\'[a-zA-Z0-9_]{1,10}\'\,?\s?(\bor\b)?(\band\b)?\s?){1,10}";
         private const string FirstName = "firstname";
         private const string LastName = "lastname";
         private const string Gender = "gender";
@@ -78,29 +78,46 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
+        private static IEnumerable<(string key, string value)> GetKeyValuePairs(string source)
+        {
+            const int keyIndex = 0;
+            const int valueIndex = 1;
+            var result = new List<(string key, string value)>();
+            var keyValuePairs = source.Split(",");
+            foreach (var keyValuePair in keyValuePairs)
+            {
+                var keyValueArray = keyValuePair.Split('=');
+                result.Add((keyValueArray[keyIndex].Trim(), keyValueArray[valueIndex].Trim('\'', ' ')));
+            }
+
+            return result;
+        }
+
+        private static bool ContainsAnd(string parameters, string separators)
+        {
+            int countAnd = (parameters.Length - parameters.Replace(separators, string.Empty, StringComparison.OrdinalIgnoreCase).Length) / separators.Length;
+            if (countAnd > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void Delete(string parameters)
         {
             try
             {
-                if (string.IsNullOrEmpty(parameters))
+                if (!IsRightCommandSyntax(ParametersTemplate, parameters))
                 {
                     throw new FormatException("Invalid command format of 'delete' command.");
                 }
 
-                if (parameters.Split()[0].ToString(CultureInfo.InvariantCulture) != Separator)
-                {
-                    throw new FormatException("Invalid command format of 'delete' command.");
-                }
+                var parametersArray = parameters.Trim().Split(Separator, StringSplitOptions.RemoveEmptyEntries);
 
-                var pairsOfParameterValue = parameters.Trim().Split(Separator, StringSplitOptions.RemoveEmptyEntries);
-                var request = string.Join(string.Empty, pairsOfParameterValue);
-
-                if (!IsRightCommandSyntax(ParametersTemplate, request))
-                {
-                    throw new FormatException("Invalid command format of 'delete' command.");
-                }
-
-                this.FindRecord(request);
+                this.FindRecord(string.Join(string.Empty, parametersArray));
 
                 if (this.list.Count == 0)
                 {
@@ -141,66 +158,60 @@ namespace FileCabinetApp.CommandHandlers
 
             if (sortedRecords.Count == 1)
             {
-                Console.WriteLine($"Record {this.builder.ToString()} is deleted.");
+                Console.WriteLine($"Record {this.builder.ToString()}is deleted.");
             }
             else
             {
-                Console.WriteLine($"Record {this.builder.ToString()} are deleted.");
+                Console.WriteLine($"Record {this.builder.ToString()}are deleted.");
             }
         }
 
-        private void RequestConsistsAnd(string key, string value, string key2, string value2)
+        private void FindRecordByMatchingCriteria(string key, string value)
         {
-            this.FindRecordByKey(key, value);
-            this.FindRecordByKey(key2, value2);
-            string[] keys = { key, key2 };
-            string[] values = { value, value2 };
             bool isParse;
-            for (int i = 0; i < keys.Length; i++)
+
+            switch (key)
             {
-                switch (keys[i])
-                {
-                    case Id:
+               case Id:
 
-                        isParse = int.TryParse(values[i], out int id);
-                        IsParse(isParse, id);
-                        this.list = this.list.Where(record => record.Id == id).ToList();
-                        break;
-                    case FirstName:
+                   isParse = int.TryParse(value, out int id);
+                   IsParse(isParse, id);
+                   this.list = this.list.Where(record => record.Id == id).ToList();
+                   break;
+               case FirstName:
 
-                        this.list = this.list.Where(record => string.Equals(record.FirstName, values[i], StringComparison.CurrentCultureIgnoreCase)).ToList();
-                        break;
-                    case LastName:
+                   this.list = this.list.Where(record => string.Equals(record.FirstName, value, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                   break;
+               case LastName:
 
-                        this.list = this.list.Where(record => string.Equals(record.LastName, values[i], StringComparison.CurrentCultureIgnoreCase)).ToList();
-                        break;
-                    case DateOfBirth:
+                   this.list = this.list.Where(record => string.Equals(record.LastName, value, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                   break;
+               case DateOfBirth:
 
-                        isParse = DateTime.TryParse(values[i], out DateTime date);
-                        IsParse(isParse, date);
-                        this.list = this.list.Where(record => record.DateOfBirth == date).ToList();
-                        break;
-                    case Salary:
+                   isParse = DateTime.TryParse(value, out DateTime date);
+                   IsParse(isParse, date);
+                   this.list = this.list.Where(record => record.DateOfBirth == date).ToList();
+                   break;
+               case Salary:
 
-                        isParse = decimal.TryParse(values[i], out decimal salary);
-                        IsParse(isParse, salary);
-                        this.list = this.list.Where(record => record.Salary == salary).ToList();
-                        break;
-                    case Gender:
+                   isParse = decimal.TryParse(value, out decimal salary);
+                   IsParse(isParse, salary);
+                   this.list = this.list.Where(record => record.Salary == salary).ToList();
+                   break;
+               case Gender:
 
-                        isParse = char.TryParse(values[i], out char gender);
-                        IsParse(isParse, gender);
-                        this.list = this.list.Where(record => string.Equals(record.Gender.ToString(CultureInfo.InvariantCulture), values[i], StringComparison.CurrentCultureIgnoreCase)).ToList();
-                        break;
-                    case Age:
+                   isParse = char.TryParse(value, out char gender);
+                   IsParse(isParse, gender);
+                   this.list = this.list.Where(record => string.Equals(record.Gender.ToString(CultureInfo.InvariantCulture), value, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                   break;
+               case Age:
 
-                        isParse = short.TryParse(values[i], out short age);
-                        IsParse(isParse, age);
-                        this.list = this.list.Where(record => record.Age == age).ToList();
-                        break;
-                    default:
-                        throw new FormatException("Invalid command format of 'delete' command.");
-                }
+                   isParse = short.TryParse(value, out short age);
+                   IsParse(isParse, age);
+                   this.list = this.list.Where(record => record.Age == age).ToList();
+                   break;
+               default:
+                   throw new FormatException("Invalid command format of 'delete' command.");
             }
         }
 
@@ -217,56 +228,52 @@ namespace FileCabinetApp.CommandHandlers
 
         private void FindRecord(string request)
         {
-            var pairsOfParameterValue = request.
-                Replace("=", string.Empty, StringComparison.OrdinalIgnoreCase).
-                Trim();
-
-            string[] pairsOfParameterValueArray = pairsOfParameterValue
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                .Select(value => value.Trim('\'')).ToArray();
-
-            if (Array.Exists(pairsOfParameterValueArray, elements => elements == And))
+            if (request.Contains(Or, StringComparison.InvariantCultureIgnoreCase) || request.Contains(And, StringComparison.InvariantCultureIgnoreCase))
             {
-                var index = 0;
-                for (int i = 0; i < pairsOfParameterValue.Length; i++)
+                var isContainsAnd = ContainsAnd(request, And);
+                var parameters = request.Trim().Split(' ');
+
+                var separators = new string[] { Or, And };
+                var parametersArray = parameters
+                    .Select(item => separators
+                    .Contains(item) ? item.Replace(item, ",", StringComparison.InvariantCultureIgnoreCase) : item).ToArray();
+
+                var countSeparators = 0;
+                for (int i = 0; i < parametersArray.Length; i++)
                 {
-                    if (pairsOfParameterValueArray[i] == And)
+                    if (parametersArray[i] != parameters[i])
                     {
-                        index = i;
-                        break;
+                        countSeparators++;
                     }
                 }
 
-                var key = pairsOfParameterValueArray[index - 2];
-                var value = pairsOfParameterValueArray[index - 1];
-                var key2 = pairsOfParameterValueArray[index + 1];
-                var value2 = pairsOfParameterValueArray[index + 2];
-                this.RequestConsistsAnd(key, value, key2, value2);
-                return;
+                if (countSeparators > 1)
+                {
+                    throw new FormatException("Invalid command format of 'delete' command.");
+                }
+
+                var valueAndProperty = string.Join(string.Empty, parametersArray);
+                var keyValuePairs = GetKeyValuePairs(valueAndProperty);
+                foreach (var pair in keyValuePairs)
+                {
+                    this.FindRecordByKey(pair.key, pair.value);
+                }
+
+                if (isContainsAnd)
+                {
+                    foreach (var pair in keyValuePairs)
+                    {
+                        this.FindRecordByMatchingCriteria(pair.key, pair.value);
+                    }
+                }
             }
-
-            for (int i = 0; i < pairsOfParameterValueArray.Length; i++)
+            else
             {
-                if (pairsOfParameterValueArray.Length - 1 == i)
+                var keyValuePairs = GetKeyValuePairs(request.Trim());
+                foreach (var pair in keyValuePairs)
                 {
-                    break;
+                    this.FindRecordByKey(pair.key, pair.value);
                 }
-
-                var parameterKey = pairsOfParameterValueArray[i];
-                var parameterValue = pairsOfParameterValueArray[i + 1];
-                if (string.Equals(pairsOfParameterValueArray[i + 1], Or, StringComparison.OrdinalIgnoreCase)
-                   || string.Equals(pairsOfParameterValueArray[i + 1], And, StringComparison.OrdinalIgnoreCase))
-                {
-                    parameterValue = pairsOfParameterValueArray[i + 3];
-                    parameterKey = pairsOfParameterValueArray[i + 2];
-                }
-
-                if (i + 3 == pairsOfParameterValueArray.Length)
-                {
-                    break;
-                }
-
-                this.FindRecordByKey(parameterKey, parameterValue);
             }
         }
 

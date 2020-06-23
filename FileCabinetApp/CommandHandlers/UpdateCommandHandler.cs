@@ -197,15 +197,16 @@ namespace FileCabinetApp.CommandHandlers
                     var isContainsAnd = ContainsAnd(parametersArray[AfterWhere], And);
                     var parametersArrayAfterWhere = parametersArray[AfterWhere].Trim().Split(' ');
                     var countSeparators = 0;
+
+                    var splitArrayAfterParameters = parametersArrayAfterWhere
+                    .Select(item => separators
+                    .Contains(item) ? item.Replace(item, ",", StringComparison.InvariantCultureIgnoreCase) : item).ToArray();
+
                     for (int i = 0; i < parametersArrayAfterWhere.Length; i++)
                     {
-                        for (int j = 0; j < separators.Length; j++)
+                        if (parametersArrayAfterWhere[i] != splitArrayAfterParameters[i])
                         {
-                            if (parametersArrayAfterWhere[i] == separators[j])
-                            {
-                                countSeparators++;
-                                parametersArrayAfterWhere[i] = ",";
-                            }
+                            countSeparators++;
                         }
                     }
 
@@ -214,7 +215,7 @@ namespace FileCabinetApp.CommandHandlers
                         throw new FormatException(InvalidFormat);
                     }
 
-                    var valueAndProperty = string.Join(string.Empty, parametersArrayAfterWhere);
+                    var valueAndProperty = string.Join(string.Empty, splitArrayAfterParameters);
                     keyValuePairs = GetKeyValuePairs(valueAndProperty);
                     var parametersAfterWhere = string.Join(string.Empty, parametersArray[AfterWhere]).Trim();
                     foreach (var pair in keyValuePairs)
