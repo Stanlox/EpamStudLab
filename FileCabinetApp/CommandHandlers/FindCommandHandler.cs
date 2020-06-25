@@ -79,6 +79,7 @@ namespace FileCabinetApp.CommandHandlers
                         findRecord = this.service.FindByDateOfBirth(date);
                         this.print(findRecord);
                         break;
+
                     default:
                         Console.WriteLine("Wrong search field");
                         break;

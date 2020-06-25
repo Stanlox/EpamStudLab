@@ -15,7 +15,7 @@ namespace FileCabinetApp.Services.Comparer
         /// </summary>
         /// <param name="x">Input charater 1.</param>
         /// <param name="y">Input character 2.</param>
-        /// <returns>Innteger that indicates their relative position in the sort order.</returns>
+        /// <returns>Integer that indicates their relative position in the sort order.</returns>
         public int Compare(char x, char y)
         {
             if (char.ToLowerInvariant(x) == char.ToLowerInvariant(y))
