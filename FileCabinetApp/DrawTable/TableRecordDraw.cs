@@ -11,7 +11,6 @@ namespace FileCabinetApp.TablePrinter
     /// </summary>
     public static class TableRecordDraw
     {
-        private const string MaxIsLessValue = "Maximal дутпер is less than real length of the value";
         private const string Delimiter = "|";
         private const string Corner = "+";
         private const char Border = '-';

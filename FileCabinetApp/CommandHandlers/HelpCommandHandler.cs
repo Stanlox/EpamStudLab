@@ -20,15 +20,6 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "stat", "prints the number of records.", "The 'stat' command prints statistics." },
             new string[] { "create", "creates new user.", "The 'create' command creates the record." },
-            new string[] { "list", "prints a list of records added to the service.", "The 'list' command prints all records." },
-            new string[]
-            {
-                "find", "finds record by the specified value.", "The 'find' command finds all records by specified value." +
-                "\nFull command: find<property name> <value>" +
-                "\nAcceptable properties: firstName, lastName, dateOfBirth. Case doesn't matter." +
-                "\nValue is the string with the value." +
-                "\nExample: find firstName \"Maxim\"",
-            },
             new string[]
             {
                 "export", "exports all records to a file.", "The 'export' command exports all records to a file." +

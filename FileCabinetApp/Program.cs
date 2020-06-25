@@ -143,8 +143,6 @@ namespace FileCabinetApp
 
         private static CommandHandlerBase CreateCommandHandlers(IFileCabinetService service)
         {
-            var listCommandHandler = new ListCommandHandler(service, DefaultRecordPrint);
-            var findCommandHandler = new FindCommandHandler(service, DefaultRecordPrint);
             var helpCommandHandler = new HelpCommandHandler();
             var createCommandHandler = new CreateCommandHandler(service);
             var exitCommandHandler = new ExitCommandHandler(ChangeRunning, fileStream);
@@ -160,12 +158,10 @@ namespace FileCabinetApp
             helpCommandHandler.SetNext(createCommandHandler);
             createCommandHandler.SetNext(exitCommandHandler);
             exitCommandHandler.SetNext(exportCommandHandler);
-            exportCommandHandler.SetNext(findCommandHandler);
-            findCommandHandler.SetNext(importCommandHandler);
+            exportCommandHandler.SetNext(importCommandHandler);
             importCommandHandler.SetNext(purgeCommandHandler);
             purgeCommandHandler.SetNext(statCommandHandler);
-            statCommandHandler.SetNext(listCommandHandler);
-            listCommandHandler.SetNext(insertCommandHandler);
+            statCommandHandler.SetNext(insertCommandHandler);
             insertCommandHandler.SetNext(deleteCommandHandler);
             deleteCommandHandler.SetNext(updateCommandHandler);
             updateCommandHandler.SetNext(selectCommandHandler);
