@@ -16,8 +16,6 @@ namespace FileCabinetApp.CommandHandlers
             "exit",
             "stat",
             "crate",
-            "list",
-            "find",
             "export",
             "import",
             "purge",

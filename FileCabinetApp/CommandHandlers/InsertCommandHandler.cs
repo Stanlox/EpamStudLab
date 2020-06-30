@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using FileCabinetApp.Search;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -45,7 +44,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input firstname parameter.</param>
         public static void GetFirstName(FileCabinetServiceContext record, string parameters)
         {
-            record.FirstName = parameters.Trim();
+            record.FirstName = parameters;
         }
 
         /// <summary>
@@ -55,7 +54,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input last name parameter.</param>
         public static void GetLastName(FileCabinetServiceContext record, string parameters)
         {
-            record.LastName = parameters.Trim();
+            record.LastName = parameters;
         }
 
         /// <summary>
@@ -65,7 +64,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input date of birth parameter.</param>
         public static void GetDateOfBirth(FileCabinetServiceContext record, string parameters)
         {
-            var isConverted = DateTime.TryParse(parameters, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
+            var isConverted = DateTime.TryParseExact(parameters, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
             if (!isConverted)
             {
                 throw new FormatException("Wrong Date of Birth format.");
@@ -137,6 +136,11 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "insert";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
+                if (this.service is FileCabinetMemoryService)
+                {
+                    Caсhe.ClearCashe();
+                }
+
                 this.Insert(request.Parameters);
                 return null;
             }
@@ -164,7 +168,7 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input id parameter.</param>
         private void GetId(string parameters)
         {
-            var isConverted = int.TryParse(parameters, out int id);
+            var isConverted = int.TryParse(parameters.Trim(), out int id);
             if (!isConverted)
             {
                 throw new FormatException("Wrong id format.");
@@ -189,7 +193,7 @@ namespace FileCabinetApp.CommandHandlers
 
                 (var propertyNames, var propertyValues) = GetPropertyNamesAndValues(ParametersTemplate, parameters);
                 var arrayPropertyNames = propertyNames.Split(',');
-                var arrayPropertyValues = propertyValues.Split(',').Select(value => value.Trim('\'')).ToArray();
+                var arrayPropertyValues = propertyValues.Split(',').Select(value => value.Trim().Trim('\'')).ToArray();
                 if (arrayPropertyNames.Length != arrayPropertyValues.Length)
                 {
                     throw new FormatException("Invalid command format of 'insert' command.");
@@ -197,7 +201,7 @@ namespace FileCabinetApp.CommandHandlers
 
                 for (var i = 0; i < arrayPropertyNames.Length; i++)
                 {
-                    var index = Array.FindIndex(this.commands, j => j.Item1.Equals(arrayPropertyNames[i], StringComparison.InvariantCultureIgnoreCase));
+                    var index = Array.FindIndex(this.commands, j => j.Item1.Equals(arrayPropertyNames[i].Trim(), StringComparison.InvariantCultureIgnoreCase));
 
                     if (index >= 0)
                     {

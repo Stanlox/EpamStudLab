@@ -41,7 +41,7 @@ namespace FileCabinetApp.CommandHandlers
             {
                 "insert", "inserts a record with the specified parameters.", "The 'insert' command creates the record." +
                 "\nFull command: (all fields must be listed in any order) values (the value corresponding to the fields)." +
-                "\nExamples: insert (firstName,dateofbirth,lastName,salary,age,gender) values ('maxim','12/12/2012','bandaruk','1000','19','M')",
+                "\nExamples: insert (id, firstName, dateofbirth, lastName, salary, age, gender) values ('1', 'maxim', '12/12/2012', 'bandaruk', '1000', '19', 'M')",
             },
             new string[]
             {

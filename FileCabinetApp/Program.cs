@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Search;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
