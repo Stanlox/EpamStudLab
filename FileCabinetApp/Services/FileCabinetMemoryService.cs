@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using FileCabinetApp.Services.Comparer;
 
 namespace FileCabinetApp
 {
@@ -14,7 +15,7 @@ namespace FileCabinetApp
         private readonly IRecordValidator contextStrategy;
         private readonly Dictionary<decimal, List<FileCabinetRecord>> salaryDictionary = new Dictionary<decimal, List<FileCabinetRecord>>();
         private readonly Dictionary<short, List<FileCabinetRecord>> ageDictionary = new Dictionary<short, List<FileCabinetRecord>>();
-        private readonly Dictionary<char, List<FileCabinetRecord>> genderDictionary = new Dictionary<char, List<FileCabinetRecord>>();
+        private readonly Dictionary<char, List<FileCabinetRecord>> genderDictionary = new Dictionary<char, List<FileCabinetRecord>>(new CharEqualityComparer());
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();

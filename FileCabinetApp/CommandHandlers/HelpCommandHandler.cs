@@ -20,15 +20,6 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "stat", "prints the number of records.", "The 'stat' command prints statistics." },
             new string[] { "create", "creates new user.", "The 'create' command creates the record." },
-            new string[] { "list", "prints a list of records added to the service.", "The 'list' command prints all records." },
-            new string[]
-            {
-                "find", "finds record by the specified value.", "The 'find' command finds all records by specified value." +
-                "\nFull command: find<property name> <value>" +
-                "\nAcceptable properties: firstName, lastName, dateOfBirth. Case doesn't matter." +
-                "\nValue is the string with the value." +
-                "\nExample: find firstName \"Maxim\"",
-            },
             new string[]
             {
                 "export", "exports all records to a file.", "The 'export' command exports all records to a file." +
@@ -50,22 +41,29 @@ namespace FileCabinetApp.CommandHandlers
             {
                 "insert", "inserts a record with the specified parameters.", "The 'insert' command creates the record." +
                 "\nFull command: (all fields must be listed in any order) values (the value corresponding to the fields)." +
-                "\nExamples: insert (firstName,dateofbirth,lastName,salary,age,gender) values ('maxim','12/12/2012','bandaruk','1000','19','M')",
+                "\nExamples: insert (id, firstName, dateofbirth, lastName, salary, age, gender) values ('1', 'maxim', '12/12/2012', 'bandaruk', '1000', '19', 'M')",
             },
             new string[]
             {
                 "delete", "deletes records by conditions. ", "The 'delete' command deletes records by conditions." +
                 "\nFull command: delete where <field> or/and/without logical operators = 'value'." +
                 "\nExamples: delete where dateofbirth = '11/11/2000'" +
-                "\n delete where firstname = 'maxim' and lastname = 'bandaruk'" +
-                "\n delete where id='1' or salary = '1000'",
+                "\ndelete where firstname = 'maxim' and lastname = 'bandaruk'" +
+                "\ndelete where id='1' or salary = '1000'",
             },
             new string[]
             {
                 "update", "updates records.", "The 'update' command updates records by conditions." +
-                "\nFull command: update set <field(s)> = value(s) where <field(s)> = value(s) " +
-                "\nExample: update set firstname = 'ivan' where lastname = 'ivanov' and age = '15'" +
+                "\nFull command: update set <field(s)> = value(s) where <field(s)> = 'value(s)' " +
+                "\nExamples:\nupdate set firstname = 'ivan' where lastname = 'ivanov' and age = '15'" +
                 "\nupdate set salary = '2000', firstname = 'Vitya' where id = '1'",
+            },
+            new string[]
+            {
+                "select", "shows records.", "The 'select' command shows records." +
+                "\nFull command: select <field(s)> where or/and/without logical operators <fields(Min 2 fields)> = 'values'" +
+                "\nExamples:\nselect firstName where id='1'" +
+                "\nselect lastname, firstname where firstname='ivan' and lastname='ivanov'",
             },
         };
 

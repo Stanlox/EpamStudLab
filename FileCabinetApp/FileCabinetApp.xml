@@ -125,25 +125,6 @@
             <param name="request">Input request.</param>
             <returns>AppCommandRequest instance.</returns>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.FindCommandHandler">
-            <summary>
-            concrete handler for find a record.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord}})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.FindCommandHandler"/> class.
-            </summary>
-            <param name="service">Input service.</param>
-            <param name="print">Print method.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <summary>
-            handles the specified request.
-            </summary>
-            <param name="request">Input request.</param>
-            <returns>AppCommandRequest instance.</returns>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.HelpCommandHandler">
             <summary>
             concrete handler command help.
@@ -259,25 +240,6 @@
             </summary>
             <param name="parameters">Input id parameter.</param>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
-            <summary>
-            concrete handler command list.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord}})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.ListCommandHandler"/> class.
-            </summary>
-            <param name="service">Input service.</param>
-            <param name="action">Input action.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <summary>
-            handles the specified request.
-            </summary>
-            <param name="request">Input request.</param>
-            /// <returns>AppCommandRequest instance.</returns>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.PrintMissedCommandHandler">
             <summary>
             Concrete handler print missed command.
@@ -306,6 +268,24 @@
             handles the specified request.
             </summary>
             <param name="request">Input handle.</param>
+            <returns>AppCommandRequest instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.SelectCommandHandler">
+            <summary>
+            Concrete handler for shows records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.SelectCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.SelectCommandHandler"/> class.
+            </summary>
+            <param name="service">Input service.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.SelectCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            handles the specified request.
+            </summary>
+            <param name="request">Input record.</param>
             <returns>AppCommandRequest instance.</returns>
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.ServiceCommandHandlerBase">
@@ -407,6 +387,64 @@
             Read gender criterions from json file.
             </summary>
             <returns>array of acceptable values.</returns>
+        </member>
+        <member name="T:FileCabinetApp.DrawTable.ContentAlign">
+            <summary>
+            Contains content align.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.DrawTable.ContentAlign.Left">
+            <summary>
+            Left align.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.DrawTable.ContentAlign.Right">
+            <summary>
+            Right align.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.DrawTable.TableColumn">
+            <summary>
+            Represents column of the table.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DrawTable.TableColumn.#ctor(System.String,System.Collections.Generic.IEnumerable{System.String},FileCabinetApp.DrawTable.ContentAlign)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.DrawTable.TableColumn"/> class.
+            </summary>
+            <param name="columnName">Column name.</param>
+            <param name="values">Values.</param>
+            <param name="align">Content align.</param>
+        </member>
+        <member name="P:FileCabinetApp.DrawTable.TableColumn.MaxLenqth">
+            <summary>
+            Gets or sets max length of values.
+            </summary>
+            <value> Max length of values.</value>
+        </member>
+        <member name="P:FileCabinetApp.DrawTable.TableColumn.ContentAlign">
+            <summary>
+            Gets or sets contant align.
+            </summary>
+            <value> Contant align.</value>
+        </member>
+        <member name="M:FileCabinetApp.DrawTable.TableColumn.GetNextValue">
+            <summary>
+            Gets the next value.
+            </summary>
+            <returns>Value.</returns>
+        </member>
+        <member name="T:FileCabinetApp.TablePrinter.TableRecordDraw">
+            <summary>
+            Contains method for printing the table.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.TablePrinter.TableRecordDraw.PrintTable(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord},System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Prints the table.
+            </summary>
+            <param name="records">Records to print.</param>
+            <param name="properties">Properties to print.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -575,6 +613,68 @@
             </summary>
             <param name="args">command line parameter.</param>
         </member>
+        <member name="T:FileCabinetApp.Search.Caсhe">
+            <summary>
+            Find records in cashe.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Search.Caсhe.FindRecordInCashe(System.String,System.String)">
+            <summary>
+            Find record in cashe by key.
+            </summary>
+            <param name="key">Input key.</param>
+            <param name="value">Input value.</param>
+            <returns>Found records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Search.Caсhe.AddInCashe(System.Object,System.String,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Add record in cashe by key.
+            </summary>
+            <param name="key">Input key.</param>
+            <param name="value">Input value.</param>
+            <param name="record">Input record.</param>
+        </member>
+        <member name="M:FileCabinetApp.Search.Caсhe.ClearCashe">
+            <summary>
+            Clears cashe.
+            </summary>
+        </member>
+        <member name="T:FileCabinetApp.Search.FindRecordInService">
+            <summary>
+            Find records in service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Search.FindRecordInService.#ctor(FileCabinetApp.IFileCabinetService,System.String,System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord}@)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Search.FindRecordInService"/> class.
+            </summary>
+            <param name="service">Input type of service.</param>
+            <param name="commandName">Command name.</param>
+            <param name="list">List passed by key.</param>
+        </member>
+        <member name="M:FileCabinetApp.Search.FindRecordInService.ContainsAnd(System.String,System.String)">
+            <summary>
+            Checks whether the request contains 'and'.
+            </summary>
+            <param name="parameters">Input parameters.</param>
+            <param name="separators">Input separators.</param>
+            <returns>Boolean value is contained in the query 'and'.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Search.FindRecordInService.FindRecordByKey(System.String,System.String)">
+            <summary>
+            finds records in dictionary by key.
+            </summary>
+            <param name="parameterKey">Input key.</param>
+            <param name="parameterValue">Input value corresponding to the key.</param>
+            <returns>List of found records of a specific type.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Search.FindRecordInService.FindRecordByMatchingCriteria(System.String,System.String)">
+            <summary>
+            Find record by matching criteria.
+            </summary>
+            <param name="key">Input key.</param>
+            <param name="value">Input value.</param>
+        </member>
         <member name="T:FileCabinetApp.SerializebleCollection">
             <summary>
             class for serialize cillection.
@@ -610,7 +710,18 @@
             </summary>
             <param name="x">Input charater 1.</param>
             <param name="y">Input character 2.</param>
-            <returns>Innteger that indicates their relative position in the sort order.</returns>
+            <returns>Integer that indicates their relative position in the sort order.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Services.Comparer.CharEqualityComparer">
+            <summary>
+            Implementation of the comparator.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Services.Comparer.CharEqualityComparer.Equals(System.Char,System.Char)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.Services.Comparer.CharEqualityComparer.GetHashCode(System.Char)">
+            <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>

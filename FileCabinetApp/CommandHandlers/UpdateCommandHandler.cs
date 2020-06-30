@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using FileCabinetApp.Search;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -17,15 +18,9 @@ namespace FileCabinetApp.CommandHandlers
         private const string InvalidFormat = "Invalid command format of 'update' command.";
         private const int BeforeWhere = 0;
         private const int AfterWhere = 1;
-        private const string FirstName = "FIRSTNAME";
-        private const string LastName = "LASTNAME";
-        private const string Gender = "GENDER";
-        private const string DateOfBirth = "DATEOFBIRTH";
-        private const string Id = "ID";
-        private const string Salary = "SALARY";
-        private const string Age = "AGE";
         private const string Or = "or";
         private const string And = "and";
+        private const string NameCommand = "update";
 
         private readonly Tuple<string, Action<FileCabinetServiceContext, string>>[] commands = new Tuple<string, Action<FileCabinetServiceContext, string>>[]
           {
@@ -39,8 +34,7 @@ namespace FileCabinetApp.CommandHandlers
 
         private FileCabinetServiceContext recordContext = new FileCabinetServiceContext();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
-        private IEnumerable<FileCabinetRecord> records;
-        private FileCabinetRecord record;
+        private FindRecordInService find;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateCommandHandler"/> class.
@@ -49,6 +43,7 @@ namespace FileCabinetApp.CommandHandlers
         public UpdateCommandHandler(IFileCabinetService service)
             : base(service)
         {
+            this.find = new FindRecordInService(service, NameCommand, ref this.list);
         }
 
         /// <summary>
@@ -66,6 +61,11 @@ namespace FileCabinetApp.CommandHandlers
             const string name = "update";
             if (string.Equals(request.Command, name, StringComparison.OrdinalIgnoreCase))
             {
+                if (this.service is FileCabinetMemoryService)
+                {
+                    Caсhe.ClearCashe();
+                }
+
                 this.Update(request.Parameters);
                 return null;
             }
@@ -148,19 +148,6 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static bool ContainsAnd(string parameters, string separators)
-        {
-            int countAnd = (parameters.Length - parameters.Replace(separators, string.Empty, StringComparison.OrdinalIgnoreCase).Length) / separators.Length;
-            if (countAnd > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         private void Update(string parameters)
         {
             try
@@ -194,7 +181,7 @@ namespace FileCabinetApp.CommandHandlers
                 if (parametersArray[AfterWhere].Contains(Or, StringComparison.InvariantCultureIgnoreCase) || parametersArray[AfterWhere].Contains(And, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var separators = new string[] { Or, And };
-                    var isContainsAnd = ContainsAnd(parametersArray[AfterWhere], And);
+                    var isContainsAnd = this.find.ContainsAnd(parametersArray[AfterWhere], And);
                     var parametersArrayAfterWhere = parametersArray[AfterWhere].Trim().Split(' ');
                     var countSeparators = 0;
 
@@ -220,14 +207,14 @@ namespace FileCabinetApp.CommandHandlers
                     var parametersAfterWhere = string.Join(string.Empty, parametersArray[AfterWhere]).Trim();
                     foreach (var pair in keyValuePairs)
                     {
-                        this.FindRecordByKey(pair.key, pair.value);
+                        this.find.FindRecordByKey(pair.key, pair.value);
                     }
 
                     if (isContainsAnd)
                     {
                         foreach (var pair in keyValuePairs)
                         {
-                            this.FindRecordByMatchingCriteria(pair.key, pair.value);
+                            this.find.FindRecordByMatchingCriteria(pair.key, pair.value);
                         }
                     }
                 }
@@ -236,7 +223,7 @@ namespace FileCabinetApp.CommandHandlers
                      keyValuePairs = GetKeyValuePairs(parametersArray[AfterWhere].Trim());
                      foreach (var pair in keyValuePairs)
                      {
-                        this.FindRecordByKey(pair.key, pair.value);
+                        this.find.FindRecordByKey(pair.key, pair.value);
                      }
                 }
 
@@ -313,119 +300,6 @@ namespace FileCabinetApp.CommandHandlers
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine(InvalidFormat);
-            }
-        }
-
-        private void AddRecord(List<FileCabinetRecord> records)
-        {
-            foreach (var item in records)
-            {
-                if (!this.list.Exists(record => record.Id == item.Id))
-                {
-                    this.list.Add(item);
-                }
-            }
-        }
-
-        private void FindRecordByKey(string parameterKey, string parameterValue)
-        {
-            bool isParse;
-            switch (parameterKey.ToUpperInvariant())
-            {
-                case Id:
-
-                    isParse = int.TryParse(parameterValue, out int id);
-                    IsParse(isParse, id);
-                    this.record = this.service.FindById(id);
-                    this.list.Add(this.record);
-                    break;
-                case FirstName:
-
-                    this.records = this.service.FindByFirstName(parameterValue);
-                    this.AddRecord(this.records.ToList());
-                    break;
-                case LastName:
-
-                    this.records = this.service.FindByLastName(parameterValue);
-                    this.AddRecord(this.records.ToList());
-                    break;
-                case DateOfBirth:
-
-                    isParse = DateTime.TryParse(parameterValue, out DateTime date);
-                    IsParse(isParse, date);
-                    this.records = this.service.FindByDateOfBirth(date);
-                    this.AddRecord(this.records.ToList());
-                    break;
-                case Salary:
-
-                    isParse = decimal.TryParse(parameterValue, out decimal salary);
-                    IsParse(isParse, salary);
-                    this.records = this.service.FindBySalary(salary);
-                    this.AddRecord(this.records.ToList());
-                    break;
-                case Gender:
-
-                    isParse = char.TryParse(parameterValue, out char gender);
-                    IsParse(isParse, gender);
-                    this.records = this.service.FindByGender(gender);
-                    this.AddRecord(this.records.ToList());
-                    break;
-                case Age:
-
-                    isParse = short.TryParse(parameterValue, out short age);
-                    IsParse(isParse, age);
-                    this.records = this.service.FindByAge(age);
-                    this.AddRecord(this.records.ToList());
-                    break;
-                default:
-                    throw new FormatException("Invalid command format of 'update' command.");
-            }
-        }
-
-        private void FindRecordByMatchingCriteria(string key, string value)
-        {
-            bool isParse;
-            switch (key.ToUpperInvariant())
-            {
-                case Id:
-
-                    isParse = int.TryParse(value, out int id);
-                    IsParse(isParse, id);
-                    this.list = this.list.Where(record => record.Id == id).ToList();
-                    break;
-                case FirstName:
-
-                    this.list = this.list.Where(record => string.Equals(record.FirstName, value, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                    break;
-                case LastName:
-                    this.list = this.list.Where(record => string.Equals(record.LastName, value, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                    break;
-                case DateOfBirth:
-
-                    isParse = DateTime.TryParse(value, out DateTime date);
-                    IsParse(isParse, date);
-                    this.list = this.list.Where(record => record.DateOfBirth == date).ToList();
-                    break;
-                case Salary:
-
-                    isParse = decimal.TryParse(value, out decimal salary);
-                    IsParse(isParse, salary);
-                    this.list = this.list.Where(record => record.Salary == salary).ToList();
-                    break;
-                case Gender:
-
-                    isParse = char.TryParse(value, out char gender);
-                    IsParse(isParse, gender);
-                    this.list = this.list.Where(record => string.Equals(record.Gender.ToString(CultureInfo.InvariantCulture), value, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                    break;
-                case Age:
-
-                    isParse = short.TryParse(value, out short age);
-                    IsParse(isParse, age);
-                    this.list = this.list.Where(record => record.Age == age).ToList();
-                    break;
-                default:
-                    throw new FormatException("Invalid command format of 'delete' command.");
             }
         }
     }
