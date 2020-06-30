@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using FileCabinetApp.Search;
 
 namespace FileCabinetApp.CommandHandlers
 {
     /// <summary>
-    /// concrete handler insers record.
+    /// Concrete handler for inserts records.
     /// </summary>
     public class InsertCommandHandler : ServiceCommandHandlerBase
     {

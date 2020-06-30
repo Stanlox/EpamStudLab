@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -15,7 +14,7 @@ namespace FileCabinetApp.CommandHandlers
             "help",
             "exit",
             "stat",
-            "crate",
+            "create",
             "export",
             "import",
             "purge",

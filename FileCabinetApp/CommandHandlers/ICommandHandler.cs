@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FileCabinetApp.CommandHandlers
+﻿namespace FileCabinetApp.CommandHandlers
 {
     /// <summary>
     /// The Handler interface declares a method for building a chain of handlers. It also declares a method for executing the query.
