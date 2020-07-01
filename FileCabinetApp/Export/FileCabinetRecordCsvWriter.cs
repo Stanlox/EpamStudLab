@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -26,6 +27,11 @@ namespace FileCabinetApp
         /// <param name="fileCabinetRecord">the record of a <see cref="FileCabinetRecord"/> type.</param>
         public void Write(FileCabinetRecord fileCabinetRecord)
         {
+            if (fileCabinetRecord == null)
+            {
+                throw new ArgumentNullException(nameof(fileCabinetRecord));
+            }
+
             var builder = new StringBuilder();
             builder.Append($"{fileCabinetRecord.Id}, ");
             builder.Append($"{fileCabinetRecord.FirstName}, ");

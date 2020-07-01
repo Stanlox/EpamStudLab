@@ -28,6 +28,11 @@ namespace FileCabinetApp.Validators
         /// <exception cref="ArgumentException">thrown when <paramref name="parameters.DateOfBirth"/> is the wrong range.</exception>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             if (DateTime.Compare(this.to, parameters.DateOfBirth) < 0 || DateTime.Compare(this.from, parameters.DateOfBirth) > 0)
             {
                 throw new ArgumentException("Invalid Date", $"{nameof(parameters.DateOfBirth)}");

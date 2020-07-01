@@ -6,7 +6,7 @@ using System.IO;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// contains methods for reading records from a file.
+    /// Contains methods for reading records from a csv file.
     /// </summary>
     public class FileCabinetRecordCsvReader
     {
@@ -15,10 +15,10 @@ namespace FileCabinetApp
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetRecordCsvReader"/> class.
         /// </summary>
-        /// <param name="streamReader">Thread.</param>
+        /// <param name="streamReader">Stream reader.</param>
         public FileCabinetRecordCsvReader(StreamReader streamReader)
         {
-            this.reader = streamReader;
+            this.reader = streamReader ?? throw new ArgumentNullException(nameof(streamReader));
         }
 
         /// <summary>

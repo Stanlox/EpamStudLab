@@ -25,6 +25,11 @@ namespace FileCabinetApp.Validators
         /// <exception cref="ArgumentException">Thrown, when user entered a negative amount.</exception>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             if (parameters.Salary > this.max)
             {
                 throw new ArgumentException("You entered too much salary", $"{nameof(parameters.Salary)}");

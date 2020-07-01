@@ -46,6 +46,11 @@ namespace FileCabinetApp.Search
         /// <returns>Found records.</returns>
         public static IEnumerable<FileCabinetRecord> FindRecordInCashe(string key, string value)
         {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             switch (key.ToUpperInvariant())
             {
                 case Id:
@@ -94,6 +99,11 @@ namespace FileCabinetApp.Search
         /// <param name="record">Input record.</param>
         public static void AddInCashe(object key, string value, FileCabinetRecord record)
         {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             var upperCaseKey = key.ToString().ToUpperInvariant();
             var index = Array.FindIndex(Finds, j => j.Item1.Equals(upperCaseKey, StringComparison.InvariantCultureIgnoreCase));
             if (index >= 0)

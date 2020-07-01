@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// class for serialize cillection.
+    /// Class for serialize collection.
     /// </summary>
     [XmlRoot(IsNullable = false)]
     [XmlInclude(typeof(FileCabinetRecord))]

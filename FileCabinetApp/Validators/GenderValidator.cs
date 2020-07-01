@@ -26,6 +26,11 @@ namespace FileCabinetApp.Validators
         /// <exception cref="ArgumentException">Thrown, when gender not defined.</exception>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             if (!this.gender.Contains(parameters.Gender))
             {
                 throw new ArgumentException("There is no such gender", $"{nameof(parameters.Gender)}");

@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using FileCabinetApp;
 
-namespace FileCabinetGenerator
+namespace FileCabinetApp
 {
     /// <summary>
     /// serialize with help xmlWriter.
     /// </summary>
-    public class FileCabinetGeneratorXmlWriter
+    public class FileCabinetRecordXmlWriter
     {
         private XmlSerializer serializer = new XmlSerializer(typeof(SerializebleCollection));
         private XmlWriter xmlWriter;
         private SerializebleCollection serializebleCollection = new SerializebleCollection();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetGeneratorXmlWriter"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetRecordXmlWriter"/> class.
         /// </summary>
         /// <param name="writer">XmlWriter.</param>
-        public FileCabinetGeneratorXmlWriter(XmlWriter writer)
+        public FileCabinetRecordXmlWriter(XmlWriter writer)
         {
             this.xmlWriter = writer;
         }
@@ -32,6 +29,11 @@ namespace FileCabinetGenerator
         /// <param name="records">list <see cref="FileCabinetRecord"/>.</param>
         public void Write(List<FileCabinetRecord> records)
         {
+            if (records == null)
+            {
+                throw new ArgumentNullException(nameof(records));
+            }
+
             foreach (var item in records)
             {
                 this.serializebleCollection.Record.Add(item);

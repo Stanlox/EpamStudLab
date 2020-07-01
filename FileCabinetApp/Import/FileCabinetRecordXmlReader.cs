@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace FileCabinetApp
 {
     /// <summary>
-    /// deserialize with help xmlWriter.
+    /// Contains methods for reading records from a xml file.
     /// </summary>
     public class FileCabinetRecordXmlReader
     {
@@ -15,10 +16,10 @@ namespace FileCabinetApp
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetRecordXmlReader"/> class.
         /// </summary>
-        /// <param name="xmlReader">XmlReader.</param>
+        /// <param name="xmlReader">Xml reader.</param>
         public FileCabinetRecordXmlReader(XmlReader xmlReader)
         {
-            this.xmlReader = xmlReader;
+            this.xmlReader = xmlReader ?? throw new ArgumentNullException(nameof(xmlReader));
         }
 
         /// <summary>

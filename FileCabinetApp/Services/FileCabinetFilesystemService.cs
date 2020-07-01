@@ -41,7 +41,7 @@ namespace FileCabinetApp
         /// <param name="fileStream">Input FileStream.</param>
         public FileCabinetFilesystemService(FileStream fileStream)
         {
-            this.fileStream = fileStream;
+            this.fileStream = fileStream ?? throw new ArgumentNullException(nameof(fileStream));
 
             if (this.fileStream.Length != 0)
             {
@@ -270,6 +270,11 @@ namespace FileCabinetApp
         /// <returns>Id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             this.contextStrategy.ValidateParameters(parameters);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
@@ -717,7 +722,7 @@ namespace FileCabinetApp
         /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
         public void RemoveRecordInAllDictionary(FileCabinetRecord record, int index)
         {
-            if (record is null)
+            if (record == null)
             {
                 throw new ArgumentNullException(nameof(record));
             }
@@ -739,7 +744,7 @@ namespace FileCabinetApp
         /// <exception cref="ArgumentNullException">Thrown when record is null.</exception>
         public void AddRecordInAllDictionary(FileCabinetRecord record, int index)
         {
-            if (record is null)
+            if (record == null)
             {
                 throw new ArgumentNullException(nameof(record));
             }
@@ -756,6 +761,11 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             return new FileCabinetRecord()
             {
                 Id = record.Id,
@@ -818,6 +828,11 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
+            if (snapshot == null)
+            {
+                throw new ArgumentNullException(nameof(snapshot));
+            }
+
             var record = snapshot.Records;
             var recordFromFile = snapshot.ListFromFile;
             bool isFind = false;

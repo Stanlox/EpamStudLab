@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
@@ -76,6 +77,11 @@ namespace FileCabinetApp
         /// <param name="filestream">Input filestream.</param>
         public void LoadFromCsv(FileStream filestream)
         {
+            if (filestream == null)
+            {
+                throw new ArgumentNullException(nameof(filestream));
+            }
+
             using (StreamReader streamReader = new StreamReader(filestream.Name, Encoding.ASCII))
             {
                 this.fileCabinetRecordCsvReader = new FileCabinetRecordCsvReader(streamReader);
@@ -89,6 +95,11 @@ namespace FileCabinetApp
         /// <param name="filestream">Input filestream.</param>
         public void LoadFromXml(FileStream filestream)
         {
+            if (filestream == null)
+            {
+                throw new ArgumentNullException(nameof(filestream));
+            }
+
             using (XmlReader xmlReader = XmlReader.Create(filestream.Name))
             {
                 this.fileCabinetRecordXmlReader = new FileCabinetRecordXmlReader(xmlReader);
