@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace FileCabinetApp.Search
 {
@@ -47,6 +46,16 @@ namespace FileCabinetApp.Search
         #pragma warning disable CA1822
         public bool ContainsAnd(string parameters, string separators)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            if (separators == null)
+            {
+                throw new ArgumentNullException(nameof(separators));
+            }
+
             int countAnd = (parameters.Length - parameters.Replace(separators, string.Empty, StringComparison.OrdinalIgnoreCase).Length) / separators.Length;
             if (countAnd > 0)
             {
@@ -66,6 +75,11 @@ namespace FileCabinetApp.Search
         /// <returns>List of found records of a specific type.</returns>
         public List<FileCabinetRecord> FindRecordByKey(string parameterKey, string parameterValue)
         {
+            if (parameterKey == null)
+            {
+                throw new ArgumentNullException(nameof(parameterKey));
+            }
+
             this.casheList.Clear();
             bool isParse;
             switch (parameterKey.ToUpperInvariant())
@@ -136,6 +150,11 @@ namespace FileCabinetApp.Search
         /// <param name="value">Input value.</param>
         public void FindRecordByMatchingCriteria(string key, string value)
         {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             bool isParse;
             switch (key.ToUpperInvariant())
             {

@@ -176,7 +176,7 @@
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.InsertCommandHandler">
             <summary>
-            concrete handler insers record.
+            Concrete handler for inserts records.
             </summary>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
@@ -340,54 +340,6 @@
             <param name="request">Input request.</param>
             <returns>AppCommandRequest instance.</returns>
         </member>
-        <member name="T:FileCabinetApp.ConfigurationReader">
-            <summary>
-            Reads data from a json validation file.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.ConfigurationReader.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.ConfigurationReader"/> class.
-            build congiguration json file.
-            </summary>
-            <param name="validType">Input type of validation.</param>
-        </member>
-        <member name="M:FileCabinetApp.ConfigurationReader.ReadFirstNameCriterions">
-            <summary>
-            Read first name criterions from json file.
-            </summary>
-            <returns>tuple of the minLength and maxLength of the first name.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConfigurationReader.ReadLastNameCriterions">
-            <summary>
-            Read last name criterions from json file.
-            </summary>
-            <returns>tuple of the minLength and maxLength of the last name.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConfigurationReader.ReadDateOfBirthCriterions">
-            <summary>
-            Read date of birth criterions from json file.
-            </summary>
-            <returns>tuple of the minDate and maxDate of the date of birth.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConfigurationReader.ReadAgeCriterions">
-            <summary>
-            Read age criterions from json file.
-            </summary>
-            <returns>tuple of the minAge and maxAge of the Age.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConfigurationReader.ReadSalaryCriterions">
-            <summary>
-            Read salary criterions from json file.
-            </summary>
-            <returns>max salary.</returns>
-        </member>
-        <member name="M:FileCabinetApp.ConfigurationReader.ReadGenderCriterions">
-            <summary>
-            Read gender criterions from json file.
-            </summary>
-            <returns>array of acceptable values.</returns>
-        </member>
         <member name="T:FileCabinetApp.DrawTable.ContentAlign">
             <summary>
             Contains content align.
@@ -446,6 +398,122 @@
             <param name="records">Records to print.</param>
             <param name="properties">Properties to print.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
+            <summary>
+            contains methods for writing records to a file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
+            </summary>
+            <param name="writer">Thread.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            writes to a record file.
+            </summary>
+            <param name="fileCabinetRecord">the record of a <see cref="T:FileCabinetApp.FileCabinetRecord"/> type.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            serialize with help xmlWriter.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.Xml.XmlWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="writer">XmlWriter.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Serialise records to a file.
+            </summary>
+            <param name="records">list <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvReader">
+            <summary>
+            Contains methods for reading records from a csv file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.#ctor(System.IO.StreamReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvReader"/> class.
+            </summary>
+            <param name="streamReader">Stream reader.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.ReadAll">
+            <summary>
+            Read all data from a file.
+            </summary>
+            <returns>list of records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlReader">
+            <summary>
+            Contains methods for reading records from a xml file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.#ctor(System.Xml.XmlReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlReader"/> class.
+            </summary>
+            <param name="xmlReader">Xml reader.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.ReadAll">
+            <summary>
+            Read all data from xml file.
+            </summary>
+            <returns>list of records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.ConfigurationReader">
+            <summary>
+            Reads data from a json validation file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ConfigurationReader"/> class.
+            build congiguration json file.
+            </summary>
+            <param name="validType">Input type of validation.</param>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadFirstNameCriterions">
+            <summary>
+            Read first name criterions from json file.
+            </summary>
+            <returns>tuple of the minLength and maxLength of the first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadLastNameCriterions">
+            <summary>
+            Read last name criterions from json file.
+            </summary>
+            <returns>tuple of the minLength and maxLength of the last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadDateOfBirthCriterions">
+            <summary>
+            Read date of birth criterions from json file.
+            </summary>
+            <returns>tuple of the minDate and maxDate of the date of birth.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadAgeCriterions">
+            <summary>
+            Read age criterions from json file.
+            </summary>
+            <returns>tuple of the minAge and maxAge of the Age.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadSalaryCriterions">
+            <summary>
+            Read salary criterions from json file.
+            </summary>
+            <returns>max salary.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ConfigurationReader.ReadGenderCriterions">
+            <summary>
+            Read gender criterions from json file.
+            </summary>
+            <returns>array of acceptable values.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             properties that describe the model.
@@ -492,74 +560,6 @@
             Gets or sets properties Salary.
             </summary>
             <value>The Salary property gets/sets the value.</value>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetRecordCsvReader">
-            <summary>
-            contains methods for reading records from a file.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.#ctor(System.IO.StreamReader)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvReader"/> class.
-            </summary>
-            <param name="streamReader">Thread.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.ReadAll">
-            <summary>
-            Read all data from a file.
-            </summary>
-            <returns>list of records.</returns>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
-            <summary>
-            contains methods for writing records to a file.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.#ctor(System.IO.TextWriter)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
-            </summary>
-            <param name="writer">Thread.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            writes to a record file.
-            </summary>
-            <param name="fileCabinetRecord">the record of a <see cref="T:FileCabinetApp.FileCabinetRecord"/> type.</param>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetRecordXmlReader">
-            <summary>
-            deserialize with help xmlWriter.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.#ctor(System.Xml.XmlReader)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlReader"/> class.
-            </summary>
-            <param name="xmlReader">XmlReader.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.ReadAll">
-            <summary>
-            Read all data from xml file.
-            </summary>
-            <returns>list of records.</returns>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
-            <summary>
-            serialize with help xmlWriter.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.Xml.XmlWriter)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
-            </summary>
-            <param name="writer">XmlWriter.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord})">
-            <summary>
-            Serialise records to a file.
-            </summary>
-            <param name="records">list <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetServiceContext">
             <summary>
@@ -677,7 +677,7 @@
         </member>
         <member name="T:FileCabinetApp.SerializebleCollection">
             <summary>
-            class for serialize cillection.
+            Class for serialize collection.
             </summary>
         </member>
         <member name="M:FileCabinetApp.SerializebleCollection.#ctor">
@@ -723,6 +723,33 @@
         <member name="M:FileCabinetApp.Services.Comparer.CharEqualityComparer.GetHashCode(System.Char)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.Services.Extensions.BytesToModel">
+            <summary>
+            Сontains methods for converting bytes to records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Services.Extensions.BytesToModel.SetFields(System.Int16@,System.Int32,System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord}@)">
+            <summary>
+            Set fields.
+            </summary>
+            <param name="deletedStatus">Status of deleting a record.</param>
+            <param name="maxstringlength">The maximal length of the string.</param>
+            <param name="deletedlist">List of deleted records.</param>
+        </member>
+        <member name="M:FileCabinetApp.Services.Extensions.BytesToModel.ToFileCabinetRecord(System.Byte[])">
+            <summary>
+            Сonverts an array of bytes to a single record.
+            </summary>
+            <param name="bytes">Input bytes.</param>
+            <returns>Record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Services.Extensions.BytesToModel.ToListFileCabinetRecord(System.Byte[])">
+            <summary>
+            Converts an array of bytes to list a record.
+            </summary>
+            <param name="bytes">Input array of bytes.</param>
+            <returns>List of records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
             contains file services for adding, editing, and modifying records using filestream.
@@ -733,20 +760,6 @@
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetFilesystemService"/> class.
             </summary>
             <param name="fileStream">Input FileStream.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.BytesToListFileCabinetRecord(System.Byte[])">
-            <summary>
-            converts an array of bytes to a record.
-            </summary>
-            <param name="bytes">Input array of bytes.</param>
-            <returns>list of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.BytesToFileCabinetRecord(System.Byte[])">
-            <summary>
-            Сonverts one byte to a single record.
-            </summary>
-            <param name="bytes">Input bytes.</param>
-            <returns>Record.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.AddInDictionaryDateOfBirth(System.DateTime,System.Int32)">
             <summary>

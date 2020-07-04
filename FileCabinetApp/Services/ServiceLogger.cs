@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace FileCabinetApp
 {
@@ -33,6 +32,11 @@ namespace FileCabinetApp
         /// <returns>Id of the new record.</returns>
         public int CreateRecord(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.CreateRecord)}() with FirstName = '{parameters.FirstName}'," +
@@ -51,6 +55,11 @@ namespace FileCabinetApp
         /// <param name="parameters">Input new FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
         public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             using (TextWriter writer = File.AppendText(this.path))
             {
                 writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.EditRecord)}() with id = '{id}', FirstName = '{parameters.FirstName}'," +
@@ -142,7 +151,7 @@ namespace FileCabinetApp
         {
             using (TextWriter writer = File.AppendText(this.path))
             {
-                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindById)}() with Ide = '{id}' ");
+                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.FindById)}() with Id = '{id}' ");
                 var record = this.service.FindById(id);
                 if (record != null)
                 {

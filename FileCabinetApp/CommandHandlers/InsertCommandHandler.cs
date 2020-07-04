@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using FileCabinetApp.Search;
 
 namespace FileCabinetApp.CommandHandlers
 {
     /// <summary>
-    /// concrete handler insers record.
+    /// Concrete handler for inserts records.
     /// </summary>
     public class InsertCommandHandler : ServiceCommandHandlerBase
     {
@@ -44,6 +43,11 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input firstname parameter.</param>
         public static void GetFirstName(FileCabinetServiceContext record, string parameters)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             record.FirstName = parameters;
         }
 
@@ -54,6 +58,11 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input last name parameter.</param>
         public static void GetLastName(FileCabinetServiceContext record, string parameters)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             record.LastName = parameters;
         }
 
@@ -64,6 +73,11 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input date of birth parameter.</param>
         public static void GetDateOfBirth(FileCabinetServiceContext record, string parameters)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             var isConverted = DateTime.TryParseExact(parameters, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
             if (!isConverted)
             {
@@ -80,6 +94,11 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input age parameter.</param>
         public static void GetAge(FileCabinetServiceContext record, string parameters)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             var isConverted = short.TryParse(parameters, out short age);
             if (!isConverted)
             {
@@ -96,6 +115,11 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input salary parameter.</param>
         public static void GetSalary(FileCabinetServiceContext record, string parameters)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             var isConverted = decimal.TryParse(parameters, out decimal salary);
             if (!isConverted)
             {
@@ -112,6 +136,11 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input gender parameter.</param>
         public static void GetGender(FileCabinetServiceContext record, string parameters)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             var isConverted = char.TryParse(parameters, out char gender);
             if (!isConverted)
             {

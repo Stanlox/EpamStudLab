@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using System.Xml.Serialization;
-using FileCabinetApp;
 
 namespace FileCabinetApp
 {
     /// <summary>
-    /// class for serialize cillection.
+    /// Class for serialize collection.
     /// </summary>
     [XmlRoot(IsNullable = false)]
     [XmlInclude(typeof(FileCabinetRecord))]

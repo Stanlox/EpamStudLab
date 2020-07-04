@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FileCabinetApp.Validators
 {
@@ -30,6 +28,11 @@ namespace FileCabinetApp.Validators
         /// <exception cref="ArgumentException">thrown when <paramref name="parameters.Age"/> less than 0. </exception>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             if (parameters.Age < this.min || parameters.Age > this.max)
             {
                 throw new ArgumentException("Invalid Age", $"{nameof(parameters.Age)}");

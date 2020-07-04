@@ -34,6 +34,11 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             return new FileCabinetRecord()
             {
                 Id = record.Id,
@@ -55,6 +60,11 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public int CreateRecord(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             this.contextStrategy.ValidateParameters(parameters);
 
             var record = new FileCabinetRecord
@@ -87,6 +97,11 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public void EditRecord(int id, FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             this.contextStrategy.ValidateParameters(parameters);
 
             FileCabinetRecord oldrecord = this.list[id - 1];
@@ -438,6 +453,11 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public void Restore(FileCabinetServiceSnapshot snapshot)
         {
+            if (snapshot == null)
+            {
+                throw new ArgumentNullException(nameof(snapshot));
+            }
+
             var record = snapshot.Records;
             var recordFromFile = snapshot.ListFromFile;
             bool isFind = false;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FileCabinetApp;
 
 namespace FileCabinetGenerator
@@ -26,6 +25,11 @@ namespace FileCabinetGenerator
         /// <returns>new new cloned object <see cref ="FileCabinetRecord"/>.</returns>
         public static FileCabinetRecord DeepCopy(FileCabinetRecord record)
         {
+            if (record == null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             return new FileCabinetRecord()
             {
                 Id = record.Id,

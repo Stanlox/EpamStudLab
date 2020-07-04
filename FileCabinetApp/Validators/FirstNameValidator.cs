@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FileCabinetApp.Validators
 {
@@ -30,6 +28,11 @@ namespace FileCabinetApp.Validators
         /// <exception cref="ArgumentException">Thrown when string is not correct length.</exception>
         public void ValidateParameters(FileCabinetServiceContext parameters)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             if (parameters.FirstName.Length < this.minLength | parameters.FirstName.Length > this.maxLength)
             {
                 throw new ArgumentException("Invalid length.", $"{nameof(parameters.FirstName)}");

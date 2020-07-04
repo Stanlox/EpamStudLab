@@ -62,35 +62,6 @@
             </summary>
             <param name="sw">stream.</param>
         </member>
-        <member name="T:FileCabinetGenerator.Program">
-            <summary>
-            Сlass designed for processing input parameters and generating data.
-            </summary>
-        </member>
-        <member name="T:FileCabinetGenerator.SerializebleCollection">
-            <summary>
-            class for serialize cillection.
-            </summary>
-        </member>
-        <member name="M:FileCabinetGenerator.SerializebleCollection.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetGenerator.SerializebleCollection"/> class.
-            </summary>
-        </member>
-        <member name="P:FileCabinetGenerator.SerializebleCollection.Records">
-            <summary>
-            Gets or sets an attribute.
-            </summary>
-            <value>
-            Records.
-            </value>
-        </member>
-        <member name="P:FileCabinetGenerator.SerializebleCollection.Record">
-            <summary>
-            Gets collection for serialize.
-            </summary>
-            <value>The Records property gets/sets the value.</value>
-        </member>
         <member name="T:FileCabinetGenerator.ServiceGenerator">
             <summary>
             Сontains methods for generating values for fields <see cref="T:FileCabinetApp.FileCabinetRecord"/>.
@@ -120,6 +91,35 @@
             makes a snapshot of an list.
             </summary>
             <returns>new cloned object type of<see cref="T:FileCabinetGenerator.FileCabinetServiceGeneratorSnapshot"/> as an array.</returns>
+        </member>
+        <member name="T:FileCabinetGenerator.Program">
+            <summary>
+            Сlass designed for processing input parameters and generating data.
+            </summary>
+        </member>
+        <member name="T:FileCabinetGenerator.SerializebleCollection">
+            <summary>
+            class for serialize cillection.
+            </summary>
+        </member>
+        <member name="M:FileCabinetGenerator.SerializebleCollection.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetGenerator.SerializebleCollection"/> class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetGenerator.SerializebleCollection.Records">
+            <summary>
+            Gets or sets an attribute.
+            </summary>
+            <value>
+            Records.
+            </value>
+        </member>
+        <member name="P:FileCabinetGenerator.SerializebleCollection.Record">
+            <summary>
+            Gets collection for serialize.
+            </summary>
+            <value>The Records property gets/sets the value.</value>
         </member>
     </members>
 </doc>
