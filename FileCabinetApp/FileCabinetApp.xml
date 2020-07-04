@@ -723,6 +723,33 @@
         <member name="M:FileCabinetApp.Services.Comparer.CharEqualityComparer.GetHashCode(System.Char)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.Services.Extensions.BytesToModel">
+            <summary>
+            Сontains methods for converting bytes to records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Services.Extensions.BytesToModel.SetFields(System.Int16@,System.Int32,System.Collections.Generic.List{FileCabinetApp.FileCabinetRecord}@)">
+            <summary>
+            Set fields.
+            </summary>
+            <param name="deletedStatus">Status of deleting a record.</param>
+            <param name="maxstringlength">The maximal length of the string.</param>
+            <param name="deletedlist">List of deleted records.</param>
+        </member>
+        <member name="M:FileCabinetApp.Services.Extensions.BytesToModel.ToFileCabinetRecord(System.Byte[])">
+            <summary>
+            Сonverts an array of bytes to a single record.
+            </summary>
+            <param name="bytes">Input bytes.</param>
+            <returns>Record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Services.Extensions.BytesToModel.ToListFileCabinetRecord(System.Byte[])">
+            <summary>
+            Converts an array of bytes to list a record.
+            </summary>
+            <param name="bytes">Input array of bytes.</param>
+            <returns>List of records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
             contains file services for adding, editing, and modifying records using filestream.
@@ -733,20 +760,6 @@
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetFilesystemService"/> class.
             </summary>
             <param name="fileStream">Input FileStream.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.BytesToListFileCabinetRecord(System.Byte[])">
-            <summary>
-            converts an array of bytes to a record.
-            </summary>
-            <param name="bytes">Input array of bytes.</param>
-            <returns>list of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.BytesToFileCabinetRecord(System.Byte[])">
-            <summary>
-            Сonverts one byte to a single record.
-            </summary>
-            <param name="bytes">Input bytes.</param>
-            <returns>Record.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.AddInDictionaryDateOfBirth(System.DateTime,System.Int32)">
             <summary>

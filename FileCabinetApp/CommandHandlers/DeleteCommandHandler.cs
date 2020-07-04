@@ -111,6 +111,10 @@ namespace FileCabinetApp.CommandHandlers
             {
                 Console.WriteLine(ex.Message);
             }
+            catch (NullReferenceException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void Print()

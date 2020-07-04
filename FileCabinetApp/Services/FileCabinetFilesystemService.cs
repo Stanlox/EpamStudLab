@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using FileCabinetApp.Services.Comparer;
+using FileCabinetApp.Services.Extensions;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
@@ -42,111 +43,18 @@ namespace FileCabinetApp
         public FileCabinetFilesystemService(FileStream fileStream)
         {
             this.fileStream = fileStream ?? throw new ArgumentNullException(nameof(fileStream));
+            BytesToModel.SetFields(ref status, MaxStringLength, ref isDeletedlist);
 
             if (this.fileStream.Length != 0)
             {
                 byte[] recordBuffer = new byte[this.fileStream.Length];
                 this.fileStream.Read(recordBuffer, 0, recordBuffer.Length);
-                var listRecord = BytesToListFileCabinetRecord(recordBuffer);
+                var listRecord = recordBuffer.ToListFileCabinetRecord();
                 var index = 1;
                 for (int i = 0; i < listRecord.Count; i++)
                 {
                     this.AddRecordInAllDictionary(listRecord[i], index);
                     index++;
-                }
-            }
-        }
-
-        /// <summary>
-        /// converts an array of bytes to a record.
-        /// </summary>
-        /// <param name="bytes">Input array of bytes.</param>
-        /// <returns>list of records.</returns>
-        public static List<FileCabinetRecord> BytesToListFileCabinetRecord(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                throw new ArgumentNullException(nameof(bytes));
-            }
-
-            List<FileCabinetRecord> recordList = new List<FileCabinetRecord>();
-
-            using (var memoryStream = new MemoryStream(bytes))
-            {
-                using (var binaryReader = new BinaryReader(memoryStream))
-                {
-                    binaryReader.BaseStream.Position = 0;
-                    while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                    {
-                        FileCabinetRecord record = new FileCabinetRecord();
-                        status = binaryReader.ReadInt16();
-                        record.Id = binaryReader.ReadInt32();
-                        var firstNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                        var lastNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                        var firstNameLength = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameBuffer.Length);
-                        var lastNameLength = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameBuffer.Length);
-                        record.FirstName = firstNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
-                        record.LastName = lastNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
-                        var yearOfBirth = binaryReader.ReadInt32();
-                        var monthOfBirth = binaryReader.ReadInt32();
-                        var dayOfBirth = binaryReader.ReadInt32();
-                        record.DateOfBirth = new DateTime(yearOfBirth, monthOfBirth, dayOfBirth);
-                        record.Age = binaryReader.ReadInt16();
-                        record.Salary = binaryReader.ReadDecimal();
-                        record.Gender = binaryReader.ReadChar();
-                        if (status == 1)
-                        {
-                            var findRecord = isDeletedlist.Find(item => item.Id == record.Id);
-                            if (!isDeletedlist.Contains(findRecord))
-                            {
-                                isDeletedlist.Add(record);
-                            }
-                        }
-                        else
-                        {
-                            recordList.Add(record);
-                        }
-                    }
-                }
-            }
-
-            return recordList;
-        }
-
-        /// <summary>
-        /// Сonverts one byte to a single record.
-        /// </summary>
-        /// <param name="bytes">Input bytes.</param>
-        /// <returns>Record.</returns>
-        public static FileCabinetRecord BytesToFileCabinetRecord(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                throw new ArgumentNullException(nameof(bytes));
-            }
-
-            using (var memoryStream = new MemoryStream(bytes))
-            {
-                using (var binaryReader = new BinaryReader(memoryStream))
-                {
-                    binaryReader.BaseStream.Position = 0;
-                    FileCabinetRecord record = new FileCabinetRecord();
-                    status = binaryReader.ReadInt16();
-                    record.Id = binaryReader.ReadInt32();
-                    var firstNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                    var lastNameBuffer = binaryReader.ReadBytes(MaxStringLength);
-                    var firstNameLength = Encoding.ASCII.GetString(firstNameBuffer, 0, firstNameBuffer.Length);
-                    var lastNameLength = Encoding.ASCII.GetString(lastNameBuffer, 0, lastNameBuffer.Length);
-                    record.FirstName = firstNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
-                    record.LastName = lastNameLength.Replace("\0", string.Empty, StringComparison.OrdinalIgnoreCase);
-                    var yearOfBirth = binaryReader.ReadInt32();
-                    var monthOfBirth = binaryReader.ReadInt32();
-                    var dayOfBirth = binaryReader.ReadInt32();
-                    record.DateOfBirth = new DateTime(yearOfBirth, monthOfBirth, dayOfBirth);
-                    record.Age = binaryReader.ReadInt16();
-                    record.Salary = binaryReader.ReadDecimal();
-                    record.Gender = binaryReader.ReadChar();
-                    return record;
                 }
             }
         }
@@ -400,7 +308,7 @@ namespace FileCabinetApp
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
 
-                this.list = BytesToListFileCabinetRecord(recordBuffer);
+                this.list = recordBuffer.ToListFileCabinetRecord();
                 var updateRecord = this.list.Find(record => record.Id == id);
                 FileCabinetRecord oldrecord = updateRecord;
                 var positionInFile = this.GetPositionInFileById(oldrecord.Id);
@@ -542,7 +450,7 @@ namespace FileCabinetApp
             {
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = BytesToListFileCabinetRecord(recordBuffer);
+                this.list = recordBuffer.ToListFileCabinetRecord();
                 ReadOnlyCollection<FileCabinetRecord> records = new ReadOnlyCollection<FileCabinetRecord>(this.list);
                 return records;
             }
@@ -555,7 +463,7 @@ namespace FileCabinetApp
             {
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = BytesToListFileCabinetRecord(recordBuffer);
+                this.list = recordBuffer.ToListFileCabinetRecord();
                 return Tuple.Create(this.list.Count, isDeletedlist.Count);
             }
         }
@@ -567,7 +475,7 @@ namespace FileCabinetApp
             {
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = BytesToListFileCabinetRecord(recordBuffer);
+                this.list = recordBuffer.ToListFileCabinetRecord();
             }
 
             this.fileStream.SetLength(0);
@@ -785,7 +693,7 @@ namespace FileCabinetApp
             {
                 byte[] recordBuffer = new byte[file.Length];
                 file.Read(recordBuffer, 0, recordBuffer.Length);
-                this.list = BytesToListFileCabinetRecord(recordBuffer);
+                this.list = recordBuffer.ToListFileCabinetRecord();
                 return new FileCabinetServiceSnapshot(this.list.Select(x => this.DeepCopy(x)).ToArray());
             }
         }
@@ -930,7 +838,7 @@ namespace FileCabinetApp
                 file.Seek((RecordSize * position) - RecordSize, SeekOrigin.Begin);
                 var bytes = new byte[RecordSize];
                 file.Read(bytes, 0, RecordSize);
-                var record = BytesToFileCabinetRecord(bytes);
+                var record = bytes.ToFileCabinetRecord();
                 return record;
             }
         }
