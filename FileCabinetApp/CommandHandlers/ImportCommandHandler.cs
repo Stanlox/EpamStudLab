@@ -72,7 +72,7 @@ namespace FileCabinetApp.CommandHandlers
                     throw new ArgumentException($"You want to import data from a {nameFile}, but you specified the type {typeFile}");
                 }
 
-                if (File.Exists(nameFile))
+                if (File.Exists(fullPath))
                 {
                     snapshot = this.service.MakeSnapshot();
                     if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
@@ -86,7 +86,7 @@ namespace FileCabinetApp.CommandHandlers
                     }
                     else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
                     {
-                        using (var fileStream = File.Open(nameFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        using (var fileStream = File.Open(fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
                             snapshot.LoadFromXml(fileStream);
                             Console.WriteLine($"{snapshot.ListFromFile.Count} records were imported from {fullPath}");
