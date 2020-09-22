@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using FileCabinetApp;
 
@@ -57,20 +58,27 @@ namespace FileCabinetGenerator
         /// <summary>
         /// Generating random data in the interval.
         /// </summary>
-        /// <param name="valueToStart">Start id.</param>
         /// <param name="amountOfGeneratedRecords">Count of generated records.</param>
-        public void CreateRecordRandomValues(int valueToStart, int amountOfGeneratedRecords)
+        /// <param name="valueToStart">Start id.</param>
+        public void CreateRecordRandomValues(int amountOfGeneratedRecords, int valueToStart)
         {
+            if (valueToStart == 0)
+            {
+                valueToStart = 1;
+            }
+
             var lastIdRecord = amountOfGeneratedRecords + valueToStart;
+
             while (valueToStart < lastIdRecord)
             {
                 this.GeneratorGenderAndDateOfBirth();
+
                 var record = new FileCabinetRecord
                 {
                     Id = valueToStart,
                     FirstName = Faker.Name.First(),
                     LastName = Faker.Name.Last(),
-                    DateOfBirth = new DateTime(this.randomYear, this.randomMonth, this.randomDay),
+                    DateOfBirth = new DateTime(this.randomYear, this.randomMonth, this.randomDay).Date,
                     Salary = new Random().Next(0, int.MaxValue),
                     Age = (short)Faker.RandomNumber.Next(0, 130),
                     Gender = this.arrayGender[this.index],

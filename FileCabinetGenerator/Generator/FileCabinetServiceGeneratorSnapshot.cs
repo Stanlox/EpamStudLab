@@ -16,6 +16,7 @@ namespace FileCabinetGenerator
         private FileCabinetGeneratorCsvWriter csvWriter;
         private FileCabinetGeneratorXmlWriter xmlWriter;
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private XmlWriterSettings settings = new XmlWriterSettings();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceGeneratorSnapshot"/> class.
@@ -25,6 +26,9 @@ namespace FileCabinetGenerator
         public FileCabinetServiceGeneratorSnapshot(FileCabinetRecord[] fileCabinetRecord)
         {
             this.records = fileCabinetRecord;
+            this.settings.OmitXmlDeclaration = true;
+            this.settings.Indent = true;
+            this.settings.NewLineOnAttributes = true;
         }
 
         /// <summary>
@@ -46,7 +50,7 @@ namespace FileCabinetGenerator
         /// <param name="sw">stream.</param>
         public void SaveToXml(StreamWriter sw)
         {
-            this.xmlWriter = new FileCabinetGeneratorXmlWriter(XmlWriter.Create(sw));
+            this.xmlWriter = new FileCabinetGeneratorXmlWriter(XmlWriter.Create(sw, this.settings));
             foreach (var record in this.records)
             {
                 this.list.Add(record);

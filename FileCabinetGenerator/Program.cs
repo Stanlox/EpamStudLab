@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 
@@ -20,51 +21,63 @@ namespace FileCabinetGenerator
 
         private static void Main(string[] args)
         {
-            if (args.Length != 0)
+            try
             {
-                var parameterCommandLine = string.Join(' ', args);
-                var parameterName = parameterCommandLine.Trim(' ').Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
-                var pairs = parameterName.Select((value, key) => new { Index = key, Value = value })
-                    .Where(i => i.Index % 2 == 0)
-                    .Select(pair => new { Key = pair.Value, Value = parameterName[pair.Index + 1] });
-
-                foreach (var pair in pairs)
+                if (args.Length != 0)
                 {
-                    switch (pair.Key)
+                    var parameterCommandLine = string.Join(' ', args);
+                    var parameterName = parameterCommandLine.Trim(' ').Split(new char[] { ' ', '=' }, StringSplitOptions.RemoveEmptyEntries);
+                    var pairs = parameterName.Select((value, key) => new { Index = key, Value = value })
+                        .Where(i => i.Index % 2 == 0)
+                        .Select(pair => new { Key = pair.Value, Value = parameterName[pair.Index + 1] });
+
+                    foreach (var pair in pairs)
                     {
-                        case "--output-type":
-                        case "-t":
-                            outputFormatType = pair.Value;
-                            break;
-                        case "--output":
-                        case "-o":
-                            outputFileName = pair.Value;
-                            break;
-                        case "-a":
-                        case "--records-amount":
-                            isCorrectData = int.TryParse(pair.Value, out amountOfGeneratedRecords);
-                            break;
-                        case "-i":
-                        case "--start-id":
-                            isCorrectData = int.TryParse(pair.Value, out valueToStart);
-                            break;
-                        default:
-                            Console.WriteLine("You entered an unknown command");
-                            break;
+                        switch (pair.Key)
+                        {
+                            case "--output-type":
+                            case "-t":
+                                outputFormatType = pair.Value;
+                                break;
+                            case "--output":
+                            case "-o":
+                                outputFileName = pair.Value;
+                                break;
+                            case "-a":
+                            case "--records-amount":
+                                isCorrectData = int.TryParse(pair.Value, out amountOfGeneratedRecords);
+                                break;
+                            case "-i":
+                            case "--start-id":
+                                isCorrectData = int.TryParse(pair.Value, out valueToStart);
+                                break;
+                            default:
+                                throw new ArgumentException("You entered an unknown command or incorrect format of the entered data");
+                        }
+                    }
+
+                    if (!isCorrectData)
+                    {
+                        Console.WriteLine("Сheck the entered values");
                     }
                 }
-
-                if (!isCorrectData)
-                {
-                    Console.WriteLine("Сheck the entered values");
-                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Сheck the entered values");
+                Environment.Exit(0);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Environment.Exit(0);
             }
 
             CreateRecord();
             Export();
             if (!isRunning)
             {
-                Console.WriteLine("\t Check the file path you entered");
+                Console.WriteLine("Check the file path you entered");
             }
             else
             {
@@ -74,7 +87,7 @@ namespace FileCabinetGenerator
 
         private static void CreateRecord()
         {
-            serviceGenerator.CreateRecordRandomValues(valueToStart, amountOfGeneratedRecords);
+            serviceGenerator.CreateRecordRandomValues(amountOfGeneratedRecords, valueToStart);
         }
 
         private static void Export()
@@ -82,6 +95,7 @@ namespace FileCabinetGenerator
             const string csv = "csv";
             const string xml = "xml";
             string shortPath = Path.GetFileName(outputFileName);
+            string extensionFile = Path.GetExtension(shortPath).TrimStart('.');
             try
             {
                 fileCabinetServiceGeneratorSnapshot = serviceGenerator.MakeSnapshot();
@@ -89,16 +103,30 @@ namespace FileCabinetGenerator
                 {
                     if (string.Equals(csv, outputFormatType, StringComparison.OrdinalIgnoreCase))
                     {
-                        using (var sw = new StreamWriter(shortPath))
+                        if (string.Equals(csv, extensionFile, StringComparison.OrdinalIgnoreCase))
                         {
-                            fileCabinetServiceGeneratorSnapshot.SaveToCsv(sw);
+                            using (var sw = new StreamWriter(outputFileName))
+                            {
+                                fileCabinetServiceGeneratorSnapshot.SaveToCsv(sw);
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("The file extension does not match the selected output format type");
                         }
                     }
                     else if (string.Equals(xml, outputFormatType, StringComparison.OrdinalIgnoreCase))
                     {
-                        using (var sw = new StreamWriter(shortPath))
+                        if (string.Equals(xml, extensionFile, StringComparison.OrdinalIgnoreCase))
                         {
-                            fileCabinetServiceGeneratorSnapshot.SaveToXml(sw);
+                            using (var sw = new StreamWriter(outputFileName))
+                            {
+                                fileCabinetServiceGeneratorSnapshot.SaveToXml(sw);
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("The file extension does not match the selected output format type");
                         }
                     }
                     else
@@ -113,6 +141,7 @@ namespace FileCabinetGenerator
                 }
                 catch (ArgumentException ex)
                 {
+                    isRunning = false;
                     Console.WriteLine(ex.Message);
                 }
             }

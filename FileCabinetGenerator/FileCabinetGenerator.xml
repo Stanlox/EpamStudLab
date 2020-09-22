@@ -83,8 +83,8 @@
             <summary>
             Generating random data in the interval.
             </summary>
-            <param name="valueToStart">Start id.</param>
             <param name="amountOfGeneratedRecords">Count of generated records.</param>
+            <param name="valueToStart">Start id.</param>
         </member>
         <member name="M:FileCabinetGenerator.ServiceGenerator.MakeSnapshot">
             <summary>
