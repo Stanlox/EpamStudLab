@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.ComponentModel;
 
 namespace FileCabinetApp
 {
@@ -21,8 +23,7 @@ namespace FileCabinetApp
         {
             this.validType = validType;
             var builder = new ConfigurationBuilder()
-             .SetBasePath("D:/EpamStudLab/FileCabinetApp/Properties/")
-             .AddJsonFile("validation-rules.json");
+             .AddJsonFile("validation-rules.json", true, true);
             this.config = builder.Build();
         }
 
