@@ -12,6 +12,9 @@
 	<None Update="Properties\validation-rules.json">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+	<None Update="validation-rules.json">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
 	<None Update="readme.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

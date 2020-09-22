@@ -1,8 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using System.IO;
-using System.ComponentModel;
 
 namespace FileCabinetApp
 {
@@ -23,7 +23,7 @@ namespace FileCabinetApp
         {
             this.validType = validType;
             var builder = new ConfigurationBuilder()
-             .AddJsonFile("validation-rules.json", true, true);
+             .AddJsonFile("validation-rules.json");
             this.config = builder.Build();
         }
 
