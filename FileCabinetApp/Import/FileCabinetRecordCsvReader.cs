@@ -36,13 +36,13 @@ namespace FileCabinetApp
                 FileCabinetRecord record = new FileCabinetRecord();
                 line = this.reader.ReadLine();
                 values = line.Split(",");
-                record.Id = int.Parse(values[0], CultureInfo.InvariantCulture);
-                record.FirstName = values[1];
-                record.LastName = values[2];
-                record.DateOfBirth = DateTime.Parse(values[3], CultureInfo.InvariantCulture);
-                record.Gender = char.Parse(values[4]);
-                record.Age = short.Parse(values[5], CultureInfo.InvariantCulture);
-                record.Salary = decimal.Parse(values[6], CultureInfo.InvariantCulture);
+                record.Id = int.Parse(values[0].TrimStart(), CultureInfo.InvariantCulture);
+                record.FirstName = values[1].TrimStart();
+                record.LastName = values[2].TrimStart();
+                record.DateOfBirth = DateTime.Parse(values[3].TrimStart(), CultureInfo.InvariantCulture);
+                record.Gender = char.Parse(values[4].TrimStart());
+                record.Age = short.Parse(values[5].TrimStart(), CultureInfo.InvariantCulture);
+                record.Salary = decimal.Parse(values[6].TrimStart(), CultureInfo.InvariantCulture);
                 list.Add(record);
             }
 

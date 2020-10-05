@@ -2,7 +2,7 @@
   "profiles": {
     "FileCabinetGenerator": {
       "commandName": "Project",
-      "commandLineArgs": "--output-type=xml --output=D:\\vironIT\\5.xml  --records-amount=5"
+      "commandLineArgs": "--output-type=xml --output=D:\\vironIT\\20.xml  --records-amount=10"
     }
   }
 }

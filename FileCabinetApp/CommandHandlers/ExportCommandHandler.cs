@@ -114,16 +114,21 @@ namespace FileCabinetApp.CommandHandlers
             {
                 snapshot = this.service.MakeSnapshot();
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parameterArray.Length != 2)
+                {
+                    throw new ArgumentException("You did not specify the type of file to export or the path to export");
+                }
+
                 var fullPath = parameterArray.Last();
                 var nameFile = Path.GetFileName(fullPath);
                 var typeFile = parameterArray.First();
-                var extensionOfFile = Path.GetExtension(nameFile).Trim('.');
-                if (typeFile != extensionOfFile)
+                var extensionFile = Path.GetExtension(nameFile).TrimStart('.');
+                if (typeFile != extensionFile)
                 {
-                    throw new ArgumentException($"You want to import data from a {nameFile}, but you specified the type {typeFile}");
+                    throw new ArgumentException($"You want to export data to a {nameFile}, but you specified the type {typeFile}");
                 }
 
-                if (File.Exists(nameFile))
+                if (File.Exists(fullPath))
                 {
                     Console.Write($"File is exist - rewrite {nameFile}?[Y / n] ");
                     var rewriteOrNo = ReadInput(RewriteConverter, RewriteValidator);
@@ -138,7 +143,7 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     if (string.Equals(csv, typeFile, StringComparison.OrdinalIgnoreCase))
                     {
-                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        using (var sw = new StreamWriter(fullPath, rewrite))
                         {
                             snapshot.SaveToCsv(sw);
                             Console.WriteLine($"All records are exported to file {nameFile}");
@@ -146,7 +151,7 @@ namespace FileCabinetApp.CommandHandlers
                     }
                     else if (string.Equals(xml, typeFile, StringComparison.OrdinalIgnoreCase))
                     {
-                        using (var sw = new StreamWriter(nameFile, rewrite))
+                        using (var sw = new StreamWriter(fullPath, rewrite))
                         {
                             snapshot.SaveToXml(sw);
                             Console.WriteLine($"All records are exported to file {nameFile}");

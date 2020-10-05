@@ -21,6 +21,7 @@ namespace FileCabinetApp.CommandHandlers
             "insert",
             "delete",
             "update",
+            "select",
         };
 
         /// <summary>

@@ -49,6 +49,31 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Creates a new records.
+        /// Displays the run time of the method.
+        /// </summary>
+        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        /// <param name="id">Input id record.</param>
+        /// <returns>Id of the new record.</returns>
+        public int CreateRecord(FileCabinetServiceContext parameters, int id)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            using (TextWriter writer = File.AppendText(this.path))
+            {
+                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - Calling {nameof(this.service.CreateRecord)}() with FirstName = '{parameters.FirstName}'," +
+                       $" LastName = '{parameters.LastName}', DateOfBirth = '{parameters.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}' " +
+                       $" Salary = '{parameters.Salary}', Gender = '{parameters.Gender}'");
+                var rezult = this.service.CreateRecord(parameters, id);
+                writer.WriteLine($"{DateTime.Now.ToString("dd/MM/yyyy hh:mm", CultureInfo.InvariantCulture)} - {nameof(this.service.CreateRecord)}() returned '{rezult}'");
+                return rezult;
+            }
+        }
+
+        /// <summary>
         /// Сhanging data in an existing record and writes the execution result to the log.
         /// </summary>
         /// <param name="id">Id of the record to edit.</param>

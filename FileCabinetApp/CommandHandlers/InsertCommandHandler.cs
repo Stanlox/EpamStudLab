@@ -16,6 +16,7 @@ namespace FileCabinetApp.CommandHandlers
         private const int PropertyValuesIndex = 3;
         private static FileCabinetServiceContext record = new FileCabinetServiceContext();
         private int countCalledCommands = 0;
+        private int id;
 
         private Tuple<string, Action<FileCabinetServiceContext, string>>[] commands = new Tuple<string, Action<FileCabinetServiceContext, string>>[]
             {
@@ -197,13 +198,13 @@ namespace FileCabinetApp.CommandHandlers
         /// <param name="parameters">Input id parameter.</param>
         private void GetId(string parameters)
         {
-            var isConverted = int.TryParse(parameters.Trim(), out int id);
+            var isConverted = int.TryParse(parameters.Trim(), out this.id);
             if (!isConverted)
             {
                 throw new FormatException("Wrong id format.");
             }
 
-            var record = this.service.FindById(id);
+            var record = this.service.FindById(this.id);
 
             if (record != null)
             {
@@ -252,7 +253,7 @@ namespace FileCabinetApp.CommandHandlers
                     throw new FormatException("Invalid command format of 'insert' command.");
                 }
 
-                var recordId = this.service.CreateRecord(record);
+                var recordId = this.service.CreateRecord(record, this.id);
                 Console.WriteLine($"Record #{recordId} is created.");
             }
             catch (FormatException ex)

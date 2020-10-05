@@ -674,6 +674,13 @@
             </summary>
             <param name="key">Input key.</param>
             <param name="value">Input value.</param>
+            <returns>List of found conditions according to the conditions.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Search.FindRecordInService.GetAllProperties">
+            <summary>
+            Get all properties.
+            </summary>
+            <returns>All properies.</returns>
         </member>
         <member name="T:FileCabinetApp.SerializebleCollection">
             <summary>
@@ -809,6 +816,16 @@
             </summary>
             <param name="lastName">Input key.</param>
             <param name="offsetFromBeginFile">Position in file.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Create(FileCabinetApp.FileCabinetServiceContext)">
+            <summary>
+            Create record with the specified id.
+            </summary>
+            <param name="parameters">Input parameters.</param>
+            <returns>Id of the created record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.CreateRecord(FileCabinetApp.FileCabinetServiceContext,System.Int32)">
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
             <summary>
@@ -977,6 +994,17 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.MakeSnapshot">
             <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.CreateRecord(FileCabinetApp.FileCabinetServiceContext,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Create(FileCabinetApp.FileCabinetServiceContext,System.Int32)">
+            <summary>
+            Create record with the specified id.
+            </summary>
+            <param name="parameters">Input parameters.</param>
+            <param name="id">Input id record.</param>
+            <returns>Id of the created record.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.CreateRecord(FileCabinetApp.FileCabinetServiceContext)">
             <inheritdoc/>
@@ -1198,6 +1226,14 @@
             <param name="objectParameter">Input objectParameter.</param>
             <returns>New record.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetServiceContext,System.Int32)">
+            <summary>
+            Create record with the specified id.
+            </summary>
+            <param name="objectParameter">Input objectParameter.</param>
+            <param name="id">Input id record.</param>
+            <returns>New record.</returns>
+        </member>
         <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
             <summary>
             Edit record.
@@ -1314,6 +1350,15 @@
             Creates a new records and writes the execution result to the log.
             </summary>
             <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <returns>Id of the new record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceLogger.CreateRecord(FileCabinetApp.FileCabinetServiceContext,System.Int32)">
+            <summary>
+            Creates a new records.
+            Displays the run time of the method.
+            </summary>
+            <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <param name="id">Input id record.</param>
             <returns>Id of the new record.</returns>
         </member>
         <member name="M:FileCabinetApp.ServiceLogger.EditRecord(System.Int32,FileCabinetApp.FileCabinetServiceContext)">
@@ -1433,6 +1478,15 @@
             Displays the run time of the method.
             </summary>
             <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <returns>Id of the new record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.CreateRecord(FileCabinetApp.FileCabinetServiceContext,System.Int32)">
+            <summary>
+            Creates a new records.
+            Displays the run time of the method.
+            </summary>
+            <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+            <param name="id">Input id record.</param>
             <returns>Id of the new record.</returns>
         </member>
         <member name="M:FileCabinetApp.ServiceMeter.DeepCopy(FileCabinetApp.FileCabinetRecord)">

@@ -35,6 +35,7 @@ namespace FileCabinetApp
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileStream fileStream;
         private int recordId = 0;
+        private bool isRecordIdSet = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -172,18 +173,17 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Creates a new records.
+        /// Create record with the specified id.
         /// </summary>
-        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
-        /// <returns>Id of the new record.</returns>
-        public int CreateRecord(FileCabinetServiceContext parameters)
+        /// <param name="parameters">Input parameters.</param>
+        /// <returns>Id of the created record.</returns>
+        public int Create(FileCabinetServiceContext parameters)
         {
             if (parameters == null)
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            this.contextStrategy.ValidateParameters(parameters);
             using (var file = File.Open(this.fileStream.Name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 if (file.Length <= 0)
@@ -197,8 +197,10 @@ namespace FileCabinetApp
                     file.Seek(offset, SeekOrigin.Begin);
                     file.Read(recordBuffer, 0, recordBuffer.Length);
                     byte[] bufferStatus = new byte[sizeof(short)];
-                    byte[] recordBufferId = new byte[sizeof(int)];
-                    this.recordId = BitConverter.ToInt32(recordBuffer, bufferStatus.Length) + 1;
+                    if (!this.isRecordIdSet)
+                    {
+                        this.recordId = BitConverter.ToInt32(recordBuffer, bufferStatus.Length) + 1;
+                    }
                 }
 
                 var record = new FileCabinetRecord
@@ -215,6 +217,39 @@ namespace FileCabinetApp
                 this.FileCabinetRecordToBytes(record);
                 return this.recordId;
             }
+        }
+
+        /// <inheritdoc/>
+        public int CreateRecord(FileCabinetServiceContext parameters, int id)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            this.contextStrategy.ValidateParameters(parameters);
+            this.recordId = id;
+            this.isRecordIdSet = true;
+            var recordId = this.Create(parameters);
+            return recordId;
+        }
+
+        /// <summary>
+        /// Creates a new records.
+        /// </summary>
+        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        /// <returns>Id of the new record.</returns>
+        public int CreateRecord(FileCabinetServiceContext parameters)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            this.contextStrategy.ValidateParameters(parameters);
+            this.isRecordIdSet = false;
+            var recordId = this.Create(parameters);
+            return recordId;
         }
 
         /// <summary>

@@ -47,8 +47,9 @@ namespace FileCabinetApp.CommandHandlers
                 var tuple = this.service.PurgeRecord();
                 Console.WriteLine($"Data file processing is completed: {tuple.Item1} of {tuple.Item2} records were purged.");
             }
-            catch (NotImplementedException)
+            catch (NotImplementedException ex)
             {
+                Console.WriteLine(ex.Message);
             }
         }
     }

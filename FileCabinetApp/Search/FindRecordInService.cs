@@ -87,10 +87,14 @@ namespace FileCabinetApp.Search
                 case Id:
 
                     isParse = int.TryParse(parameterValue, out int id);
-                    this.IsParse(isParse, id);
+                    this.IsParse(isParse, Id);
                     this.record = this.service.FindById(id);
-                    this.list.Add(this.record);
-                    this.casheList.Add(this.record);
+                    if (this.record != null)
+                    {
+                        this.list.Add(this.record);
+                        this.casheList.Add(this.record);
+                    }
+
                     break;
                 case FirstName:
 
@@ -107,7 +111,7 @@ namespace FileCabinetApp.Search
                 case DateOfBirth:
 
                     isParse = DateTime.TryParse(parameterValue, out DateTime date);
-                    this.IsParse(isParse, date);
+                    this.IsParse(isParse, DateOfBirth);
                     this.records = this.service.FindByDateOfBirth(date);
                     this.AddRecord(this.records);
                     this.casheList.AddRange(this.records);
@@ -115,7 +119,7 @@ namespace FileCabinetApp.Search
                 case Salary:
 
                     isParse = decimal.TryParse(parameterValue, out decimal salary);
-                    this.IsParse(isParse, salary);
+                    this.IsParse(isParse, Salary);
                     this.records = this.service.FindBySalary(salary);
                     this.AddRecord(this.records);
                     this.casheList.AddRange(this.records);
@@ -123,7 +127,7 @@ namespace FileCabinetApp.Search
                 case Gender:
 
                     isParse = char.TryParse(parameterValue, out char gender);
-                    this.IsParse(isParse, gender);
+                    this.IsParse(isParse, Gender);
                     this.records = this.service.FindByGender(gender);
                     this.AddRecord(this.records);
                     this.casheList.AddRange(this.records);
@@ -131,7 +135,7 @@ namespace FileCabinetApp.Search
                 case Age:
 
                     isParse = short.TryParse(parameterValue, out short age);
-                    this.IsParse(isParse, age);
+                    this.IsParse(isParse, Age);
                     this.records = this.service.FindByAge(age);
                     this.AddRecord(this.records);
                     this.casheList.AddRange(this.records);
@@ -148,7 +152,8 @@ namespace FileCabinetApp.Search
         /// </summary>
         /// <param name="key">Input key.</param>
         /// <param name="value">Input value.</param>
-        public void FindRecordByMatchingCriteria(string key, string value)
+        /// <returns>List of found conditions according to the conditions.</returns>
+        public List<FileCabinetRecord> FindRecordByMatchingCriteria(string key, string value)
         {
             if (key == null)
             {
@@ -161,43 +166,52 @@ namespace FileCabinetApp.Search
                 case Id:
 
                     isParse = int.TryParse(value, out int id);
-                    this.IsParse(isParse, id);
+                    this.IsParse(isParse, Id);
                     this.list = this.list.Where(record => record.Id == id).ToList();
-                    break;
+                    return this.list;
                 case FirstName:
 
                     this.list = this.list.Where(record => string.Equals(record.FirstName, value, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                    break;
+                    return this.list;
                 case LastName:
                     this.list = this.list.Where(record => string.Equals(record.LastName, value, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                    break;
+                    return this.list;
                 case DateOfBirth:
 
                     isParse = DateTime.TryParse(value, out DateTime date);
-                    this.IsParse(isParse, date);
+                    this.IsParse(isParse, DateOfBirth);
                     this.list = this.list.Where(record => record.DateOfBirth == date).ToList();
-                    break;
+                    return this.list;
                 case Salary:
 
                     isParse = decimal.TryParse(value, out decimal salary);
-                    this.IsParse(isParse, salary);
+                    this.IsParse(isParse, Salary);
                     this.list = this.list.Where(record => record.Salary == salary).ToList();
-                    break;
+                    return this.list;
                 case Gender:
 
                     isParse = char.TryParse(value, out char gender);
-                    this.IsParse(isParse, gender);
+                    this.IsParse(isParse, Gender);
                     this.list = this.list.Where(record => string.Equals(record.Gender.ToString(CultureInfo.InvariantCulture), value, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                    break;
+                    return this.list;
                 case Age:
 
                     isParse = short.TryParse(value, out short age);
-                    this.IsParse(isParse, age);
+                    this.IsParse(isParse, Age);
                     this.list = this.list.Where(record => record.Age == age).ToList();
-                    break;
+                    return this.list;
                 default:
                     throw new FormatException($"Invalid command format of '{this.commandName}' command.");
             }
+        }
+
+        /// <summary>
+        /// Get all properties.
+        /// </summary>
+        /// <returns>All properies.</returns>
+        public IEnumerable<string> GetAllProperties()
+        {
+            return new List<string> { Id, FirstName, LastName, DateOfBirth, Age, Salary, Gender }.AsEnumerable();
         }
 
         private void AddRecord(IEnumerable<FileCabinetRecord> records)
@@ -211,11 +225,11 @@ namespace FileCabinetApp.Search
             }
         }
 
-        private bool IsParse(bool isParce, object parameter)
+        private bool IsParse(bool isParce, string parameter)
         {
             if (!isParce)
             {
-                throw new FormatException($"The {parameter} format is incorrect");
+                throw new FormatException($"The '{parameter}' format is incorrect");
             }
             else
             {

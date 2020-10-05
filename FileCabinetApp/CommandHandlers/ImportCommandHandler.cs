@@ -51,9 +51,14 @@ namespace FileCabinetApp.CommandHandlers
             try
             {
                 var parameterArray = parameters.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parameterArray.Length != 2)
+                {
+                    throw new ArgumentException("You did not specify the type of file to export or the path to export");
+                }
+
                 var fullPath = parameterArray.Last();
                 var nameFile = Path.GetFileName(fullPath);
-                var extensionOfFile = Path.GetExtension(nameFile).Trim('.');
+                var extensionFile = Path.GetExtension(nameFile).TrimStart('.');
                 var typeFile = parameterArray.First();
                 if (!string.Equals(typeFile, xml, StringComparison.OrdinalIgnoreCase) && !string.Equals(typeFile, csv, StringComparison.OrdinalIgnoreCase))
                 {
@@ -67,7 +72,7 @@ namespace FileCabinetApp.CommandHandlers
                     while (rezult == false);
                 }
 
-                if (typeFile != extensionOfFile)
+                if (typeFile != extensionFile)
                 {
                     throw new ArgumentException($"You want to import data from a {nameFile}, but you specified the type {typeFile}");
                 }

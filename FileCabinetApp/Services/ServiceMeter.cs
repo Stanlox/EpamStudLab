@@ -40,6 +40,23 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Creates a new records.
+        /// Displays the run time of the method.
+        /// </summary>
+        /// <param name="parameters">Input FirstName, LastName, DateOfBirth, Gender, Salary, Age.</param>
+        /// <param name="id">Input id record.</param>
+        /// <returns>Id of the new record.</returns>
+        public int CreateRecord(FileCabinetServiceContext parameters, int id)
+        {
+            this.stopwatch.Reset();
+            this.stopwatch.Start();
+            var rezult = this.service.CreateRecord(parameters, id);
+            this.stopwatch.Stop();
+            Console.WriteLine($"{nameof(this.service.CreateRecord)} method execution duration is {this.stopwatch.ElapsedTicks} ticks.");
+            return rezult;
+        }
+
+        /// <summary>
         /// Makes a deep copy of the object.
         /// </summary>
         /// <param name="record">Input record.</param>
