@@ -17,6 +17,14 @@ namespace FileCabinetApp
         int CreateRecord(FileCabinetServiceContext objectParameter);
 
         /// <summary>
+        /// Create record with the specified id.
+        /// </summary>
+        /// <param name="objectParameter">Input objectParameter.</param>
+        /// <param name="id">Input id record.</param>
+        /// <returns>New record.</returns>
+        int CreateRecord(FileCabinetServiceContext objectParameter, int id);
+
+        /// <summary>
         /// Edit record.
         /// </summary>
         /// <param name="id">id of the record to edit.</param>

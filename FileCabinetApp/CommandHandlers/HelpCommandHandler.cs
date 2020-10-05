@@ -58,6 +58,7 @@ namespace FileCabinetApp.CommandHandlers
             new string[]
             {
                 "select", "shows records.", "The 'select' command shows records." +
+                "\nGet all records: select all" +
                 "\nFull command: select <field(s)> where or/and/without logical operators <fields(Min 2 fields)> = 'values'" +
                 "\nExamples:\nselect firstName where id='1'" +
                 "\nselect lastname, firstname where firstname='ivan' and lastname='ivanov'",

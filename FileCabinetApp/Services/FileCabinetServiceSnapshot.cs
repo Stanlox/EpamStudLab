@@ -18,6 +18,7 @@ namespace FileCabinetApp
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FileCabinetRecordCsvReader fileCabinetRecordCsvReader;
         private FileCabinetRecordXmlReader fileCabinetRecordXmlReader;
+        private XmlWriterSettings settings = new XmlWriterSettings();
 
         /// <summary>
         /// Gets сollection of records from the program.
@@ -41,6 +42,9 @@ namespace FileCabinetApp
         {
             this.records = fileCabinetRecord;
             this.Records = new ReadOnlyCollection<FileCabinetRecord>(fileCabinetRecord);
+            this.settings.OmitXmlDeclaration = true;
+            this.settings.Indent = true;
+            this.settings.NewLineOnAttributes = true;
         }
 
         /// <summary>
@@ -62,7 +66,7 @@ namespace FileCabinetApp
         /// <param name="sw">stream.</param>
         public void SaveToXml(StreamWriter sw)
         {
-            this.xmlWriter = new FileCabinetRecordXmlWriter(XmlWriter.Create(sw));
+            this.xmlWriter = new FileCabinetRecordXmlWriter(XmlWriter.Create(sw, this.settings));
             foreach (var record in this.records)
             {
                 this.list.Add(record);

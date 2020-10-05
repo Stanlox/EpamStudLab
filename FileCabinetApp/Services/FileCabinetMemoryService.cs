@@ -20,7 +20,7 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>(StringComparer.InvariantCultureIgnoreCase);
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateofbirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
         private readonly Dictionary<int, FileCabinetRecord> idrecordDictionary = new Dictionary<int, FileCabinetRecord>();
-        private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
@@ -58,7 +58,24 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public int CreateRecord(FileCabinetServiceContext parameters)
+        public int CreateRecord(FileCabinetServiceContext parameters, int id)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            var recordId = this.Create(parameters, id);
+            return recordId;
+        }
+
+        /// <summary>
+        /// Create record with the specified id.
+        /// </summary>
+        /// <param name="parameters">Input parameters.</param>
+        /// <param name="id">Input id record.</param>
+        /// <returns>Id of the created record.</returns>
+        public int Create(FileCabinetServiceContext parameters, int id)
         {
             if (parameters == null)
             {
@@ -69,7 +86,7 @@ namespace FileCabinetApp
 
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count == 0 ? 1 : this.list.Max(maxId => maxId.Id) + 1,
+                Id = id,
                 FirstName = parameters.FirstName,
                 LastName = parameters.LastName,
                 DateOfBirth = parameters.DateOfBirth,
@@ -79,7 +96,20 @@ namespace FileCabinetApp
             };
             this.AddRecordInAllDictionary(record);
             this.list.Add(record);
+            this.list = this.list.OrderBy(x => x.Id).ToList();
             return record.Id;
+        }
+
+        /// <inheritdoc/>
+        public int CreateRecord(FileCabinetServiceContext parameters)
+        {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            var id = this.Create(parameters, this.list.Count == 0 ? 1 : this.list.Max(maxId => maxId.Id) + 1);
+            return id;
         }
 
         /// <inheritdoc/>
@@ -501,6 +531,6 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public Tuple<int, int> PurgeRecord() => throw new NotImplementedException();
+        public Tuple<int, int> PurgeRecord() => throw new NotImplementedException("This command only works with the file service");
     }
 }

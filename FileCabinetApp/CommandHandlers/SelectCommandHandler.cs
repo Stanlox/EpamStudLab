@@ -84,81 +84,89 @@ namespace FileCabinetApp.CommandHandlers
         {
             try
             {
-                if (string.IsNullOrEmpty(parameters))
+                if (parameters.Split().Length == 1 && parameters.ToUpperInvariant() == "ALL")
                 {
-                    throw new ArgumentNullException(parameters);
+                    this.recordsToShow = this.service.GetRecords();
+                    this.propertiesToShow = this.find.GetAllProperties();
                 }
-
-                var parametersArray = parameters.Split(Where, StringSplitOptions.None);
-
-                if (parametersArray.Length == 1)
+                else
                 {
-                    if (!IsRightCommandSyntax(ParametersTemplateWithoutCondition, string.Join(string.Empty, parametersArray)))
+                    var parametersArray = parameters.Split(Where, StringSplitOptions.None);
+
+                    if (parametersArray.Length == 1)
+                    {
+                        if (!IsRightCommandSyntax(ParametersTemplateWithoutCondition, string.Join(string.Empty, parametersArray)))
+                        {
+                            throw new FormatException(InvalidFormat);
+                        }
+                    }
+                    else if (!IsRightCommandSyntax(ParametersTemplateWithCondition, parameters))
                     {
                         throw new FormatException(InvalidFormat);
                     }
 
-                    this.recordsToShow = this.service.GetRecords();
-                }
-                else if (!IsRightCommandSyntax(ParametersTemplateWithCondition, parameters))
-                {
-                    throw new FormatException(InvalidFormat);
-                }
+                    this.propertiesToShow = parametersArray[BeforeWhere].Trim().Split(",").Select(prop => prop.Trim().ToUpperInvariant()).AsEnumerable();
 
-                this.propertiesToShow = parametersArray[BeforeWhere].Trim().Split(",").Select(prop => prop.Trim().ToUpperInvariant()).AsEnumerable();
-
-                if (parametersArray.Length == 2)
-                {
-                    var isContainsAnd = this.find.ContainsAnd(parametersArray[AfterWhere], And);
-                    var separators = new string[] { Or, And };
-                    var parametersAfterWhere = parametersArray[AfterWhere].Trim().Split(' ');
-                    var parametersAfterWhereWithoutSeparators = parametersAfterWhere.Select(item => separators
-                    .Contains(item) ? item.Replace(item, ",", StringComparison.InvariantCultureIgnoreCase) : item).ToArray();
-
-                    var keyValuePairs = GetKeyValuePairs(string.Join(string.Empty, parametersAfterWhereWithoutSeparators)).ToList();
-
-                    foreach (var pair in keyValuePairs)
+                    if (parametersArray.Length == 2)
                     {
-                        if (this.service is FileCabinetMemoryService)
+                        var isContainsAnd = this.find.ContainsAnd(parametersArray[AfterWhere], And);
+                        var separators = new string[] { Or, And };
+                        var parametersAfterWhere = parametersArray[AfterWhere].Trim().Split(' ');
+                        var parametersAfterWhereWithoutSeparators = parametersAfterWhere.Select(item => separators
+                        .Contains(item) ? item.Replace(item, ",", StringComparison.InvariantCultureIgnoreCase) : item).ToArray();
+
+                        var keyValuePairs = GetKeyValuePairs(string.Join(string.Empty, parametersAfterWhereWithoutSeparators)).ToList();
+
+                        foreach (var pair in keyValuePairs)
                         {
-                            var recordsFromCashe = Caсhe.FindRecordInCashe(pair.key, pair.value);
-                            if (!recordsFromCashe.Any())
+                            if (this.service is FileCabinetMemoryService)
                             {
-                                var recordsFromSrvice = this.find.FindRecordByKey(pair.key, pair.value);
-                                foreach (var record in recordsFromSrvice)
+                                var recordsFromCashe = Caсhe.FindRecordInCashe(pair.key, pair.value);
+                                if (!recordsFromCashe.Any())
                                 {
-                                    Caсhe.AddInCashe(pair.key, pair.value, record);
+                                    var recordsFromService = this.find.FindRecordByKey(pair.key, pair.value);
+                                    foreach (var record in recordsFromService)
+                                    {
+                                        Caсhe.AddInCashe(pair.key, pair.value, record);
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var record in recordsFromCashe)
+                                    {
+                                        if (!this.list.Exists(x => x.Id == record.Id))
+                                        {
+                                            this.list.Add(record);
+                                        }
+                                    }
                                 }
                             }
                             else
                             {
-                                foreach (var record in recordsFromCashe)
-                                {
-                                    if (!this.list.Exists(x => x.Id == record.Id))
-                                    {
-                                        this.list.Add(record);
-                                    }
-                                }
+                                this.find.FindRecordByKey(pair.key, pair.value);
                             }
                         }
-                        else
-                        {
-                            this.find.FindRecordByKey(pair.key, pair.value);
-                        }
-                    }
 
-                    if (isContainsAnd)
-                    {
-                        foreach (var pair in keyValuePairs)
+                        if (isContainsAnd)
                         {
-                            this.find.FindRecordByMatchingCriteria(pair.key, pair.value);
+                            foreach (var pair in keyValuePairs)
+                            {
+                                this.list = this.find.FindRecordByMatchingCriteria(pair.key, pair.value);
+                            }
                         }
-                    }
 
-                    this.recordsToShow = this.list.OrderBy(record => record.Id).AsEnumerable();
+                        this.recordsToShow = this.list.OrderBy(record => record.Id).AsEnumerable();
+                    }
                 }
 
-                TableRecordDraw.PrintTable(this.recordsToShow, this.propertiesToShow);
+                if (!this.recordsToShow.Any())
+                {
+                    Console.WriteLine("No records were found with the specified search criteria");
+                }
+                else
+                {
+                    TableRecordDraw.PrintTable(this.recordsToShow, this.propertiesToShow);
+                }
             }
             catch (ArgumentNullException ex)
             {
@@ -167,6 +175,10 @@ namespace FileCabinetApp.CommandHandlers
             catch (FormatException ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("The properties you specified for the selection do not exist");
             }
         }
     }

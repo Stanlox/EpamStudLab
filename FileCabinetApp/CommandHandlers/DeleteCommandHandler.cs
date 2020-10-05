@@ -180,7 +180,7 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     foreach (var pair in keyValuePairs)
                     {
-                        this.find.FindRecordByMatchingCriteria(pair.key, pair.value);
+                        this.list = this.find.FindRecordByMatchingCriteria(pair.key, pair.value);
                     }
                 }
             }
