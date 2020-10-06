@@ -134,9 +134,8 @@ namespace FileCabinetApp
 
             this.contextStrategy.ValidateParameters(parameters);
 
-            FileCabinetRecord oldrecord = this.list[id - 1];
-            this.RemoveRecordInAllDictionary(oldrecord);
-            var record = this.list.Find(x => x.Id == id);
+            FileCabinetRecord record = this.list.Find(x => x.Id == id);
+            this.RemoveRecordInAllDictionary(record);
             record.Id = record.Id;
             record.FirstName = parameters.FirstName;
             record.LastName = parameters.LastName;

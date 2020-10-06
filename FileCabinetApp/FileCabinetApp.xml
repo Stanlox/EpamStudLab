@@ -602,6 +602,47 @@
             </summary>
             <value>The Salary property gets/sets the value.</value>
         </member>
+        <member name="T:FileCabinetApp.Model.FileCabinetServiceContextNullable">
+            <summary>
+            this class is intended to be passed as an object.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Model.FileCabinetServiceContextNullable.FirstName">
+            <summary>
+            Gets or sets properties FirstName.
+            </summary>
+            <value>The FirstName property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.FileCabinetServiceContextNullable.LastName">
+            <summary>
+            Gets or sets properties LastName.
+            </summary>
+            <value>The LastName property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.FileCabinetServiceContextNullable.DateOfBirth">
+            <summary>
+            Gets or sets properties DateOfBirth.
+            </summary>
+            <value>The DateOfBirth property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.FileCabinetServiceContextNullable.Gender">
+            <summary>
+            Gets or sets properties Gender.
+            </summary>
+            <value>The Gender property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.FileCabinetServiceContextNullable.Age">
+            <summary>
+            Gets or sets properties Age.
+            </summary>
+            <value>The Age property gets/sets the value.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.FileCabinetServiceContextNullable.Salary">
+            <summary>
+            Gets or sets properties Salary.
+            </summary>
+            <value>The Salary property gets/sets the value.</value>
+        </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
             A class that is intended for processing user data and further processing it.

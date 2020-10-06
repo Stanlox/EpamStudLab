@@ -238,7 +238,7 @@ namespace FileCabinetApp.CommandHandlers
                         this.commands[index].Item2(record, arrayPropertyValues[i]);
                         this.countCalledCommands++;
                     }
-                    else if (string.Equals(arrayPropertyNames[i], "id", StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals(arrayPropertyNames[i].Trim(), "id", StringComparison.OrdinalIgnoreCase))
                     {
                         this.GetId(arrayPropertyValues[i]);
                     }
@@ -257,6 +257,10 @@ namespace FileCabinetApp.CommandHandlers
                 Console.WriteLine($"Record #{recordId} is created.");
             }
             catch (FormatException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (ArgumentException ex)
             {
                 Console.WriteLine(ex.Message);
             }

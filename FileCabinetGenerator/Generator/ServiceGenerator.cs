@@ -49,7 +49,7 @@ namespace FileCabinetGenerator
         public void GeneratorGenderAndDateOfBirth()
         {
             Random rnd = new Random();
-            this.index = rnd.Next(this.arrayGender.Length - 1);
+            this.index = rnd.Next(this.arrayGender.Length);
             this.randomYear = rnd.Next(MinDate.Year, DateTime.Now.Year);
             this.randomMonth = rnd.Next(1, 12);
             this.randomDay = rnd.Next(1, DateTime.DaysInMonth(this.randomYear, this.randomMonth));

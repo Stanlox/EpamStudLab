@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using FileCabinetApp.Model;
 using FileCabinetApp.Search;
 
 namespace FileCabinetApp.CommandHandlers
@@ -22,17 +24,17 @@ namespace FileCabinetApp.CommandHandlers
         private const string And = "and";
         private const string NameCommand = "update";
 
-        private readonly Tuple<string, Action<FileCabinetServiceContext, string>>[] commands = new Tuple<string, Action<FileCabinetServiceContext, string>>[]
+        private readonly Tuple<string, Action<FileCabinetServiceContextNullable, string>>[] commands = new Tuple<string, Action<FileCabinetServiceContextNullable, string>>[]
           {
-                    new Tuple<string, Action<FileCabinetServiceContext, string>>("firstname", GetFirstName),
-                    new Tuple<string, Action<FileCabinetServiceContext, string>>("lastname", GetLastName),
-                    new Tuple<string, Action<FileCabinetServiceContext, string>>("dateofbirth", GetDateOfBirth),
-                    new Tuple<string, Action<FileCabinetServiceContext, string>>("age", GetAge),
-                    new Tuple<string, Action<FileCabinetServiceContext, string>>("salary", GetSalary),
-                    new Tuple<string, Action<FileCabinetServiceContext, string>>("gender", GetGender),
+                    new Tuple<string, Action<FileCabinetServiceContextNullable, string>>("firstname", GetFirstName),
+                    new Tuple<string, Action<FileCabinetServiceContextNullable, string>>("lastname", GetLastName),
+                    new Tuple<string, Action<FileCabinetServiceContextNullable, string>>("dateofbirth", GetDateOfBirth),
+                    new Tuple<string, Action<FileCabinetServiceContextNullable, string>>("age", GetAge),
+                    new Tuple<string, Action<FileCabinetServiceContextNullable, string>>("salary", GetSalary),
+                    new Tuple<string, Action<FileCabinetServiceContextNullable, string>>("gender", GetGender),
           };
 
-        private FileCabinetServiceContext recordContext = new FileCabinetServiceContext();
+        private FileCabinetServiceContextNullable recordContext = new FileCabinetServiceContextNullable();
         private List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private FindRecordInService find;
 
@@ -75,24 +77,24 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void GetFirstName(FileCabinetServiceContext record, string parameters)
+        private static void GetFirstName(FileCabinetServiceContextNullable record, string parameters)
         {
             record.FirstName = parameters.Trim();
         }
 
-        private static void GetLastName(FileCabinetServiceContext record, string parameters)
+        private static void GetLastName(FileCabinetServiceContextNullable record, string parameters)
         {
             record.LastName = parameters.Trim();
         }
 
-        private static void GetDateOfBirth(FileCabinetServiceContext record, string parameters)
+        private static void GetDateOfBirth(FileCabinetServiceContextNullable record, string parameters)
         {
             var isConverted = DateTime.TryParse(parameters, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth);
             IsParse(isConverted, dateOfBirth);
             record.DateOfBirth = dateOfBirth;
         }
 
-        private static void GetAge(FileCabinetServiceContext record, string parameters)
+        private static void GetAge(FileCabinetServiceContextNullable record, string parameters)
         {
             var isConverted = short.TryParse(parameters, out short age);
             IsParse(isConverted, age);
@@ -100,7 +102,7 @@ namespace FileCabinetApp.CommandHandlers
             record.Age = age;
         }
 
-        private static void GetSalary(FileCabinetServiceContext record, string parameters)
+        private static void GetSalary(FileCabinetServiceContextNullable record, string parameters)
         {
             var isConverted = decimal.TryParse(parameters, out decimal salary);
             IsParse(isConverted, salary);
@@ -108,7 +110,7 @@ namespace FileCabinetApp.CommandHandlers
             record.Salary = salary;
         }
 
-        private static void GetGender(FileCabinetServiceContext record, string parameters)
+        private static void GetGender(FileCabinetServiceContextNullable record, string parameters)
         {
             var isConverted = char.TryParse(parameters, out char gender);
             IsParse(isConverted, gender);
@@ -235,30 +237,15 @@ namespace FileCabinetApp.CommandHandlers
 
                 foreach (var record in this.list)
                 {
+                    var context = new FileCabinetServiceContext();
                     record.Id = record.Id;
-                    this.recordContext.FirstName = this.recordContext.FirstName ?? record.FirstName;
-                    this.recordContext.LastName = this.recordContext.LastName ?? record.LastName;
-                    if (this.recordContext.DateOfBirth == DateTime.MinValue)
-                    {
-                        this.recordContext.DateOfBirth = record.DateOfBirth;
-                    }
-
-                    if (this.recordContext.Salary == 0)
-                    {
-                        this.recordContext.Salary = record.Salary;
-                    }
-
-                    if (this.recordContext.Age == 0)
-                    {
-                        this.recordContext.Age = record.Age;
-                    }
-
-                    if (this.recordContext.Gender == 0)
-                    {
-                        this.recordContext.Gender = record.Gender;
-                    }
-
-                    this.service.EditRecord(record.Id, this.recordContext);
+                    context.FirstName = this.recordContext.FirstName ?? record.FirstName;
+                    context.LastName = this.recordContext.LastName ?? record.LastName;
+                    context.DateOfBirth = this.recordContext.DateOfBirth ?? record.DateOfBirth;
+                    context.Salary = this.recordContext.Salary ?? record.Salary;
+                    context.Age = this.recordContext.Age ?? record.Age;
+                    context.Gender = this.recordContext.Gender ?? record.Gender;
+                    this.service.EditRecord(record.Id, context);
                 }
 
                 StringBuilder builder = new StringBuilder();
@@ -293,9 +280,13 @@ namespace FileCabinetApp.CommandHandlers
             {
                 Console.WriteLine(ex.Message);
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException ex)
             {
-                Console.WriteLine(InvalidFormat);
+                Console.WriteLine(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             catch (IndexOutOfRangeException)
             {
